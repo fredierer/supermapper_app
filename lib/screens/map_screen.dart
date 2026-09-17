@@ -15,6 +15,7 @@ class mapScreen extends StatefulWidget {
 }
 class _mapScreenState extends State<mapScreen> {
   bool _addDialogShown = false;
+  bool _lowBandExtended = false;
 
   final List<LowBandButton> _lowBandButtons = [
     LowBandButton(
@@ -26,7 +27,7 @@ class _mapScreenState extends State<mapScreen> {
     LowBandButton(
       icon: Icons.car_rental, 
       label: "Transport", 
-      color: Colors.lightGreen,
+      color: Colors.green.shade300,
       onPressed: () => print("Filtre transport"),
     ),
     LowBandButton(
@@ -42,10 +43,22 @@ class _mapScreenState extends State<mapScreen> {
       onPressed: () => print("Filtre Restaurant"),
     ),
     LowBandButton(
-      icon: Icons.filter_center_focus, 
-      label: "More Filters", 
-      color: AppColors.primary,
-      onPressed: () => print("More filters"),
+      icon: Icons.landscape_rounded, 
+      label: "Scenic view", 
+      color: Colors.green.shade700,
+      onPressed: () => print("Scenic view"),
+    ),
+    LowBandButton(
+      icon: Icons.account_balance_rounded, 
+      label: "Administation", 
+      color: Colors.deepPurpleAccent.shade200,
+      onPressed: () => print("Administration"),
+    ),
+    LowBandButton(
+      icon: Icons.window_outlined, 
+      label: "Others", 
+      color: Colors.brown.shade700,
+      onPressed: () => print("Others"),
     ),
   ];
 
@@ -119,9 +132,14 @@ class _mapScreenState extends State<mapScreen> {
                           ),
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          setState(() {
+                            _lowBandExtended = !_lowBandExtended;
+                            print(_lowBandExtended);
+                          });
+                        },
                         child :
-                          Icon(Icons.arrow_drop_up_rounded, size: 30, )
+                          Icon(_lowBandExtended ? Icons.arrow_drop_down_rounded : Icons.arrow_drop_up_rounded, size: 30, )
                       ),
                       SizedBox(width: double.infinity, height: 15,),
                       ElevatedButton(
@@ -156,7 +174,7 @@ class _mapScreenState extends State<mapScreen> {
                       GridView.builder(
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
-                        itemCount: _lowBandButtons.length,
+                        itemCount: _lowBandExtended ? _lowBandButtons.length : 5,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 5,
                           crossAxisSpacing: 10,
