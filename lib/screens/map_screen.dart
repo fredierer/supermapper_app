@@ -4,6 +4,7 @@ import 'package:supermapper_app/widgets/map.dart';
 import 'package:supermapper_app/theme.dart';
 import 'package:supermapper_app/widgets/add_window.dart';
 
+
 class mapScreen extends StatefulWidget {
   const mapScreen({super.key});
 
@@ -12,10 +13,22 @@ class mapScreen extends StatefulWidget {
 
 
 }
-
-
 class _mapScreenState extends State<mapScreen> {
   bool _addDialogShown = false;
+
+  final List<LowBandButton> _lowBandButtons = [
+    LowBandButton(
+      icon: Icons.search, 
+      label: "Search", 
+      onPressed: () => print("Chercher chercher"),
+    ),
+    LowBandButton(
+      icon: Icons.layers, 
+      label: "Calques", 
+      onPressed: () => print("Je change de calque"),
+    ),
+  ];
+
 
   void _showAddDialog(BuildContext context) {
   showDialog(
@@ -123,7 +136,7 @@ class _mapScreenState extends State<mapScreen> {
                       GridView.builder(
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
-                        itemCount: 3,
+                        itemCount: _lowBandButtons.length,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 5,
                           crossAxisSpacing: 10,
@@ -131,7 +144,7 @@ class _mapScreenState extends State<mapScreen> {
                           childAspectRatio: 1,
                         ),
                         itemBuilder: (context, index) {
-                          return LowBandButton(icon : Icons.ac_unit_rounded, label: "Cardddd", onPressed: () {}, );
+                          return _lowBandButtons[index];
                         }
                       ),
                     ],
