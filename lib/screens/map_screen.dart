@@ -17,51 +17,106 @@ class _mapScreenState extends State<mapScreen> {
   bool _addDialogShown = false;
   bool _lowBandExtended = false;
 
-  final List<LowBandButton> _lowBandButtons = [
-    LowBandButton(
-      icon: Icons.search, 
-      label: "Search", 
-      color: AppColors.primary,
-      onPressed: () => print("Chercher chercher"),
+  final List<Widget> _lowBandButtons = [
+    InkWell(
+      onTap: () {
+        //To determine
+      },
+      borderRadius: BorderRadius.circular(16),
+      child: Card(
+        color: AppColors.primary,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16), // Bordure subtile
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(Icons.search, size:40),
+            Text("Search", style: TextStyle(fontSize: 10),)
+          ],
+        ),
+      ),
     ),
-    LowBandButton(
-      icon: Icons.car_rental, 
+    FilterButton(
+      icon: Icons.airport_shuttle, 
       label: "Transport", 
       color: Colors.green.shade300,
       onPressed: () => print("Filtre transport"),
     ),
-    LowBandButton(
+    FilterButton(
       icon: Icons.work, 
       label: "Borders", 
       color: Colors.lightBlue,
       onPressed: () => print("Filtre Borders"),
     ),
-    LowBandButton(
+    FilterButton(
       icon: Icons.restaurant_menu_rounded, 
       label: "Restaurant", 
       color: Colors.orange,
       onPressed: () => print("Filtre Restaurant"),
     ),
-    LowBandButton(
+    FilterButton(
       icon: Icons.landscape_rounded, 
       label: "Scenic view", 
       color: Colors.green.shade700,
       onPressed: () => print("Scenic view"),
     ),
-    LowBandButton(
+    FilterButton(
       icon: Icons.account_balance_rounded, 
       label: "Administation", 
       color: Colors.deepPurpleAccent.shade200,
       onPressed: () => print("Administration"),
     ),
-    LowBandButton(
+    FilterButton(
       icon: Icons.window_outlined, 
       label: "Others", 
       color: Colors.brown.shade700,
       onPressed: () => print("Others"),
     ),
   ];
-
+  final List<Widget> _bigFilterButtons = [
+    InkWell(
+      onTap: () {
+        //To determine
+      },
+      borderRadius: BorderRadius.circular(16),
+      child: Card(
+        color: AppColors.primary.withValues(alpha: 0.2),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16), // Bordure subtile
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(Icons.flag_outlined, size : 40, color: Colors.grey.shade800),
+            Text("Filter by country", style: TextStyle(color: Colors.grey.shade800, fontSize: 15),)
+          ],
+        ),
+      ),
+    ),
+    InkWell(
+      onTap: () {
+        //To determine
+      },
+      borderRadius: BorderRadius.circular(16),
+      child: Card(
+        color: AppColors.primary.withValues(alpha: 0.2),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16), // Bordure subtile
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(Icons.date_range, size : 40, color: Colors.grey.shade800),
+            Text("Filter by dates", style: TextStyle(color: Colors.grey.shade800, fontSize: 15),)
+          ],
+        ),
+      ),
+    ),
+  ];
 
   void _showAddDialog(BuildContext context) {
   showDialog(
@@ -185,6 +240,22 @@ class _mapScreenState extends State<mapScreen> {
                           return _lowBandButtons[index];
                         }
                       ),
+                      SizedBox(height: 10,width: double.infinity,),
+                      if (_lowBandExtended)
+                        GridView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: 2,
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                            childAspectRatio: 2.5,
+                          ),
+                          itemBuilder: (context, index) {
+                            return _bigFilterButtons[index];
+                          }
+                        ),
                     ],
                   ),
                 ]
