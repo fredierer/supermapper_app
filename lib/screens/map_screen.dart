@@ -20,12 +20,32 @@ class _mapScreenState extends State<mapScreen> {
     LowBandButton(
       icon: Icons.search, 
       label: "Search", 
+      color: AppColors.primary,
       onPressed: () => print("Chercher chercher"),
     ),
     LowBandButton(
-      icon: Icons.layers, 
-      label: "Calques", 
-      onPressed: () => print("Je change de calque"),
+      icon: Icons.car_rental, 
+      label: "Transport", 
+      color: Colors.lightGreen,
+      onPressed: () => print("Filtre transport"),
+    ),
+    LowBandButton(
+      icon: Icons.work, 
+      label: "Borders", 
+      color: Colors.lightBlue,
+      onPressed: () => print("Filtre Borders"),
+    ),
+    LowBandButton(
+      icon: Icons.restaurant_menu_rounded, 
+      label: "Restaurant", 
+      color: Colors.orange,
+      onPressed: () => print("Filtre Restaurant"),
+    ),
+    LowBandButton(
+      icon: Icons.filter_center_focus, 
+      label: "More Filters", 
+      color: AppColors.primary,
+      onPressed: () => print("More filters"),
     ),
   ];
 
