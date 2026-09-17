@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supermapper_app/widgets/lowBandButton.dart';
 import 'package:supermapper_app/widgets/map.dart';
 import 'package:supermapper_app/theme.dart';
 import 'package:supermapper_app/widgets/add_window.dart';
@@ -130,17 +131,7 @@ class _mapScreenState extends State<mapScreen> {
                           childAspectRatio: 1,
                         ),
                         itemBuilder: (context, index) {
-                          return Card(
-                            color: AppColors.primary,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Icon(Icons.abc, size:50),
-                                Text("Search", style: TextStyle(fontSize: 12),)
-                              ],
-                            ),
-                          );
+                          return LowBandButton(icon : Icons.ac_unit_rounded, label: "Cardddd", onPressed: () {}, );
                         }
                       ),
                     ],
