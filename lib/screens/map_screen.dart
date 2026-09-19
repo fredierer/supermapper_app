@@ -130,144 +130,92 @@ class _mapScreenState extends State<mapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
+      extendBody: true,
       body: Stack(
         children: [
           MapWidget(),
           SafeArea(child: 
-            Padding(padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15), child: 
-              Column(
+            Padding(padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15), child: 
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary, // Fond blanc épuré
-                          foregroundColor: AppColors.background, // Couleur du texte / icône
-                          elevation: 0,
-                          fixedSize: const Size(80, 40), // Hauteur fixe de 52px, largeur responsive
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16), // Bordure fine
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                        ),
-                        onPressed: () {},
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Join",
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                  IconButton(
+                    icon: const Icon(Icons.search, size: 24,),
+                    onPressed: () {},
+                    style: IconButton.styleFrom(
+                      shape: const CircleBorder(),
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.all(14),
+                    ),
                   ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white.withValues(alpha: 10), // Fond blanc épuré
-                          foregroundColor: Colors.black, // Couleur du texte / icône
-                          elevation: 0,
-                          fixedSize: const Size(60, 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16), // Bordure fine
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _lowBandExtended = !_lowBandExtended;
-                            print(_lowBandExtended);
-                          });
-                        },
-                        child :
-                          Icon(_lowBandExtended ? Icons.arrow_drop_down_rounded : Icons.arrow_drop_up_rounded, size: 30, )
-                      ),
-                      SizedBox(width: double.infinity, height: 15,),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary, // Fond blanc épuré
-                          foregroundColor: AppColors.background, // Couleur du texte / icône
-                          elevation: 0,
-                          fixedSize: const Size(double.infinity, 50), // Hauteur fixe de 52px, largeur responsive
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16), // Bordure fine
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                        ),
-                        onPressed: () => _showAddDialog(context),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.add, size: 20),
-                            const SizedBox(width: 8),
-                            Text(
-                              " Add",
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(width: double.infinity, height: 15,),   
-                      GridView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: _lowBandExtended ? _lowBandButtons.length : 5,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 5,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
-                          childAspectRatio: 1,
-                        ),
-                        itemBuilder: (context, index) {
-                          return _lowBandButtons[index];
-                        }
-                      ),
-                      SizedBox(height: 10,width: double.infinity,),
-                      if (_lowBandExtended)
-                        GridView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: 2,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
-                            childAspectRatio: 2.5,
-                          ),
-                          itemBuilder: (context, index) {
-                            return _bigFilterButtons[index];
-                          }
-                        ),
-                    ],
+                  IconButton(
+                    icon: const Icon(Icons.filter_list, size: 24,),
+                    onPressed: () {},
+                    style: IconButton.styleFrom(
+                      shape: const CircleBorder(),
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.all(14),
+                    ),
                   ),
-                ]
+                ],
               )
             )
-          ),
+          )
         ]
-      )
+      ),
+
+      bottomNavigationBar: BottomAppBar(
+        color: const Color.fromARGB(255, 193, 227, 255),
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 12.0, 
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            // Bouton gauche (Carte)
+            IconButton(
+              icon: const Icon(Icons.map_outlined, size: 30),
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: const Icon(Icons.settings_outlined, size: 30),
+              onPressed: () {},
+            ),
+            
+            // Espace vide au centre pour laisser place au bouton flottant
+            const SizedBox(width: 120), 
+            
+            // Bouton droit (Paramètres)
+            IconButton(
+              icon: const Icon(Icons.settings_outlined, size: 30),
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: const Icon(Icons.settings_outlined, size: 30),
+              onPressed: () {},
+            ),
+          ],
+        ),
+      ),
+
+
+      floatingActionButton: RawMaterialButton(
+        onPressed: () {},
+        fillColor: Colors.blue,
+        elevation: 4,
+        shape: const CircleBorder(),
+        constraints: const BoxConstraints(
+          minWidth: 80,
+          minHeight: 80,
+        ),
+        child: const Icon(Icons.add, size: 40, color: Colors.white),
+      ),
+
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
-
-
-
-
