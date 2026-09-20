@@ -11,122 +11,34 @@ class mapScreen extends StatefulWidget {
   @override
   State<mapScreen> createState() => _mapScreenState();
 
-
 }
-class _mapScreenState extends State<mapScreen> {
-  bool _addDialogShown = false;
-  bool _lowBandExtended = false;
+class _mapScreenState extends State<mapScreen> with SingleTickerProviderStateMixin {
 
-  final List<Widget> _lowBandButtons = [
-    InkWell(
-      onTap: () {
-        //To determine
-      },
-      borderRadius: BorderRadius.circular(16),
-      child: Card(
-        color: AppColors.primary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16), // Bordure subtile
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Icon(Icons.search, size:40),
-            Text("Search", style: TextStyle(fontSize: 10),)
-          ],
-        ),
-      ),
-    ),
-    FilterButton(
-      icon: Icons.airport_shuttle, 
-      label: "Transport", 
-      color: Colors.green.shade300,
-      onPressed: () => print("Filtre transport"),
-    ),
-    FilterButton(
-      icon: Icons.work, 
-      label: "Borders", 
-      color: Colors.lightBlue,
-      onPressed: () => print("Filtre Borders"),
-    ),
-    FilterButton(
-      icon: Icons.restaurant_menu_rounded, 
-      label: "Restaurant", 
-      color: Colors.orange,
-      onPressed: () => print("Filtre Restaurant"),
-    ),
-    FilterButton(
-      icon: Icons.landscape_rounded, 
-      label: "Scenic view", 
-      color: Colors.green.shade700,
-      onPressed: () => print("Scenic view"),
-    ),
-    FilterButton(
-      icon: Icons.account_balance_rounded, 
-      label: "Administation", 
-      color: Colors.deepPurpleAccent.shade200,
-      onPressed: () => print("Administration"),
-    ),
-    FilterButton(
-      icon: Icons.window_outlined, 
-      label: "Others", 
-      color: Colors.brown.shade700,
-      onPressed: () => print("Others"),
-    ),
-  ];
-  final List<Widget> _bigFilterButtons = [
-    InkWell(
-      onTap: () {
-        //To determine
-      },
-      borderRadius: BorderRadius.circular(16),
-      child: Card(
-        color: AppColors.primary.withValues(alpha: 0.2),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16), // Bordure subtile
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Icon(Icons.flag_outlined, size : 40, color: Colors.grey.shade800),
-            Text("Filter by country", style: TextStyle(color: Colors.grey.shade800, fontSize: 15),)
-          ],
-        ),
-      ),
-    ),
-    InkWell(
-      onTap: () {
-        //To determine
-      },
-      borderRadius: BorderRadius.circular(16),
-      child: Card(
-        color: AppColors.primary.withValues(alpha: 0.2),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16), // Bordure subtile
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Icon(Icons.date_range, size : 40, color: Colors.grey.shade800),
-            Text("Filter by dates", style: TextStyle(color: Colors.grey.shade800, fontSize: 15),)
-          ],
-        ),
-      ),
-    ),
-  ];
+  late AnimationController _addButtonController;
+  bool _addMenuOpen = false;
 
-  void _showAddDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AddWindow();
-    },
-  );
-}
   
+  void _toggleAddMenu() {
+    setState(() {
+      _addMenuOpen = !_addMenuOpen;
+    });
+
+    if(_addMenuOpen) {
+      _addButtonController.forward();
+    } else {
+      _addButtonController.reverse();
+    }
+
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    _addButtonController = AnimationController(vsync: this,duration: const Duration(milliseconds: 300));
+    _addButtonController.reverseDuration = Duration(milliseconds: 200);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -135,39 +47,107 @@ class _mapScreenState extends State<mapScreen> {
       body: Stack(
         children: [
           MapWidget(),
-          SafeArea(child: 
-            Padding(padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15), child: 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.search, size: 24,),
-                    onPressed: () {},
-                    style: IconButton.styleFrom(
-                      shape: const CircleBorder(),
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.all(14),
+          SafeArea(
+                child: Padding(
+                  padding: EdgeInsetsGeometry.symmetric(horizontal: 20, vertical: 10),
+                  child: Expanded(
+                    child : Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.search, size: 24,),
+                              onPressed: () {},
+                              style: IconButton.styleFrom(
+                                shape: const CircleBorder(),
+                                backgroundColor: Colors.blue,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.all(14),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.filter_list, size: 24,),
+                              onPressed: () {},
+                              style: IconButton.styleFrom(
+                                shape: const CircleBorder(),
+                                backgroundColor: Colors.blue,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.all(14),
+                              ),
+                            ),
+
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.filter_list, size: 24,),
-                    onPressed: () {},
-                    style: IconButton.styleFrom(
-                      shape: const CircleBorder(),
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.all(14),
-                    ),
-                  ),
-                ],
-              )
-            )
-          )
+                ),
+          ),
+          AnimatedBuilder(
+            animation: _addButtonController, 
+            builder: (context, child) {
+              final double offsetY = 50 * _addButtonController.value;
+              final double offsetX = 15 * _addButtonController.value;
+
+              return SafeArea(
+                child: Padding(
+                  padding: EdgeInsetsGeometry.all(0),
+                  child: Expanded(
+                    child : Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Transform.translate(
+                              offset: Offset(-offsetX, -offsetY), // Décalage diagonal haut-droite
+                              child: Opacity(
+                                opacity: _addButtonController.value, // Apparaît progressivement
+                                child: IconButton(
+                                  icon: const Icon(Icons.add_location_alt_outlined, size: 28,),
+                                  onPressed: () {},
+                                  style: IconButton.styleFrom(
+                                    shape: const CircleBorder(),
+                                    backgroundColor: Color.fromARGB(255, 143, 197, 241),
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.all(20),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            
+                            // Bouton Orange (Bas-Gauche)
+                            Transform.translate(
+                              offset: Offset(offsetX, -offsetY), // Décalage diagonal haut-droite
+                              child: Opacity(
+                                opacity: _addButtonController.value, // Apparaît progressivement
+                                child: IconButton(
+                                  icon: const Icon(Icons.route, size: 28,),
+                                  onPressed: () {},
+                                  style: IconButton.styleFrom(
+                                    shape: const CircleBorder(),
+                                    backgroundColor: Color.fromARGB(255, 143, 197, 241),
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.all(20),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+
+                        )
+                      ],
+                    )
+                  )
+                )
+              );
+            }
+          ),
         ]
       ),
-
+    
       bottomNavigationBar: BottomAppBar(
         color: const Color.fromARGB(255, 193, 227, 255),
         shape: const CircularNotchedRectangle(),
@@ -204,8 +184,8 @@ class _mapScreenState extends State<mapScreen> {
 
 
       floatingActionButton: RawMaterialButton(
-        onPressed: () {},
-        fillColor: Colors.blue,
+        onPressed: _toggleAddMenu,
+        fillColor: const Color.fromARGB(255, 33, 150, 243),
         elevation: 4,
         shape: const CircleBorder(),
         constraints: const BoxConstraints(
@@ -217,5 +197,12 @@ class _mapScreenState extends State<mapScreen> {
 
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
+  }
+
+
+  @override
+  void dispose() {
+    _addButtonController.dispose();
+    super.dispose();
   }
 }
