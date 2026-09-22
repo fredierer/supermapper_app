@@ -16,7 +16,7 @@ class _searchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      backgroundColor: Colors.amber,
+      backgroundColor: Colors.white,
       extendBody: true,
       body: SafeArea(
         child: Padding(

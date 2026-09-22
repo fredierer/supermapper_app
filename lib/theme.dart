@@ -25,6 +25,8 @@ final appTheme = ThemeData(
       borderRadius: BorderRadius.circular(12),
       borderSide: const BorderSide(color: Colors.red, width: 2),  // ✅ Quand actif
     ),
+    labelStyle: TextStyle(color: Colors.grey),
+    floatingLabelStyle: const TextStyle(color: Colors.grey),
     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
   ),
 
