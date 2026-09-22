@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:supermapper_app/widgets/lowBandButton.dart';
+import 'package:supermapper_app/screens/search_screen.dart';
 import 'package:supermapper_app/widgets/map.dart';
 import 'package:supermapper_app/theme.dart';
-import 'package:supermapper_app/widgets/add_window.dart';
 
 
-class mapScreen extends StatefulWidget {
-  const mapScreen({super.key});
+class MapScreen extends StatefulWidget {
+  const MapScreen({super.key});
 
   @override
-  State<mapScreen> createState() => _mapScreenState();
+  State<MapScreen> createState() => _mapScreenState();
 
 }
-class _mapScreenState extends State<mapScreen> with SingleTickerProviderStateMixin {
+class _mapScreenState extends State<MapScreen> with SingleTickerProviderStateMixin {
 
   late AnimationController _addButtonController;
   bool _addMenuOpen = false;
@@ -59,11 +58,18 @@ class _mapScreenState extends State<mapScreen> with SingleTickerProviderStateMix
                           children: [
                             IconButton(
                               icon: const Icon(Icons.search, size: 24,),
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                  context, 
+                                  MaterialPageRoute(
+                                    builder: (context) {
+                                      return SearchScreen();
+                                    }
+                                  )
+                                );
+                              },
                               style: IconButton.styleFrom(
                                 shape: const CircleBorder(),
-                                backgroundColor: Colors.blue,
-                                foregroundColor: Colors.white,
                                 padding: const EdgeInsets.all(14),
                               ),
                             ),
@@ -159,10 +165,20 @@ class _mapScreenState extends State<mapScreen> with SingleTickerProviderStateMix
             // Bouton gauche (Carte)
             IconButton(
               icon: const Icon(Icons.map_outlined, size: 30),
+              style: IconButton.styleFrom(
+                shape: const CircleBorder(),
+                backgroundColor: Colors.blue.withValues(alpha: 0.2),
+                foregroundColor: Colors.white.withValues(alpha: 0.8),
+              ),
               onPressed: () {},
             ),
             IconButton(
               icon: const Icon(Icons.settings_outlined, size: 30),
+              style: IconButton.styleFrom(
+                shape: const CircleBorder(),
+                backgroundColor: Colors.transparent,
+                foregroundColor: Colors.black.withValues(alpha: 0.4),
+              ),
               onPressed: () {},
             ),
             
@@ -172,10 +188,20 @@ class _mapScreenState extends State<mapScreen> with SingleTickerProviderStateMix
             // Bouton droit (Paramètres)
             IconButton(
               icon: const Icon(Icons.settings_outlined, size: 30),
+              style: IconButton.styleFrom(
+                shape: const CircleBorder(),
+                backgroundColor: Colors.transparent,
+                foregroundColor: Colors.black.withValues(alpha: 0.4),
+              ),
               onPressed: () {},
             ),
             IconButton(
               icon: const Icon(Icons.settings_outlined, size: 30),
+              style: IconButton.styleFrom(
+                shape: const CircleBorder(),
+                backgroundColor: Colors.transparent,
+                foregroundColor: Colors.black.withValues(alpha: 0.4),
+              ),
               onPressed: () {},
             ),
           ],
