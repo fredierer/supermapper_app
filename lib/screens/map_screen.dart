@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supermapper_app/screens/filter_screen.dart';
 import 'package:supermapper_app/screens/search_screen.dart';
 import 'package:supermapper_app/widgets/map.dart';
 import 'package:supermapper_app/theme.dart';
@@ -75,7 +76,16 @@ class _mapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
                             ),
                             IconButton(
                               icon: const Icon(Icons.filter_list, size: 24,),
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                  context, 
+                                  MaterialPageRoute(
+                                    builder: (context) {
+                                      return FilterScreen();
+                                    }
+                                  )
+                                );
+                              },
                               style: IconButton.styleFrom(
                                 shape: const CircleBorder(),
                                 backgroundColor: Colors.blue,
