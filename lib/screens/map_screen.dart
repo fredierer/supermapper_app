@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:supermapper_app/screens/filter_screen.dart';
 import 'package:supermapper_app/screens/search_screen.dart';
-import 'package:supermapper_app/widgets/map.dart';
 import 'package:supermapper_app/theme.dart';
-
+import 'package:supermapper_app/widgets/map.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -58,7 +57,7 @@ class _mapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.search, size: 24,),
+                              icon: const Icon(Icons.search),
                               onPressed: () {
                                 Navigator.push(
                                   context, 
@@ -69,13 +68,9 @@ class _mapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
                                   )
                                 );
                               },
-                              style: IconButton.styleFrom(
-                                shape: const CircleBorder(),
-                                padding: const EdgeInsets.all(14),
-                              ),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.filter_list, size: 24,),
+                              icon: const Icon(Icons.filter_list),
                               onPressed: () {
                                 Navigator.push(
                                   context, 
@@ -86,12 +81,6 @@ class _mapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
                                   )
                                 );
                               },
-                              style: IconButton.styleFrom(
-                                shape: const CircleBorder(),
-                                backgroundColor: Colors.blue,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.all(14),
-                              ),
                             ),
 
                           ],
@@ -125,10 +114,8 @@ class _mapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
                                   icon: const Icon(Icons.add_location_alt_outlined, size: 28,),
                                   onPressed: () {},
                                   style: IconButton.styleFrom(
-                                    shape: const CircleBorder(),
-                                    backgroundColor: Color.fromARGB(255, 143, 197, 241),
-                                    foregroundColor: Colors.white,
                                     padding: const EdgeInsets.all(20),
+                                    backgroundColor: AppColors.amber.withAlpha(150),
                                   ),
                                 ),
                               ),
@@ -143,10 +130,8 @@ class _mapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
                                   icon: const Icon(Icons.route, size: 28,),
                                   onPressed: () {},
                                   style: IconButton.styleFrom(
-                                    shape: const CircleBorder(),
-                                    backgroundColor: Color.fromARGB(255, 143, 197, 241),
-                                    foregroundColor: Colors.white,
                                     padding: const EdgeInsets.all(20),
+                                    backgroundColor: AppColors.amber.withAlpha(150),
                                   ),
                                 ),
                               ),
@@ -165,7 +150,6 @@ class _mapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
       ),
     
       bottomNavigationBar: BottomAppBar(
-        color: const Color.fromARGB(255, 193, 227, 255),
         shape: const CircularNotchedRectangle(),
         notchMargin: 12.0, 
         child: Row(
@@ -174,45 +158,27 @@ class _mapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
           children: [
             // Bouton gauche (Carte)
             IconButton(
-              icon: const Icon(Icons.map_outlined, size: 30),
-              style: IconButton.styleFrom(
-                shape: const CircleBorder(),
-                backgroundColor: Colors.blue.withValues(alpha: 0.2),
-                foregroundColor: Colors.white.withValues(alpha: 0.8),
-              ),
+              icon: const Icon(Icons.map_outlined),
               onPressed: () {},
-            ),
-            IconButton(
-              icon: const Icon(Icons.settings_outlined, size: 30),
               style: IconButton.styleFrom(
-                shape: const CircleBorder(),
+                iconSize: 32,
                 backgroundColor: Colors.transparent,
-                foregroundColor: Colors.black.withValues(alpha: 0.4),
+                foregroundColor: AppColors.white,
               ),
-              onPressed: () {},
             ),
             
             // Espace vide au centre pour laisser place au bouton flottant
             const SizedBox(width: 120), 
             
-            // Bouton droit (Paramètres)
+            //Bouton droite (Settings)
             IconButton(
-              icon: const Icon(Icons.settings_outlined, size: 30),
-              style: IconButton.styleFrom(
-                shape: const CircleBorder(),
-                backgroundColor: Colors.transparent,
-                foregroundColor: Colors.black.withValues(alpha: 0.4),
-              ),
+              icon: const Icon(Icons.settings_outlined),
               onPressed: () {},
-            ),
-            IconButton(
-              icon: const Icon(Icons.settings_outlined, size: 30),
               style: IconButton.styleFrom(
-                shape: const CircleBorder(),
+                iconSize: 32,
                 backgroundColor: Colors.transparent,
-                foregroundColor: Colors.black.withValues(alpha: 0.4),
+                foregroundColor: AppColors.orange.withValues(alpha: 0.5),
               ),
-              onPressed: () {},
             ),
           ],
         ),
@@ -221,7 +187,7 @@ class _mapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
 
       floatingActionButton: RawMaterialButton(
         onPressed: _toggleAddMenu,
-        fillColor: const Color.fromARGB(255, 33, 150, 243),
+        fillColor: AppColors.amber,
         elevation: 4,
         shape: const CircleBorder(),
         constraints: const BoxConstraints(

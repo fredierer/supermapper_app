@@ -16,7 +16,6 @@ class _searchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      backgroundColor: Colors.white,
       extendBody: true,
       body: SafeArea(
         child: Padding(
@@ -34,12 +33,6 @@ class _searchScreenState extends State<SearchScreen> {
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    style: IconButton.styleFrom(
-                      shape: const CircleBorder(),
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.all(14),
-                    ),
                   ),
                   SizedBox(width: 20),
                   Expanded(child: 

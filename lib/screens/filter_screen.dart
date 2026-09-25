@@ -296,7 +296,6 @@ class _FilterScreenState extends State<FilterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       extendBody: true,
       body: SafeArea(
         child: Padding(
@@ -315,11 +314,13 @@ class _FilterScreenState extends State<FilterScreen> {
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    style: IconButton.styleFrom(
-                      shape: const CircleBorder(),
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.all(14),
+                  ),
+                  SizedBox(width: 20,),
+                  Text("Filter",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.0,
+                      fontSize: 28,
                     ),
                   ),
                 ],
@@ -328,12 +329,13 @@ class _FilterScreenState extends State<FilterScreen> {
               SizedBox(height: 30, width: double.infinity,),
               
               //Filter by category
-              Text("Categories",
+              Text("CATEGORIES",
                 style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
+                  color: Colors.grey,
+                  fontSize: 18,
+                  letterSpacing: 1.5,
+                )
+
               ),
               SizedBox(height: 20, width: double.infinity,),
               Wrap(
@@ -361,14 +363,6 @@ class _FilterScreenState extends State<FilterScreen> {
                           }
                         });
                       },
-                      backgroundColor: Colors.white,
-                      selectedColor: Colors.blue,
-                      labelStyle: TextStyle(
-                        color: isSelected ? Colors.white : Colors.black,
-                      ),
-                      side: BorderSide(
-                        color: isSelected ? Colors.blue : Colors.grey.shade300,
-                      ),
                     );
                   }
                 ).toList(),
@@ -377,13 +371,12 @@ class _FilterScreenState extends State<FilterScreen> {
               SizedBox(height: 30, width: double.infinity,),
               
               //Filter by Countries, Region
-              Text("Region, Countries",
+              Text("REGIONS & COUNTRIES",
                 style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-
-                ),
+                  color: Colors.grey,
+                  fontSize: 18,
+                  letterSpacing: 1.5,
+                )
               ),
               SizedBox(height: 20, width: double.infinity,),
               Expanded(
