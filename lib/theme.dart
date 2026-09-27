@@ -121,7 +121,7 @@ final appTheme = ThemeData(
         return Colors.grey.shade300;
       }
       if (states.contains(WidgetState.selected)) {
-        return AppColors.deepOrange;
+        return AppColors.amber;
       }
       return Colors.transparent;
     }),
@@ -134,7 +134,12 @@ final appTheme = ThemeData(
 
   //9. BottomAppBar
   bottomAppBarTheme: BottomAppBarThemeData(
-    color: AppColors.amber.withValues(alpha: 0.5)
+    color: AppColors.darkNavy
+  ),
+
+  //9bis AppBar
+  appBarTheme: AppBarThemeData(
+    backgroundColor: AppColors.surfaceLight,
   ),
 
   //10. ElevatedButton

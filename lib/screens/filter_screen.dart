@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supermapper_app/theme.dart';
 
 String countryCodeToEmoji(String countryCode) {
   // Convertit un code ISO à 2 lettres (ex: "FR") en drapeaux Unicode
@@ -297,88 +298,105 @@ class _FilterScreenState extends State<FilterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
+      appBar: AppBar(
+        backgroundColor: AppColors.surfaceLight,
+        scrolledUnderElevation: 0, 
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        leadingWidth: 80,
+        leading: Padding(
+          padding: EdgeInsetsGeometry.fromLTRB(20,0,0,0),
+          child: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            }, 
+            icon: Icon(Icons.arrow_back_ios_new_outlined)
+          ),
+        ),
+        titleSpacing: 15,
+        title: const Text("Filter",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.0,
+            fontSize: 28,
+          ),
+        ),
+        
+        
+      ),
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsetsGeometry.symmetric(horizontal: 20, vertical: 10),
+          padding: EdgeInsetsGeometry.symmetric(horizontal: 20, vertical: 0),
           child : Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              //Bouton retour
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back_ios_new, size: 24,),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                  SizedBox(width: 20,),
-                  Text("Filter",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.0,
-                      fontSize: 28,
-                    ),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: 30, width: double.infinity,),
+              //Ecart
+              //Container(width: double.infinity, height: 20,color: AppColors.surfaceLight,),
               
               //Filter by category
-              Text("CATEGORIES",
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 18,
-                  letterSpacing: 1.5,
-                )
-
+              Container(
+                width: double.infinity,
+                color: AppColors.surfaceLight,   
+                padding: const EdgeInsets.fromLTRB(0, 30, 0, 10),
+                child: const Text(
+                  "CATEGORIES",
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 18,
+                    letterSpacing: 1.5,
+                  ),
+                ),
               ),
-              SizedBox(height: 20, width: double.infinity,),
-              Wrap(
-                spacing: 10,  // Espace horizontal
-                runSpacing: 10,  // Espace vertical
-                children: categories.entries.map((entry) {
-                    final name = entry.key;
-                    final icon = entry.value;
-                    final isSelected = selectedCategories.contains(name);
+              Container(
+                width: double.infinity,
+                color: AppColors.surfaceLight,
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                child :Wrap(
+                  spacing: 10,  // Espace horizontal
+                  runSpacing: 10,  // Espace vertical
+                  children: categories.entries.map((entry) {
+                      final name = entry.key;
+                      final icon = entry.value;
+                      final isSelected = selectedCategories.contains(name);
 
-                    return FilterChip(
-                      avatar: Icon(
-                        icon,
-                        color: isSelected ? Colors.transparent : Colors.grey,
-                        size : 18,
-                      ),
-                      label: Text(name),
-                      selected: isSelected,
-                      onSelected: (selected) {
-                        setState(() {
-                          if (selected) {
-                            selectedCategories.add(name);
-                          } else {
-                            selectedCategories.remove(name);
-                          }
-                        });
-                      },
-                    );
-                  }
-                ).toList(),
+                      return FilterChip(
+                        avatar: Icon(
+                          icon,
+                          color: isSelected ? Colors.transparent : Colors.grey,
+                          size : 18,
+                        ),
+                        label: Text(name),
+                        selected: isSelected,
+                        onSelected: (selected) {
+                          setState(() {
+                            if (selected) {
+                              selectedCategories.add(name);
+                            } else {
+                              selectedCategories.remove(name);
+                            }
+                          });
+                        },
+                      );
+                    }
+                  ).toList(),
+                ),
               ),
-
-              SizedBox(height: 30, width: double.infinity,),
               
               //Filter by Countries, Region
-              Text("REGIONS & COUNTRIES",
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 18,
-                  letterSpacing: 1.5,
-                )
-              ),
-              SizedBox(height: 20, width: double.infinity,),
+              Container(
+                width: double.infinity, 
+                color: AppColors.surfaceLight,   
+                padding: const EdgeInsets.fromLTRB(0, 30, 0, 20),
+                child: const Text(
+                  "REGIONS & COUNTRIES",
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 18,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+              ),             
               Expanded(
                 child : ListView.builder(
                   itemCount: regions.length,
@@ -429,6 +447,35 @@ class _FilterScreenState extends State<FilterScreen> {
               ),   
             ]
           )
+          )
+        ),
+        bottomNavigationBar: BottomAppBar(
+          color: AppColors.surfaceLight,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: null,
+                child: SizedBox(
+                  width: 150,
+                  height : 40,
+                  child:Center(child: Text("Apply Filters")),
+                ),
+              ),
+
+
+              ElevatedButton(
+                onPressed: () {Navigator.pop(context);},
+                child: SizedBox(
+                  width: 150,
+                  height : 40,
+                  child:Center(child: Text("Cancel")),
+                ),
+              ),
+              
+
+            ],
           )
         )
       );
