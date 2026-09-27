@@ -134,7 +134,7 @@ final appTheme = ThemeData(
 
   //9. BottomAppBar
   bottomAppBarTheme: BottomAppBarThemeData(
-    color: AppColors.darkNavy
+    color: AppColors.amber
   ),
 
   //9bis AppBar
