@@ -4,6 +4,7 @@ import 'package:supermapper_app/screens/search_screen.dart';
 import 'package:supermapper_app/theme.dart';
 import 'package:supermapper_app/widgets/map.dart';
 import 'package:supermapper_app/widgets/nav_bar_icon.dart';
+import 'package:supermapper_app/transitions/customSlideTransition.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -60,26 +61,16 @@ class _mapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
                             IconButton(
                               icon: const Icon(Icons.search),
                               onPressed: () {
-                                Navigator.push(
-                                  context, 
-                                  MaterialPageRoute(
-                                    builder: (context) {
-                                      return SearchScreen();
-                                    }
-                                  )
+                                Navigator.of(context).push(
+                                  customSlidefromLeft(const SearchScreen()),
                                 );
                               },
                             ),
                             IconButton(
                               icon: const Icon(Icons.filter_list),
                               onPressed: () {
-                                Navigator.push(
-                                  context, 
-                                  MaterialPageRoute(
-                                    builder: (context) {
-                                      return FilterScreen();
-                                    }
-                                  )
+                                Navigator.of(context).push(
+                                  customSlidefromRight(const FilterScreen()),
                                 );
                               },
                             ),
