@@ -321,9 +321,8 @@ class _FilterScreenState extends State<FilterScreen> {
             fontSize: 28,
           ),
         ),
-        
-        
       ),
+      
       body: SafeArea(
         child: Padding(
           padding: EdgeInsetsGeometry.symmetric(horizontal: 20, vertical: 0),

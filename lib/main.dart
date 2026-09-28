@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:supermapper_app/screens/map_screen.dart';
+import 'package:supermapper_app/shells/homeShell.dart';
 import 'package:supermapper_app/theme.dart';
 
 void main() {
@@ -12,9 +12,9 @@ class MastroApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Mastro',
+      title: 'Supermapper',
       theme: appTheme,
-      home: const MapScreen(),
+      home: HomeShell(),
     );
   }
 }

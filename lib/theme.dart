@@ -7,7 +7,7 @@ class AppColors {
   static const Color darkNavy = Color(0xFF03071E); // Couleur principale / Fond sombre
   static const Color errorRed = Color(0xFFB00020);
   
-  static const Color surfaceLight = Color(0xFFF8F9FA);
+  static const Color surfaceLight = Color(0xFFF2F0EF);
   static const Color white = Colors.white;
 }
 
