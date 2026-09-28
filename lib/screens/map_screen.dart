@@ -3,6 +3,7 @@ import 'package:supermapper_app/screens/filter_screen.dart';
 import 'package:supermapper_app/screens/search_screen.dart';
 import 'package:supermapper_app/theme.dart';
 import 'package:supermapper_app/widgets/map.dart';
+import 'package:supermapper_app/widgets/nav_bar_icon.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -93,51 +94,51 @@ class _mapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
           AnimatedBuilder(
             animation: _addButtonController, 
             builder: (context, child) {
-              final double offsetY = 50 * _addButtonController.value;
-              final double offsetX = 15 * _addButtonController.value;
+              final double offsetY = 60 * _addButtonController.value;
+              final double offsetX = 0 * _addButtonController.value;
 
               return SafeArea(
                 child: Padding(
                   padding: EdgeInsetsGeometry.all(0),
                   child: Expanded(
-                    child : Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                    child : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Transform.translate(
-                              offset: Offset(-offsetX, -offsetY), // Décalage diagonal haut-droite
-                              child: Opacity(
-                                opacity: _addButtonController.value, // Apparaît progressivement
-                                child: IconButton(
-                                  icon: const Icon(Icons.add_location_alt_outlined, size: 28,),
-                                  onPressed: () {},
-                                  style: IconButton.styleFrom(
-                                    padding: const EdgeInsets.all(20),
-                                    backgroundColor: AppColors.amber.withAlpha(150),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            
-                            // Bouton Orange (Bas-Gauche)
+                            // Bouton spot
                             Transform.translate(
                               offset: Offset(offsetX, -offsetY), // Décalage diagonal haut-droite
                               child: Opacity(
                                 opacity: _addButtonController.value, // Apparaît progressivement
-                                child: IconButton(
-                                  icon: const Icon(Icons.route, size: 28,),
+                                child: NavBarIcon(
+                                  icon: Icons.add_location_alt_outlined,
+                                  textColor: AppColors.surfaceLight,
+                                  backgroundColor: AppColors.orange,
+                                  label: 'Add a spot',
                                   onPressed: () {},
-                                  style: IconButton.styleFrom(
-                                    padding: const EdgeInsets.all(20),
-                                    backgroundColor: AppColors.amber.withAlpha(150),
-                                  ),
+                                ),
+                              ),
+                            ),
+
+                            SizedBox(height: 4,),
+
+                            //Bouton route
+                            Transform.translate(
+                              offset: Offset(offsetX, -offsetY), // Décalage diagonal haut-droite
+                              child: Opacity(
+                                opacity: _addButtonController.value, // Apparaît progressivement
+                                child: NavBarIcon(
+                                  icon: Icons.route_outlined,
+                                  textColor: AppColors.surfaceLight,
+                                  backgroundColor: AppColors.orange,
+                                  label: 'Add a route',
+                                  onPressed: () {},
                                 ),
                               ),
                             ),
                           ],
-
                         )
                       ],
                     )
@@ -148,8 +149,8 @@ class _mapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
           ),
         ]
       ),
-    
       bottomNavigationBar: BottomAppBar(
+        color: AppColors.surfaceLight,
         shape: const CircularNotchedRectangle(),
         notchMargin: 12.0, 
         child: Row(
@@ -157,44 +158,55 @@ class _mapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             // Bouton gauche (Carte)
-            IconButton(
-              icon: const Icon(Icons.map_outlined),
-              onPressed: () {},
-              style: IconButton.styleFrom(
-                iconSize: 32,
-                backgroundColor: Colors.transparent,
-                foregroundColor: AppColors.white,
+            SizedBox(
+              width: 64,
+              height: 64,
+              child: IconButton(
+                icon: const Icon(Icons.map_outlined),
+                onPressed: () {},
+                padding: EdgeInsets.zero,
+                style: IconButton.styleFrom(
+                  iconSize: 32,
+                  backgroundColor: Colors.transparent,
+                  foregroundColor: AppColors.darkNavy.withAlpha(255),
+                ),
               ),
             ),
-            
+
             // Espace vide au centre pour laisser place au bouton flottant
             const SizedBox(width: 120), 
-            
+
             //Bouton droite (Settings)
-            IconButton(
-              icon: const Icon(Icons.settings_outlined),
-              onPressed: () {},
-              style: IconButton.styleFrom(
-                iconSize: 32,
-                backgroundColor: Colors.transparent,
-                foregroundColor: AppColors.orange.withValues(alpha: 0.5),
+            SizedBox(
+              width: 64,
+              height: 64,
+              child: IconButton(
+                icon: const Icon(Icons.settings_outlined),
+                onPressed: () {},
+                padding: EdgeInsets.zero,
+                style: IconButton.styleFrom(
+                  iconSize: 32,
+                  backgroundColor: Colors.transparent,
+                  foregroundColor: AppColors.darkNavy.withAlpha(80),
+                ),
               ),
             ),
           ],
         ),
       ),
 
+// N'oublie pas d'importer dart:ui pour ImageFilter
 
       floatingActionButton: RawMaterialButton(
         onPressed: _toggleAddMenu,
-        fillColor: AppColors.amber,
+        fillColor: AppColors.darkNavy,
         elevation: 4,
         shape: const CircleBorder(),
         constraints: const BoxConstraints(
-          minWidth: 80,
-          minHeight: 80,
+          minWidth: 100,
+          minHeight: 100,
         ),
-        child: const Icon(Icons.add, size: 40, color: Colors.white),
+        child: const Icon(Icons.add, size: 64, color: Colors.white),
       ),
 
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
