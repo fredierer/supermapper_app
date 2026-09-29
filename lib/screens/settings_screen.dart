@@ -6,6 +6,7 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.surfaceLight,
       extendBody: true,
       appBar: AppBar(
         backgroundColor: AppColors.surfaceLight,
@@ -23,7 +24,9 @@ class SettingsScreen extends StatelessWidget {
       body: SafeArea(
         child: Padding(
           padding: EdgeInsetsGeometry.symmetric(horizontal: 10, vertical: 10),
-          child: Column()
+          child: Container(
+            color: AppColors.surfaceLight,
+          )
         )
       ), 
     );

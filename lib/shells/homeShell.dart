@@ -107,8 +107,10 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
       
       bottomNavigationBar:  BottomAppBar(
         color: AppColors.surfaceLight,
+        elevation: 4,
+        shadowColor: Colors.black,
         shape: const CircularNotchedRectangle(),
-        notchMargin: 12.0, 
+        notchMargin: _currentIndex == 0 ? 12.0 : 0.0, 
         child: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -124,7 +126,7 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
                 style: IconButton.styleFrom(
                   iconSize: 32,
                   backgroundColor: Colors.transparent,
-                  foregroundColor: AppColors.darkNavy.withAlpha(255),
+                  foregroundColor: AppColors.darkNavy.withAlpha(_currentIndex == 0 ? 255 : 60),
                 ),
               ),
             ),
@@ -138,30 +140,40 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
               height: 64,
               child: IconButton(
                 icon: const Icon(Icons.settings_outlined),
-                onPressed: () {setState(() => _currentIndex = 1);},
+                onPressed: () {
+                  setState(() {
+                    _currentIndex = 1;
+                    if(_addMenuOpen) {
+                      _toggleAddMenu();
+                    }
+                  });
+                },
                 padding: EdgeInsets.zero,
                 style: IconButton.styleFrom(
                   iconSize: 32,
                   backgroundColor: Colors.transparent,
-                  foregroundColor: AppColors.darkNavy.withAlpha(80),
+                  foregroundColor: AppColors.darkNavy.withAlpha(_currentIndex == 1 ? 255 : 60),
                 ),
               ),
             ),
           ],
         ),
       ),
-      
-      floatingActionButton: RawMaterialButton(
-        onPressed: _toggleAddMenu,
-        fillColor: AppColors.darkNavy,
-        elevation: 4,
-        shape: const CircleBorder(),
-        constraints: const BoxConstraints(
-          minWidth: 100,
-          minHeight: 100,
-        ),
-        child: const Icon(Icons.add, size: 64, color: Colors.white),
-      ),
+
+      floatingActionButton: Visibility(
+          visible: _currentIndex == 0,
+          child: RawMaterialButton(
+            onPressed: _toggleAddMenu,
+            fillColor: AppColors.darkNavy,
+            elevation: 4,
+            shape: const CircleBorder(),
+            constraints: const BoxConstraints(
+              minWidth: 100,
+              minHeight: 100,
+            ),
+            child: const Icon(Icons.add, size: 64, color: Colors.white),
+          ),
+        ),      
 
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
