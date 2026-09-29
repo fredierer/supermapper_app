@@ -29,7 +29,7 @@ class _searchScreenState extends State<SearchScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back_ios_new, size: 24,),
+                    icon: const Icon(Icons.arrow_back_ios_new),
                     onPressed: () {
                       Navigator.pop(context);
                     },

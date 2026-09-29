@@ -310,7 +310,7 @@ class _FilterScreenState extends State<FilterScreen> {
             onPressed: () {
               Navigator.pop(context);
             }, 
-            icon: Icon(Icons.arrow_back_ios_new_outlined)
+            icon: Icon(Icons.arrow_back_ios_new_outlined, size: 24,)
           ),
         ),
         titleSpacing: 15,

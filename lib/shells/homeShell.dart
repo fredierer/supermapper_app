@@ -9,7 +9,7 @@ class HomeShell extends StatefulWidget {
 
   @override
   State<HomeShell> createState() => _HomeShellState();
-}
+}              
 
 class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
@@ -18,6 +18,10 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
     SettingsScreen(),
   ];
   late AnimationController _addButtonController;
+  late Animation<double> _curvedAnimation;
+  late final Animation<Offset> _spotOffsetAnimation;
+  late final Animation<Offset> _routeOffsetAnimation;
+
   bool _addMenuOpen = false;
   
   void _toggleAddMenu() {
@@ -35,8 +39,29 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
   @override
   void initState() {
     super.initState();
-    _addButtonController = AnimationController(vsync: this,duration: const Duration(milliseconds: 300));
-    _addButtonController.reverseDuration = Duration(milliseconds: 200);
+    _addButtonController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+      reverseDuration: const Duration(milliseconds: 250),
+    );
+
+    // Courbe dynamique pour l'ouverture, nette pour la fermeture
+    _curvedAnimation = CurvedAnimation(
+      parent: _addButtonController,
+      curve: Curves.easeOutBack, // Petit effet élastique moderne
+      reverseCurve: Curves.easeInQuad,
+    );
+
+    // Pré-calcul des décalages (Traductions)
+    _spotOffsetAnimation = Tween<Offset>(
+      begin: const Offset(0, 0),
+      end: const Offset(0, -105), // Décalage final vers le haut
+    ).animate(_curvedAnimation);
+
+    _routeOffsetAnimation = Tween<Offset>(
+      begin: const Offset(0, 0),
+      end: const Offset(0, -55),
+    ).animate(_curvedAnimation);
   }
 
   @override
@@ -46,64 +71,61 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
       body: Stack(
         children: [
           _screens[_currentIndex],
-          AnimatedBuilder(
-            animation: _addButtonController, 
-            builder: (context, child) {
-              final double offsetY = 60 * _addButtonController.value;
-              final double offsetX = 0 * _addButtonController.value;
 
-              return SafeArea(
-                child: Padding(
-                  padding: EdgeInsetsGeometry.all(0),
-                  child: Expanded(
-                    child : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+          // Menu d'ajout optimisé
+          SafeArea(
+            child: IgnorePointer(
+              ignoring: !_addMenuOpen, // Empêche d'intercepter les clics quand fermé
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: AnimatedBuilder(
+                  animation: _curvedAnimation,
+                  builder: (context, child) {
+                    final double opacity = _addButtonController.value.clamp(0.0, 1.0);
+
+                    return Stack(
+                      alignment: Alignment.bottomCenter,
+                      clipBehavior: Clip.none,
                       children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            // Bouton spot
-                            Transform.translate(
-                              offset: Offset(offsetX, -offsetY), // Décalage diagonal haut-droite
-                              child: Opacity(
-                                opacity: _addButtonController.value, // Apparaît progressivement
-                                child: NavBarIcon(
-                                  icon: Icons.add_location_alt_outlined,
-                                  textColor: AppColors.surfaceLight,
-                                  backgroundColor: AppColors.orange,
-                                  label: 'Add a spot',
-                                  onPressed: () {},
-                                ),
-                              ),
-                            ),
 
-                            SizedBox(height: 4,),
-
-                            //Bouton route
-                            Transform.translate(
-                              offset: Offset(offsetX, -offsetY), // Décalage diagonal haut-droite
-                              child: Opacity(
-                                opacity: _addButtonController.value, // Apparaît progressivement
-                                child: NavBarIcon(
-                                  icon: Icons.route_outlined,
-                                  textColor: AppColors.surfaceLight,
-                                  backgroundColor: AppColors.orange,
-                                  label: 'Add a route',
-                                  onPressed: () {},
-                                ),
-                              ),
+                              // Bouton spot
+                              Transform.translate(
+                          offset: _spotOffsetAnimation.value,
+                          child: Opacity(
+                            opacity: opacity,
+                            child: NavBarIcon(
+                              icon: Icons.add_location_alt_outlined,
+                              textColor: AppColors.surfaceLight,
+                              backgroundColor: AppColors.orange,
+                              label: 'Add a spot',
+                              onPressed: () {},
                             ),
-                          ],
+                          ),
+                        ),
+
+                        // Bouton Route
+                        Transform.translate(
+                          offset: _routeOffsetAnimation.value,
+                          child: Opacity(
+                            opacity: opacity,
+                            child: NavBarIcon(
+                              icon: Icons.route_outlined,
+                              textColor: AppColors.surfaceLight,
+                              backgroundColor: AppColors.orange,
+                              label: 'Add a route',
+                              onPressed: () {},
+                            )
+                          )
                         )
-                      ],
-                    )
-                  )
+                      ]
+                    );
+                  }
                 )
-              );
-            }
+              )
+            )
           ),
         ]
-      ),
+      ),         
       
       bottomNavigationBar:  BottomAppBar(
         color: AppColors.surfaceLight,
