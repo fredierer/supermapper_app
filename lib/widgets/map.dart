@@ -32,18 +32,27 @@ class _MapWidgetState extends State<MapWidget> {
           urlTemplate: 'https://basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png?key=cb1_301t_1_f5198b589013a43fe135d463',
           userAgentPackageName: 'app.supermapper.app',
         ),
-        RichAttributionWidget(
-          attributions: [
-            TextSourceAttribution(
-              '© OpenStreetMap contributors, © CARTO',
+        Align(
+          alignment: Alignment.bottomRight,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 10, 110),
+            child: GestureDetector(
               onTap: () async {
                 final Uri url = Uri.parse('https://carto.com/attributions');
                 if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-                  throw Exception('Impossible top open $url');
+                  throw Exception('Impossible d\'ouvrir $url');
                 }
               },
+              child: const Text(
+                '© OpenStreetMap, © CARTO',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
             ),
-          ],
+          ),
         ),
       ],
     );
