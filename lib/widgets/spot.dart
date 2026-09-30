@@ -41,7 +41,7 @@ class Spot {
         child: const Icon(
           Icons.location_on,
           color: AppColors.orange,
-          size: 20,
+          size: 38,
         ),
       ),
     );
