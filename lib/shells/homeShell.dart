@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supermapper_app/screens/map_screen.dart';
 import 'package:supermapper_app/screens/settings_screen.dart';
+import 'package:supermapper_app/services/spots_service.dart';
 import 'package:supermapper_app/theme.dart';
 import 'package:supermapper_app/widgets/nav_bar_icon.dart';
 
@@ -25,6 +26,8 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
   bool _addMenuOpen = false;
   
   void _toggleAddMenu() {
+    print ("TOOOOGLLLGLLELLLEEEE ++");
+    SpotService().getSpots();
     setState(() {
       _addMenuOpen = !_addMenuOpen;
     });

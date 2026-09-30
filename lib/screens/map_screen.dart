@@ -3,6 +3,7 @@ import 'package:supermapper_app/screens/filter_screen.dart';
 import 'package:supermapper_app/screens/search_screen.dart';
 import 'package:supermapper_app/widgets/map.dart';
 import 'package:supermapper_app/transitions/customSlideTransition.dart';
+import 'package:supermapper_app/services/spots_service.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -12,6 +13,18 @@ class MapScreen extends StatefulWidget {
 
 }
 class _mapScreenState extends State<MapScreen> {
+
+  final SpotService _spotService = SpotService();
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchSpotsData();
+  }
+
+  Future<void> _fetchSpotsData() async {
+    await _spotService.getSpots();
+  }
 
   @override
   Widget build(BuildContext context) {
