@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:supermapper_app/widgets/spot.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MapWidget extends StatefulWidget {
-  const MapWidget({super.key});
+  final List<Spot> spots;
+
+  const MapWidget({
+    super.key,
+    this.spots = const [],
+  });
 
   @override
   State<MapWidget> createState() => _MapWidgetState();
-
 
 }
 
@@ -32,6 +37,17 @@ class _MapWidgetState extends State<MapWidget> {
           urlTemplate: 'https://basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png?key=cb1_301t_1_f5198b589013a43fe135d463',
           userAgentPackageName: 'app.supermapper.app',
         ),
+
+        MarkerLayer(
+          markers: widget.spots.map((spot) {
+            return spot.toMarker(
+              onTap: () {
+                debugPrint('Spot cliqué : ${spot.title}');
+              },
+            );
+          }).toList(),
+        ),
+
         Align(
           alignment: Alignment.bottomRight,
           child: Padding(
