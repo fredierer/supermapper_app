@@ -6,10 +6,12 @@ import 'package:url_launcher/url_launcher.dart';
 
 class MapWidget extends StatefulWidget {
   final List<Spot> spots;
-
+  final ValueChanged<int>? onSpotSelected;
+  
   const MapWidget({
     super.key,
     this.spots = const [],
+    this.onSpotSelected,
   });
 
   @override
@@ -20,8 +22,8 @@ class MapWidget extends StatefulWidget {
 
 class _MapWidgetState extends State<MapWidget> {
   final MapController _mapController = MapController(); 
+  
   @override
-
   Widget build(BuildContext context) {
     return FlutterMap( 
       mapController: _mapController,
@@ -42,7 +44,7 @@ class _MapWidgetState extends State<MapWidget> {
           markers: widget.spots.map((spot) {
             return spot.toMarker(
               onTap: () {
-                debugPrint('Spot cliqué : ${spot.title}');
+                widget.onSpotSelected?.call(spot.id);
               },
             );
           }).toList(),

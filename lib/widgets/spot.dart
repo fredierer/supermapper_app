@@ -5,7 +5,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:supermapper_app/theme.dart';
 
 class Spot {
-  final String id;
+  final int id;
   final String title;
   final String description;
   final double lat;
@@ -21,7 +21,7 @@ class Spot {
 
   factory Spot.fromJson(Map<String, dynamic> json) {
     return Spot(
-      id: json['id'].toString(),
+      id: json['id'],
       title: json['title'] ?? '',
       description: json['description'] ?? '', 
       lat : (json['lat'] as num?)?.toDouble() ?? 0.0,
