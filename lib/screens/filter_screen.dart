@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supermapper_app/theme.dart';
+import 'package:supermapper_app/configuration/spot_category.dart';
 
 String countryCodeToEmoji(String countryCode) {
   // Convertit un code ISO à 2 lettres (ex: "FR") en drapeaux Unicode
@@ -8,14 +9,6 @@ String countryCodeToEmoji(String countryCode) {
   return String.fromCharCode(firstLetter) + String.fromCharCode(secondLetter);
 }
 
-
-
-class FilterScreen extends StatefulWidget{
-  const FilterScreen({super.key});
-
-  @override
-  State<FilterScreen> createState() => _FilterScreenState();
-}
 class CountryItem {
   final String name;
   final String code;
@@ -25,7 +18,6 @@ class CountryItem {
     required this.code,
   });
 }
-
 class RegionItem {
   final String name;
   final bool isContinent;
@@ -40,21 +32,17 @@ class RegionItem {
   });
 }
 
+class FilterScreen extends StatefulWidget{
+  const FilterScreen({super.key});
+
+  @override
+  State<FilterScreen> createState() => _FilterScreenState();
+}
+
 
 class _FilterScreenState extends State<FilterScreen> {
 
-  final Map<String, IconData> categories = {
-    'Transport' : Icons.airport_shuttle_outlined,
-    'Borders crossing' : Icons.assignment_ind_outlined,
-    'Restaurant' : Icons.restaurant, 
-    'Bar' : Icons.local_drink_outlined,
-    'Accomodation' : Icons.house_outlined,
-    'Admistration' : Icons.local_police_outlined,
-    'Others' : Icons.alt_route_outlined,
-  };
-
-  Set<String> selectedCategories = {};
-
+  Set<SpotCategory> selectedCategories = {};
 
   final List<RegionItem> regions = [
     RegionItem(
@@ -330,8 +318,6 @@ class _FilterScreenState extends State<FilterScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              //Ecart
-              //Container(width: double.infinity, height: 20,color: AppColors.surfaceLight,),
               
               //Filter by category
               Container(
@@ -354,25 +340,25 @@ class _FilterScreenState extends State<FilterScreen> {
                 child :Wrap(
                   spacing: 10,  // Espace horizontal
                   runSpacing: 10,  // Espace vertical
-                  children: categories.entries.map((entry) {
-                      final name = entry.key;
-                      final icon = entry.value;
-                      final isSelected = selectedCategories.contains(name);
+                  children: SpotCategory.values.map((category) {
+                      
+                      final isSelected = selectedCategories.contains(category);
 
                       return FilterChip(
                         avatar: Icon(
-                          icon,
+                          category.icon,
                           color: isSelected ? Colors.transparent : Colors.grey,
                           size : 18,
                         ),
-                        label: Text(name),
+                        label: Text(category.label),
+                        selectedColor: category.color,
                         selected: isSelected,
                         onSelected: (selected) {
                           setState(() {
                             if (selected) {
-                              selectedCategories.add(name);
+                              selectedCategories.add(category);
                             } else {
-                              selectedCategories.remove(name);
+                              selectedCategories.remove(category);
                             }
                           });
                         },
@@ -455,7 +441,9 @@ class _FilterScreenState extends State<FilterScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               ElevatedButton(
-                onPressed: null,
+                onPressed: () {
+                  Navigator.pop(context, selectedCategories);
+                },
                 child: SizedBox(
                   width: 150,
                   height : 40,

@@ -9,9 +9,6 @@ class SpotService {
     try {
       final response = await _client.from('spots').select();
 
-      print("Resposne : ");
-      print(response);
-
       final List<Spot> spots = (response as List)
           .map((json) => Spot.fromJson(json))
           .toList();
