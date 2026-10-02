@@ -345,11 +345,14 @@ class _FilterScreenState extends State<FilterScreen> {
                       final isSelected = selectedCategories.contains(category);
 
                       return FilterChip(
-                        avatar: Icon(
-                          category.icon,
-                          color: isSelected ? Colors.transparent : Colors.grey,
-                          size : 18,
-                        ),
+                        avatar : isSelected 
+                          ? null 
+                          : Center(
+                            child : Text(
+                              category.emoji, 
+                              style: const TextStyle(fontSize: 12, height: 1.0)
+                            ),
+                          ),
                         label: Text(category.label),
                         selectedColor: category.color,
                         selected: isSelected,

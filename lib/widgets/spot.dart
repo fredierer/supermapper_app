@@ -41,10 +41,33 @@ class Spot {
       height: 40,
       child: GestureDetector(
         onTap: onTap,
-        child: Icon(
-          category.icon,  // Récupéré automatiquement depuis l'enum
-          color: category.color, // Récupéré automatiquement depuis l'enum
-          size: 38,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: category.color,
+              width: 2.0, // Adjust border thickness as needed
+            ),
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 4,
+                offset: Offset(0, 2),
+              ),
+            ],
+          ),
+          alignment: Alignment.center,
+          child: Transform.translate(
+            offset: const Offset(0, 0), // Negative Y moves it up (adjust -1 to -3 as needed)
+            child: Text(
+              category.emoji,
+              style: const TextStyle(
+                fontSize: 20,
+                height: 1.0,
+              ),
+            ),
+          ),
         ),
       ),
     );

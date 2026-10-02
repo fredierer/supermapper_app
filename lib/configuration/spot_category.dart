@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
 enum SpotCategory {
-  transport('transport','Transport',  Icons.airport_shuttle_outlined, Colors.orange),
-  camping('camping','Camping',  Icons.rv_hookup, Colors.blue),
-  borderCrossing('border_crossing','Border Crossing',  Icons.assignment_ind_outlined, Colors.orange),
-  restaurant('restaurant','Restaurant',  Icons.restaurant, Colors.orange),
-  accomodation('accomodation','Accomodation',  Icons.house_outlined, Colors.orange),
-  administration('administration','Administration',  Icons.local_police_outlined, Colors.orange),
-  other('other','Others',  Icons.alt_route_outlined, Colors.orange);
+  transport('transport','Transport', '🚗', Color.fromARGB(255, 168, 112, 91)),
+  camping('camping','Camping',  '⛱', Colors.lightGreen),
+  borderCrossing('border_crossing','Border Crossing', '🌐', Colors.deepPurpleAccent),
+  restaurant('restaurant','Restaurant',  '🌮', Colors.redAccent),
+  accomodation('accomodation','Accomodation', '🏡', Color.fromARGB(255, 185, 73, 180)),
+  administration('administration','Administration', '👮', Colors.blueAccent),
+  other('other','Others', '✨', Color.fromARGB(255, 224, 236, 108));
 
   final String dbValue;
   final String label;
-  final IconData icon;
+  final String emoji;
   final Color color;
   
-  const SpotCategory(this.dbValue, this.label, this.icon, this.color);
+  const SpotCategory(this.dbValue, this.label, this.emoji, this.color);
 
   factory SpotCategory.fromString(String? value) {
     if (value == null) return SpotCategory.other;
