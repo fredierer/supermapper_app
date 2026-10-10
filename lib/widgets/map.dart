@@ -6,11 +6,15 @@ import 'package:url_launcher/url_launcher.dart';
 
 class MapWidget extends StatefulWidget {
   final List<Spot> spots;
+  final double? targetLat;
+  final double? targetLng;
   final ValueChanged<int>? onSpotSelected;
   
   const MapWidget({
     super.key,
     this.spots = const [],
+    this.targetLat,
+    this.targetLng,
     this.onSpotSelected,
   });
 
@@ -20,9 +24,58 @@ class MapWidget extends StatefulWidget {
 }
 
 
-class _MapWidgetState extends State<MapWidget> {
+class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
   final MapController _mapController = MapController(); 
   
+  @override
+  void didUpdateWidget(covariant MapWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.targetLat != null && widget.targetLng != null) {
+      if (widget.targetLat != oldWidget.targetLat || widget.targetLng != oldWidget.targetLng) {
+        
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _animatedMapMove(
+            LatLng(widget.targetLat!, widget.targetLng!), 
+            14.0,
+            0.0,
+          );
+        });
+      }
+    }
+  }
+
+  void _animatedMapMove(LatLng destLocation, double destZoom, double destRotation) {
+    final camera = _mapController.camera;
+    final latTween = Tween<double>(begin: camera.center.latitude, end: destLocation.latitude);
+    final lngTween = Tween<double>(begin: camera.center.longitude, end: destLocation.longitude);
+    final zoomTween = Tween<double>(begin: camera.zoom, end: destZoom);
+    final rotationTween = Tween<double>(begin: camera.rotation, end: destRotation);
+
+    final controller = AnimationController(
+      duration: const Duration(milliseconds: 2000),
+      vsync: this,
+    );
+
+    final animation = CurvedAnimation(parent: controller, curve: Curves.easeInOut);
+
+    controller.addListener(() {
+      _mapController.moveAndRotate(
+        LatLng(latTween.evaluate(animation), lngTween.evaluate(animation)),
+        zoomTween.evaluate(animation),
+        rotationTween.evaluate(animation),
+      );
+    });
+
+    controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        controller.dispose();
+      }
+    });
+
+    controller.forward();
+  }
+
   @override
   Widget build(BuildContext context) {
     return FlutterMap( 

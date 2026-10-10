@@ -21,6 +21,10 @@ class _mapScreenState extends State<MapScreen> {
 
   final SpotService _spotService = SpotService();
   List<Spot> _spots = [];
+  int? _selectedSpotId;
+
+  double? _targetLat;
+  double? _targetLng;
 
   @override
   void initState() {
@@ -35,7 +39,49 @@ class _mapScreenState extends State<MapScreen> {
     });
   }
 
-  int? _selectedSpotId;
+  void _navigateToSearchScreen() async {
+
+    final dynamic result = await Navigator.of(context).push(
+      customSlidefromLeft(const SearchScreen()),
+    );
+
+    if (result == null || result is! Map<String, dynamic>) return; //No move if no spot selected from search
+
+    //getting data from selected spot
+    final spotId = result['id'] as int;
+    final lat = result['lat'] as double?;
+    final lng = result['lng'] as double?;
+
+    //set Target lat and lng to move the map
+    if (lat != null && lng != null) {
+      setState(() {
+        _targetLat = lat;
+        _targetLng = lng;
+      });
+
+      await Future.delayed(const Duration(milliseconds: 800)); //delay
+    }
+
+    //set selectedSpot to display spot Info Popup
+    setState(() {
+      _selectedSpotId = spotId;
+    });
+    
+  }
+
+  void _navigateToFilterScreen() async {
+
+    final dynamic selectedSpotId = await Navigator.of(context).push(
+      customSlidefromRight(const SearchScreen()),
+    );
+
+    if (selectedSpotId != null) {
+      setState(() {
+        _selectedSpotId = selectedSpotId as int; 
+      });
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +90,8 @@ class _mapScreenState extends State<MapScreen> {
           
           MapWidget(
             spots: _spots,
+            targetLat: _targetLat, // Transmettez la latitude cible
+            targetLng: _targetLng,
             onSpotSelected: (spotId) {
               setState(() {
                 _selectedSpotId = spotId;
@@ -62,19 +110,11 @@ class _mapScreenState extends State<MapScreen> {
                           children: [
                             ToolNavButton(
                               icon: Icons.search,
-                              onPressed: () {
-                                Navigator.of(context).push(
-                                  customSlidefromLeft(const SearchScreen()),
-                                );
-                              },
+                              onPressed: _navigateToSearchScreen,
                             ),
                             ToolNavButton(
                               icon: Icons.filter_list,
-                              onPressed: () {
-                                Navigator.of(context).push(
-                                  customSlidefromRight(const FilterScreen()),
-                                );
-                              },
+                              onPressed: _navigateToFilterScreen,
                             ),
 
                           ],
@@ -115,6 +155,8 @@ class _mapScreenState extends State<MapScreen> {
                       onClose: () {
                         setState(() {
                           _selectedSpotId = null;
+                          _targetLat = null;
+                          _targetLng = null;
                         });
                       },
                     ),

@@ -116,8 +116,15 @@ class _SearchScreenState extends State<SearchScreen> {
                                         elevation: 0, 
                                         child: InkWell(
                                           onTap: () {
-                                            
-                                            print('Spot cliqué : $title');
+                                            final spotId = spot['id'];
+                                            final lat = spot['lat'];
+                                            final lng = spot['lng'];
+
+                                            Navigator.pop(context, {
+                                              'id': spotId,
+                                              'lat': lat,
+                                              'lng': lng,
+                                            });
                                           },
                                           borderRadius: BorderRadius.circular(12),
                                           child: Container(
