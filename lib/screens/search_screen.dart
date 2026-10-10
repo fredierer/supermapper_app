@@ -108,47 +108,60 @@ class _SearchScreenState extends State<SearchScreen> {
                                     final categoryString = spot['category'];
                                     final spotCategory = SpotCategory.fromString(categoryString);
                                     
-                                    return Container(
-                                      margin: const EdgeInsets.symmetric(vertical: 6),
-                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey.shade300),
-                                        borderRadius: BorderRadius.circular(16),
-                                        color: Colors.white,
-                                      ),
-                                      child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            spotCategory.emoji, 
-                                            style: const TextStyle(fontSize: 24),
-                                          ),
-                                          const SizedBox(width: 15),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                    return Padding(
+                                      padding: EdgeInsetsGeometry.fromLTRB(0, 0, 0, 10),
+                                      child : Material(
+                                        color: Colors.white, 
+                                        borderRadius: BorderRadius.circular(12),
+                                        elevation: 0, 
+                                        child: InkWell(
+                                          onTap: () {
+                                            
+                                            print('Spot cliqué : $title');
+                                          },
+                                          borderRadius: BorderRadius.circular(12),
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                                            decoration: BoxDecoration(
+                                              border: Border.all(color: Colors.grey.shade300),
+                                              borderRadius: BorderRadius.circular(12),
+                                            ),
+                                            child: Row(
+                                              crossAxisAlignment: CrossAxisAlignment.center,
                                               children: [
                                                 Text(
-                                                  title,
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 16,
-                                                  ),
+                                                  spotCategory.emoji, 
+                                                  style: const TextStyle(fontSize: 24),
                                                 ),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  description,
-                                                  maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                    color: Colors.grey.shade600,
-                                                    fontSize: 13,
+                                                const SizedBox(width: 15),
+                                                Expanded(
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        title,
+                                                        style: const TextStyle(
+                                                          fontWeight: FontWeight.bold,
+                                                          fontSize: 16,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 4),
+                                                      Text(
+                                                        description,
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow.ellipsis,
+                                                        style: TextStyle(
+                                                          color: Colors.grey.shade600,
+                                                          fontSize: 13,
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
                                               ],
                                             ),
                                           ),
-                                        ],
+                                        ),
                                       ),
                                     );
                                   }).toList(),
