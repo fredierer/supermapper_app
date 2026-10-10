@@ -5,6 +5,7 @@ import 'package:supermapper_app/services/spots_service.dart';
 import 'package:supermapper_app/theme.dart';
 import 'package:supermapper_app/widgets/AddFeedbackButton.dart';
 import 'package:supermapper_app/widgets/navBarButton.dart';
+import 'package:supermapper_app/widgets/addSpot.dart';
 
 class HomeShell extends StatefulWidget {
   const HomeShell({super.key});
@@ -48,17 +49,15 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
       reverseDuration: const Duration(milliseconds: 250),
     );
 
-    // Courbe dynamique pour l'ouverture, nette pour la fermeture
     _curvedAnimation = CurvedAnimation(
       parent: _addButtonController,
-      curve: Curves.easeOutBack, // Petit effet élastique moderne
+      curve: Curves.easeOutBack, 
       reverseCurve: Curves.easeInQuad,
     );
 
-    // Pré-calcul des décalages (Traductions)
     _spotOffsetAnimation = Tween<Offset>(
       begin: const Offset(0, 0),
-      end: const Offset(0, -105), // Décalage final vers le haut
+      end: const Offset(0, -105), 
     ).animate(_curvedAnimation);
 
     _routeOffsetAnimation = Tween<Offset>(
@@ -74,7 +73,6 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
       body: Stack(
         children: [
           _screens[_currentIndex],
-
           SafeArea(
             child: IgnorePointer(
               ignoring: !_addMenuOpen,
@@ -122,6 +120,32 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
               )
             )
           ),
+
+          if(_currentIndex == 99)
+            Positioned.fill(
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        color: Colors.black.withAlpha(100), 
+                      ),
+                    ),
+                  ),
+
+                  Center(
+                    child: SingleChildScrollView(
+                      child: AddSpot(
+                        onClose: () {
+
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
         ]
       ),         
       

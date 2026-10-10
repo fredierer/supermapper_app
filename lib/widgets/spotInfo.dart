@@ -41,20 +41,17 @@ class _SpotInfoState extends State<SpotInfo> {
 
   @override
   Widget build(BuildContext context) {
-    // Card fournit le fond blanc/sombre, l'ombre portée et la structure visuelle de la fenêtre
     return Card(
-      elevation: 8, // Hauteur de l'ombre portée sous la fenêtre
-      margin: const EdgeInsets.all(16), // Marge externe autour de la carte
+      elevation: 8,
+      margin: const EdgeInsets.all(16), 
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16), // Coins arrondis
+        borderRadius: BorderRadius.circular(16), 
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0), // Marge interne entre la carte et son contenu
-        // FutureBuilder écoute l'état de _spotFuture et reconstruit l'UI automatiquement
+        padding: const EdgeInsets.all(16.0), 
         child: FutureBuilder<Map<String, dynamic>?>(
           future: _spotFuture,
           builder: (context, snapshot) {
-            // --- CAS 1 : En attente de la réponse de Supabase ---
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const SizedBox(
                 height: 200,
@@ -64,7 +61,6 @@ class _SpotInfoState extends State<SpotInfo> {
               );
             }
 
-            // --- CAS 2 : La requête Supabase a renvoyé une erreur ---
             if (snapshot.hasError) {
               return Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -79,7 +75,6 @@ class _SpotInfoState extends State<SpotInfo> {
               );
             }
 
-            // --- CAS 3 : La requête est terminée mais aucun enregistrement correspondant n'a été trouvé ---
             final spotData = snapshot.data;
             if (spotData == null) {
               return const Padding(
@@ -88,29 +83,26 @@ class _SpotInfoState extends State<SpotInfo> {
               );
             }
 
-            // --- CAS 4 : Succès ! Les données sont récupérées et prêtes à être affichées ---
             return Column(
-              mainAxisSize: MainAxisSize.min, // La hauteur de la fenêtre s'ajuste dynamiquement selon son contenu
-              crossAxisAlignment: CrossAxisAlignment.start, // Aligne le texte à gauche
+              mainAxisSize: MainAxisSize.min, 
+              crossAxisAlignment: CrossAxisAlignment.start, 
               children: [
-                // 1. En-tête : Titre du spot + Bouton de fermeture
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
                       child: Text(
-                        // Lit le champ 'name' de la BDD ou met un nom par défaut
                         spotData['title'] ?? 'Spot #${widget.spotId}',
                         style: Theme.of(context).textTheme.titleLarge,
-                        overflow: TextOverflow.ellipsis, // Tronque avec '...' si le nom est trop long
+                        overflow: TextOverflow.ellipsis, 
                       ),
                     ),
                     IconButton(
                       iconSize: 20, 
                       icon: const Icon(Icons.close),
                       constraints: const BoxConstraints(
-                        minWidth: 36,   // Diamètre / largeur minimale
-                        minHeight: 36,  // Diamètre / hauteur minimale
+                        minWidth: 36,   
+                        minHeight: 36,  
                       ),
                       padding: EdgeInsets.zero,                       
                       onPressed: widget.onClose ?? () => Navigator.of(context).pop(),
@@ -118,10 +110,9 @@ class _SpotInfoState extends State<SpotInfo> {
                   ],
                 ),
 
-                const Divider(), // Ligne horizontale de séparation
+                const Divider(), 
                 const SizedBox(height: 8),
 
-                // 2. Champ Description (affiché seulement s'il existe dans les données)
                 if (spotData['description'] != null) ...[
                   Text(
                     spotData['description'],

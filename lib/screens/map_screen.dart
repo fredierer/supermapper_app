@@ -72,7 +72,7 @@ class _mapScreenState extends State<MapScreen> {
   void _navigateToFilterScreen() async {
 
     final dynamic selectedSpotId = await Navigator.of(context).push(
-      customSlidefromRight(const SearchScreen()),
+      customSlidefromRight(const FilterScreen()),
     );
 
     if (selectedSpotId != null) {
@@ -90,7 +90,7 @@ class _mapScreenState extends State<MapScreen> {
           
           MapWidget(
             spots: _spots,
-            targetLat: _targetLat, // Transmettez la latitude cible
+            targetLat: _targetLat,
             targetLng: _targetLng,
             onSpotSelected: (spotId) {
               setState(() {
