@@ -8,6 +8,8 @@ import 'package:supermapper_app/widgets/spot.dart';
 import 'package:supermapper_app/widgets/spotInfo.dart';
 import 'dart:ui';
 
+import 'package:supermapper_app/widgets/toolNavButton.dart';
+
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
 
@@ -58,16 +60,16 @@ class _mapScreenState extends State<MapScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            IconButton(
-                              icon: const Icon(Icons.search),
+                            ToolNavButton(
+                              icon: Icons.search,
                               onPressed: () {
                                 Navigator.of(context).push(
                                   customSlidefromLeft(const SearchScreen()),
                                 );
                               },
                             ),
-                            IconButton(
-                              icon: const Icon(Icons.filter_list),
+                            ToolNavButton(
+                              icon: Icons.filter_list,
                               onPressed: () {
                                 Navigator.of(context).push(
                                   customSlidefromRight(const FilterScreen()),

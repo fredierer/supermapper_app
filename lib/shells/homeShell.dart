@@ -3,7 +3,8 @@ import 'package:supermapper_app/screens/map_screen.dart';
 import 'package:supermapper_app/screens/settings_screen.dart';
 import 'package:supermapper_app/services/spots_service.dart';
 import 'package:supermapper_app/theme.dart';
-import 'package:supermapper_app/widgets/nav_bar_icon.dart';
+import 'package:supermapper_app/widgets/AddFeedbackButton.dart';
+import 'package:supermapper_app/widgets/navBarButton.dart';
 
 class HomeShell extends StatefulWidget {
   const HomeShell({super.key});
@@ -26,7 +27,6 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
   bool _addMenuOpen = false;
   
   void _toggleAddMenu() {
-    print ("TOOOOGLLLGLLELLLEEEE ++");
     SpotService().getSpots();
     setState(() {
       _addMenuOpen = !_addMenuOpen;
@@ -75,10 +75,9 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
         children: [
           _screens[_currentIndex],
 
-          // Menu d'ajout optimisé
           SafeArea(
             child: IgnorePointer(
-              ignoring: !_addMenuOpen, // Empêche d'intercepter les clics quand fermé
+              ignoring: !_addMenuOpen,
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: AnimatedBuilder(
@@ -90,16 +89,13 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
                       alignment: Alignment.bottomCenter,
                       clipBehavior: Clip.none,
                       children: [
-
-                              // Bouton spot
-                              Transform.translate(
+                        Transform.translate(
                           offset: _spotOffsetAnimation.value,
                           child: Opacity(
                             opacity: opacity,
-                            child: NavBarIcon(
+                            child: AddFeedBackButton(
                               icon: Icons.add_location_alt_outlined,
-                              textColor: AppColors.surfaceLight,
-                              backgroundColor: AppColors.orange,
+                              textColor: Colors.black,
                               label: 'Add a spot',
                               onPressed: () {},
                             ),
@@ -111,10 +107,9 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
                           offset: _routeOffsetAnimation.value,
                           child: Opacity(
                             opacity: opacity,
-                            child: NavBarIcon(
+                            child: AddFeedBackButton(
                               icon: Icons.route_outlined,
-                              textColor: AppColors.surfaceLight,
-                              backgroundColor: AppColors.orange,
+                              textColor: Colors.black,
                               label: 'Add a route',
                               onPressed: () {},
                             )
@@ -140,46 +135,22 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            // Bouton gauche (Carte)
-            SizedBox(
-              width: 64,
-              height: 64,
-              child: IconButton(
-                icon: const Icon(Icons.map_outlined),
+              //Bouton gauche (Map)
+              NavBarButton(
+                icon: Icons.map_outlined,
+                textColor: _currentIndex == 0 ? Colors.black : Colors.grey,
                 onPressed: () {setState(() => _currentIndex = 0);},
-                padding: EdgeInsets.zero,
-                style: IconButton.styleFrom(
-                  iconSize: 32,
-                  backgroundColor: Colors.transparent,
-                  foregroundColor: AppColors.darkNavy.withAlpha(_currentIndex == 0 ? 255 : 60),
-                ),
               ),
-            ),
+            
 
             // Espace vide au centre pour laisser place au bouton flottant
             const SizedBox(width: 120), 
 
             //Bouton droite (Settings)
-            SizedBox(
-              width: 64,
-              height: 64,
-              child: IconButton(
-                icon: const Icon(Icons.settings_outlined),
-                onPressed: () {
-                  setState(() {
-                    _currentIndex = 1;
-                    if(_addMenuOpen) {
-                      _toggleAddMenu();
-                    }
-                  });
-                },
-                padding: EdgeInsets.zero,
-                style: IconButton.styleFrom(
-                  iconSize: 32,
-                  backgroundColor: Colors.transparent,
-                  foregroundColor: AppColors.darkNavy.withAlpha(_currentIndex == 1 ? 255 : 60),
-                ),
-              ),
+            NavBarButton(
+              icon: Icons.settings_outlined,
+              textColor: _currentIndex == 1 ? Colors.black : Colors.grey,
+              onPressed: () {setState(() => _currentIndex = 1);},
             ),
           ],
         ),
