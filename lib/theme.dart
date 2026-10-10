@@ -53,7 +53,7 @@ final appTheme = ThemeData(
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppColors.deepOrange, width: 2),
+      borderSide: const BorderSide(color: AppColors.amber, width: 2),
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
@@ -64,7 +64,7 @@ final appTheme = ThemeData(
       borderSide: const BorderSide(color: AppColors.errorRed, width: 2),
     ),
     labelStyle: const TextStyle(color: AppColors.darkNavy),
-    floatingLabelStyle: const TextStyle(color: AppColors.deepOrange, fontWeight: FontWeight.w600),
+    floatingLabelStyle: const TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
   ),
 
