@@ -50,3 +50,32 @@ Route customSlidefromRight(Widget page) {
     },
   );
 }
+
+
+
+Route customSlidefromBottom(Widget page) {
+  return PageRouteBuilder(
+    // Durée de la transition (optionnel)
+    transitionDuration: const Duration(milliseconds: 800),
+    
+    // Écran à afficher
+    pageBuilder: (context, animation, secondaryAnimation) => page,
+    
+    // Animation appliquée
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(0.0, 1.0);
+      const end = Offset.zero;
+      
+      const curve = Curves.easeInOut;
+
+      var tween = Tween(begin: begin, end: end).chain(
+        CurveTween(curve: curve),
+      );
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
+}

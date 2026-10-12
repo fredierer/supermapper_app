@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:supermapper_app/screens/add_spot_screen.dart';
 import 'package:supermapper_app/screens/map_screen.dart';
 import 'package:supermapper_app/screens/settings_screen.dart';
 import 'package:supermapper_app/services/spots_service.dart';
 import 'package:supermapper_app/theme.dart';
 import 'package:supermapper_app/widgets/AddFeedbackButton.dart';
 import 'package:supermapper_app/widgets/navBarButton.dart';
-import 'package:supermapper_app/widgets/addSpot.dart';
+import 'package:supermapper_app/transitions/customSlideTransition.dart';
 
 class HomeShell extends StatefulWidget {
   const HomeShell({super.key});
@@ -40,6 +41,11 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
     }
   }
 
+  void _navigateToAddSpotScreen() async {
+    final name = await Navigator.of(context).push(
+      customSlidefromBottom(const AddSpotScreen()),
+    );
+  }
   @override
   void initState() {
     super.initState();
@@ -98,6 +104,8 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
                                 label: 'Add a spot',
                                 onPressed: () {
                                   print("Hello spot");
+                                  _toggleAddMenu(); // referme le petit menu
+                                  _navigateToAddSpotScreen();
                                 },
                               ),
                             ),
