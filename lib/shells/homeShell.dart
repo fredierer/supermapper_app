@@ -56,14 +56,14 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
     );
 
     _spotOffsetAnimation = Tween<Offset>(
-      begin: const Offset(0, 0),
-      end: const Offset(0, -105), 
-    ).animate(_curvedAnimation);
+    begin: const Offset(1, -1.25), 
+    end: const Offset(0, -1.25),   
+  ).animate(_curvedAnimation);
 
-    _routeOffsetAnimation = Tween<Offset>(
-      begin: const Offset(0, 0),
-      end: const Offset(0, -55),
-    ).animate(_curvedAnimation);
+  _routeOffsetAnimation = Tween<Offset>(
+    begin: const Offset(-1, -2.35),
+    end: const Offset(0, -2.35),
+  ).animate(_curvedAnimation);
   }
 
   @override
@@ -78,74 +78,54 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
               ignoring: !_addMenuOpen,
               child: Align(
                 alignment: Alignment.bottomCenter,
-                child: AnimatedBuilder(
-                  animation: _curvedAnimation,
-                  builder: (context, child) {
-                    final double opacity = _addButtonController.value.clamp(0.0, 1.0);
-
-                    return Stack(
-                      alignment: Alignment.bottomCenter,
-                      clipBehavior: Clip.none,
-                      children: [
-                        Transform.translate(
-                          offset: _spotOffsetAnimation.value,
-                          child: Opacity(
-                            opacity: opacity,
-                            child: AddFeedBackButton(
-                              icon: Icons.add_location_alt_outlined,
-                              textColor: Colors.black,
-                              label: 'Add a spot',
-                              onPressed: () {},
+                child: SizedBox(
+                  height: 300,
+                  child : AnimatedBuilder(
+                    animation: _curvedAnimation,
+                    builder: (context, child) {
+                      final double opacity = _addButtonController.value.clamp(0.0, 1.0);
+                      return Stack(
+                        alignment: Alignment.bottomCenter,
+                        clipBehavior: Clip.none,
+                        children: [
+                          SlideTransition(
+                            position: _spotOffsetAnimation,
+                            child: Opacity(
+                              opacity: opacity,
+                              child: AddFeedBackButton(
+                                icon: Icons.add_location_alt_outlined,
+                                textColor: Colors.black,
+                                label: 'Add a spot',
+                                onPressed: () {
+                                  print("Hello spot");
+                                },
+                              ),
                             ),
                           ),
-                        ),
 
-                        // Bouton Route
-                        Transform.translate(
-                          offset: _routeOffsetAnimation.value,
-                          child: Opacity(
-                            opacity: opacity,
-                            child: AddFeedBackButton(
-                              icon: Icons.route_outlined,
-                              textColor: Colors.black,
-                              label: 'Add a route',
-                              onPressed: () {},
+                          // Bouton Route
+                          SlideTransition(
+                            position: _routeOffsetAnimation,
+                            child: Opacity(
+                              opacity: opacity,
+                              child: AddFeedBackButton(
+                                icon: Icons.route_outlined,
+                                textColor: Colors.black,
+                                label: 'Add a route',
+                                onPressed: () {
+                                  print("Hello");
+                                },
+                              )
                             )
                           )
-                        )
-                      ]
-                    );
-                  }
+                        ]
+                      );
+                    }
+                  )
                 )
               )
-            )
-          ),
-
-          if(_currentIndex == 99)
-            Positioned.fill(
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        color: Colors.black.withAlpha(100), 
-                      ),
-                    ),
-                  ),
-
-                  Center(
-                    child: SingleChildScrollView(
-                      child: AddSpot(
-                        onClose: () {
-
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
             ),
+          ),
         ]
       ),         
       
@@ -196,7 +176,9 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
         ),      
 
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
     );
+    
   }
 
   @override
