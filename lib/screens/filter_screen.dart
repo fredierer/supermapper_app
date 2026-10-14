@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supermapper_app/theme.dart';
-import 'package:supermapper_app/configuration/spot_category.dart';
+import 'package:supermapper_app/configuration/feedback_category.dart';
 
 String countryCodeToEmoji(String countryCode) {
   // Convertit un code ISO à 2 lettres (ex: "FR") en drapeaux Unicode

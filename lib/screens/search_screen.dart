@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:supermapper_app/configuration/spot_category.dart';
+import 'package:supermapper_app/configuration/feedback_category.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});

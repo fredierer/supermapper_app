@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:supermapper_app/configuration/spot_category.dart';
+import 'package:supermapper_app/configuration/feedback_category.dart';
 import 'package:supermapper_app/screens/addSpotScreens/add_spot_stepDetails.dart';
 import 'package:supermapper_app/screens/addSpotScreens/add_spot_stepMap.dart';
 import 'package:supermapper_app/services/spots_service.dart';

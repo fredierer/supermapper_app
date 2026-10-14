@@ -1,5 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:supermapper_app/configuration/spot_category.dart';
+import 'package:supermapper_app/configuration/feedback_category.dart';
 import 'package:supermapper_app/widgets/spot.dart';
 import 'package:flutter/foundation.dart';
 

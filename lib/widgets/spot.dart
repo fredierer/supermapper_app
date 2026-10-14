@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:supermapper_app/configuration/spot_category.dart'; 
+import 'package:supermapper_app/configuration/feedback_category.dart'; 
 class Spot {
   final int id;
   final String title;
