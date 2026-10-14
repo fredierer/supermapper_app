@@ -176,7 +176,7 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
       floatingActionButton: Visibility(
           visible: _currentIndex == 0,
           child: RawMaterialButton(
-            onPressed: _toggleAddMenu,
+            onPressed: _navigateToAddSpotScreen,
             fillColor: AppColors.darkNavy,
             elevation: 4,
             shape: const CircleBorder(),
