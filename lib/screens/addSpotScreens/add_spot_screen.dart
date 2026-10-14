@@ -34,6 +34,7 @@ class _AddSpotScreenState extends State<AddSpotScreen> {
       _categorySelected != null;
 
   void _next() {
+    if (_isSaving) return;
     switch (_step) {
       case 0:
         if(_latitude == null || _longitude == null) return;
