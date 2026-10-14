@@ -14,10 +14,10 @@ class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
 
   @override
-  State<MapScreen> createState() => _mapScreenState();
+  State<MapScreen> createState() => MapScreenState();
 
 }
-class _mapScreenState extends State<MapScreen> {
+class MapScreenState extends State<MapScreen> {
 
   final SpotService _spotService = SpotService();
   List<Spot> _spots = [];
@@ -29,10 +29,10 @@ class _mapScreenState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchSpotsData();
+    fetchSpotsData();
   }
 
-  Future<void> _fetchSpotsData() async {
+  Future<void> fetchSpotsData() async {
     final spots = await _spotService.getSpots();
     setState(() {
       _spots = spots; // Met à jour l'interface quand les données arrivent

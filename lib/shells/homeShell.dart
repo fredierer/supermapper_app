@@ -16,9 +16,11 @@ class HomeShell extends StatefulWidget {
 }              
 
 class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMixin {
+  final _mapKey = GlobalKey<MapScreenState>();
+  
   int _currentIndex = 0;
-  final List<Widget> _screens = [
-    MapScreen(),
+  late final List<Widget> _screens = [
+    MapScreen(key: _mapKey,),
     SettingsScreen(),
   ];
   late AnimationController _addButtonController;
@@ -29,7 +31,6 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
   bool _addMenuOpen = false;
   
   void _toggleAddMenu() {
-    SpotService().getSpots();
     setState(() {
       _addMenuOpen = !_addMenuOpen;
     });
@@ -41,11 +42,13 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
     }
   }
 
-  void _navigateToAddSpotScreen() async {
-    final name = await Navigator.of(context).push(
+  Future<void> _navigateToAddSpotScreen() async {
+    final added = await Navigator.of(context).push(
       customSlidefromBottom(AddSpotScreen()),
     );
-    print(name);
+    if (added == true) {
+      _mapKey.currentState?.fetchSpotsData();
+    }
   }
   @override
   void initState() {
@@ -107,6 +110,7 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
                                   print("Hello spot");
                                   _toggleAddMenu(); // referme le petit menu
                                   _navigateToAddSpotScreen();
+
                                 },
                               ),
                             ),

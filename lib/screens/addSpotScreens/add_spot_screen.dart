@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supermapper_app/configuration/spot_category.dart';
 import 'package:supermapper_app/screens/addSpotScreens/add_spot_stepDetails.dart';
 import 'package:supermapper_app/screens/addSpotScreens/add_spot_stepMap.dart';
+import 'package:supermapper_app/services/spots_service.dart';
 import 'package:supermapper_app/theme.dart';
 
 class AddSpotScreen extends StatefulWidget {
@@ -19,6 +20,10 @@ class _AddSpotScreenState extends State<AddSpotScreen> {
   SpotCategory? _categorySelected;
   double? _latitude;
   double? _longitude;
+
+  final _spotService = SpotService();
+
+  bool _isSaving = false;
 
   static const _titles = ['Choose location', 'Spot details'];
   static const _subtitles = ['Pan and zoom to place the pin', 'Specify details about your spot'];
@@ -55,14 +60,12 @@ class _AddSpotScreenState extends State<AddSpotScreen> {
           return;
         }
         //Save in database
-        
-
-        //Fermeture fenetre
-        Navigator.pop(context);
+        _save();
     }
   }
 
   void _back() {
+    if (_isSaving) return;
     if (_step == 0) {
       Navigator.pop(context);
     } else {
@@ -73,6 +76,28 @@ class _AddSpotScreenState extends State<AddSpotScreen> {
   void _onLocationChanged(double lat, double lng) {
     _latitude = lat;
     _longitude = lng;
+  }
+
+  Future<void> _save() async {
+    setState(() => _isSaving = true);
+    try {
+      await _spotService.addSpot(
+        title: _titleController.text.trim(),
+        description: _descriptionController.text.trim(),
+        category: _categorySelected!,
+        latitude: _latitude!,
+        longitude: _longitude!,
+      );
+      if (!mounted) return;
+      Navigator.pop(context, true);
+
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isSaving = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not save the spot. Please try again.')),
+      );
+    }
   }
 
   @override
@@ -115,7 +140,14 @@ class _AddSpotScreenState extends State<AddSpotScreen> {
                       ),
                       ElevatedButton(
                         onPressed: _next,
-                        child: Text(_step == _titles.length-1 ? 'Save' : 'Next'),
+                        style: ElevatedButton.styleFrom(minimumSize: const Size(90, 40)),
+                        child: _isSaving
+                            ? const SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white,),
+                              )
+                            : Text(_step == _titles.length - 1 ? 'Save' : 'Next'),
                       ),
                     ],
                   ),
