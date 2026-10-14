@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:supermapper_app/screens/add_spot_screen.dart';
+import 'package:supermapper_app/screens/addSpotScreens/add_spot_screen.dart';
 import 'package:supermapper_app/screens/map_screen.dart';
 import 'package:supermapper_app/screens/settings_screen.dart';
 import 'package:supermapper_app/services/spots_service.dart';
@@ -43,8 +43,9 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
 
   void _navigateToAddSpotScreen() async {
     final name = await Navigator.of(context).push(
-      customSlidefromBottom(const AddSpotScreen()),
+      customSlidefromBottom(AddSpotScreen()),
     );
+    print(name);
   }
   @override
   void initState() {

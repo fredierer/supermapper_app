@@ -6,16 +6,22 @@ import 'package:url_launcher/url_launcher.dart';
 
 class MapWidget extends StatefulWidget {
   final List<Spot> spots;
-  final double? targetLat;
-  final double? targetLng;
-  final ValueChanged<int>? onSpotSelected;
-  
+  final double? targetLat; //Parameter used to move the map to a desired position
+  final double? targetLng; //Parameter used to move the map to a desired position
+  final ValueChanged<int>? onSpotSelected; //Callback function used to display a menu when a spot is selected from the map
+  final double? initialLat; //Parameter used to set an initial value of Latitude, so the map can center on something
+  final double? initialLng; //Parameter used to set an initial value of Longitude, so the map can center on something
+  final void Function(double lat, double lng)? onCenterChanged; //Callback function to give the position of the center of the map when it moved
+
   const MapWidget({
     super.key,
     this.spots = const [],
     this.targetLat,
     this.targetLng,
     this.onSpotSelected,
+    this.initialLat,
+    this.initialLng,
+    this.onCenterChanged,
   });
 
   @override
@@ -27,6 +33,11 @@ class MapWidget extends StatefulWidget {
 class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
   final MapController _mapController = MapController(); 
   
+  void _reportCenter() {
+    final center = _mapController.camera.center;
+    widget.onCenterChanged?.call(center.latitude, center.longitude);
+  }
+
   @override
   void didUpdateWidget(covariant MapWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -81,8 +92,10 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
     return FlutterMap( 
       mapController: _mapController,
       options: MapOptions(
-        initialCenter: LatLng(0, 0),
-        initialZoom: 3,
+        initialCenter: LatLng(widget.initialLat ?? 0, widget.initialLng ?? 0),
+        initialZoom: widget.initialLat != null ? 14 : 3,
+        onMapReady: _reportCenter,
+        onPositionChanged: (camera, hasGesture) => _reportCenter(),
         maxZoom: 100,
         minZoom: 3,
 
