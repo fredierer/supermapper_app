@@ -12,8 +12,8 @@ class AddSpotStepDetails extends StatefulWidget {
 
   final TextEditingController titleController;
   final TextEditingController descriptionController;
-  final SpotCategory? category;
-  final ValueChanged<SpotCategory?> onCategoryChanged;
+  final FeedbackCategory? category;
+  final ValueChanged<FeedbackCategory?> onCategoryChanged;
 
   @override
   State<AddSpotStepDetails> createState() => _AddSpotStepDetailsState();
@@ -60,7 +60,7 @@ class _AddSpotStepDetailsState extends State<AddSpotStepDetails> {
            Listener(
             // Ferme le clavier du champ Title avant d'ouvrir la liste
             onPointerDown: (_) => FocusScope.of(context).unfocus(),
-            child: DropdownMenu<SpotCategory>(
+            child: DropdownMenu<FeedbackCategory>(
               initialSelection: widget.category,
               expandedInsets: EdgeInsets.zero, // pleine largeur, menu aligné sur le champ
               label: const Text('Category'),
@@ -93,7 +93,7 @@ class _AddSpotStepDetailsState extends State<AddSpotStepDetails> {
                   RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
               ),
-              dropdownMenuEntries: SpotCategory.values
+              dropdownMenuEntries: FeedbackCategory.values
                   .map(
                     (c) => DropdownMenuEntry(
                       value: c,

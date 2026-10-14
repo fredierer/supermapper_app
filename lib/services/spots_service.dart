@@ -27,7 +27,7 @@ class SpotService {
   Future<void> addSpot ({
     required String title,
     required String description,
-    required SpotCategory category,
+    required FeedbackCategory category,
     required double latitude,
     required double longitude,
   }) async {

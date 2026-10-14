@@ -17,7 +17,7 @@ class _AddSpotScreenState extends State<AddSpotScreen> {
   int _step = 0;
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  SpotCategory? _categorySelected;
+  FeedbackCategory? _categorySelected;
   double? _latitude;
   double? _longitude;
 

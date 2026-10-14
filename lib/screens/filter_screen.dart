@@ -42,7 +42,7 @@ class FilterScreen extends StatefulWidget{
 
 class _FilterScreenState extends State<FilterScreen> {
 
-  Set<SpotCategory> selectedCategories = {};
+  Set<FeedbackCategory> selectedCategories = {};
 
   final List<RegionItem> regions = [
     RegionItem(
@@ -340,7 +340,7 @@ class _FilterScreenState extends State<FilterScreen> {
                 child :Wrap(
                   spacing: 10,  // Espace horizontal
                   runSpacing: 10,  // Espace vertical
-                  children: SpotCategory.values.map((category) {
+                  children: FeedbackCategory.values.map((category) {
                       
                       final isSelected = selectedCategories.contains(category);
 

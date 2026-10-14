@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum SpotCategory {
+enum FeedbackCategory {
   transport('transport','Transport', '🚗', Color.fromARGB(255, 168, 112, 91)),
   camping('camping','Camping',  '⛱', Colors.lightGreen),
   borderCrossing('border_crossing','Border Crossing', '🌐', Colors.deepPurpleAccent),
@@ -14,13 +14,13 @@ enum SpotCategory {
   final String emoji;
   final Color color;
   
-  const SpotCategory(this.dbValue, this.label, this.emoji, this.color);
+  const FeedbackCategory(this.dbValue, this.label, this.emoji, this.color);
 
-  factory SpotCategory.fromString(String? value) {
-    if (value == null) return SpotCategory.other;
-    return SpotCategory.values.firstWhere(
+  factory FeedbackCategory.fromString(String? value) {
+    if (value == null) return FeedbackCategory.other;
+    return FeedbackCategory.values.firstWhere(
       (cat) => cat.dbValue.toLowerCase() == value.toLowerCase(),
-      orElse: () => SpotCategory.other,
+      orElse: () => FeedbackCategory.other,
     );
   }
 }

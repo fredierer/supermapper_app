@@ -5,7 +5,7 @@ import 'package:supermapper_app/configuration/spot_category.dart';
 class Spot {
   final int id;
   final String title;
-  final SpotCategory category;
+  final FeedbackCategory category;
   final String description;
   final double lat;
   final double lng;
@@ -23,7 +23,7 @@ class Spot {
     return Spot(
       id: json['id'],
       title: json['title'] ?? '',
-      category: SpotCategory.fromString(json['category'] ?? ''),
+      category: FeedbackCategory.fromString(json['category'] ?? ''),
       description: json['description'] ?? '', 
       lat : (json['lat'] as num?)?.toDouble() ?? 0.0,
       lng: (json['lng'] as num?)?.toDouble() ?? 0.0,

@@ -106,7 +106,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                     final title = spot['title'] ?? 'No title';
                                     final description = spot['description'] ?? '';
                                     final categoryString = spot['category'];
-                                    final spotCategory = SpotCategory.fromString(categoryString);
+                                    final spotCategory = FeedbackCategory.fromString(categoryString);
                                     
                                     return Padding(
                                       padding: EdgeInsetsGeometry.fromLTRB(0, 0, 0, 10),
