@@ -46,20 +46,7 @@ class SettingsScreen extends StatelessWidget {
                 ElevatedButton.icon(
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'This is not available yet.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w300, fontSize: 14),
-                        ),
-                        behavior: SnackBarBehavior.floating,
-                        backgroundColor: Colors.grey.shade500.withAlpha(200),
-                        duration: const Duration(milliseconds: 1200), 
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        margin: const EdgeInsets.only(bottom: 50, left: 50, right: 50),
-                      ),
+                      const SnackBar(content: Text('Not available yet.')),
                     );
                   },
                   icon: const Icon(
