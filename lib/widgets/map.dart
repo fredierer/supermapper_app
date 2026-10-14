@@ -3,6 +3,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:supermapper_app/widgets/spot.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
+import 'package:geolocator/geolocator.dart';
 
 class MapWidget extends StatefulWidget {
   final List<Spot> spots;
@@ -32,7 +34,30 @@ class MapWidget extends StatefulWidget {
 
 class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
   final MapController _mapController = MapController(); 
-  
+
+  bool _locationGranted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initLocation();
+  }
+
+  Future<void> _initLocation() async {
+  if (!await Geolocator.isLocationServiceEnabled()) return;
+
+  var permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+  }
+
+  final granted = permission == LocationPermission.whileInUse ||
+      permission == LocationPermission.always;
+
+  if (!mounted) return;
+  setState(() => _locationGranted = granted);
+}
+
   void _reportCenter() {
     final center = _mapController.camera.center;
     widget.onCenterChanged?.call(center.latitude, center.longitude);
@@ -98,7 +123,9 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
         onPositionChanged: (camera, hasGesture) => _reportCenter(),
         maxZoom: 100,
         minZoom: 3,
-
+        interactionOptions: const InteractionOptions(
+          enableMultiFingerGestureRace: true,
+        ),
       ),
       children: [
         TileLayer(
@@ -106,6 +133,8 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
           userAgentPackageName: 'app.supermapper.app',
         ),
 
+        if (_locationGranted) const CurrentLocationLayer(),
+        
         MarkerLayer(
           markers: widget.spots.map((spot) {
             return spot.toMarker(

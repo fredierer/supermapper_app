@@ -14,9 +14,6 @@ class SpotService {
           .map((json) => Spot.fromJson(json))
           .toList();
 
-      print("POINT FETCHES : ");
-      print(spots);
-
       return spots;
     } catch (e) {
       debugPrint('Error while fetching the spots : $e');

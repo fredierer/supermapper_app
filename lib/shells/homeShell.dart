@@ -106,10 +106,8 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
                                 icon: Icons.add_location_alt_outlined,
                                 textColor: Colors.black,
                                 label: 'Add a spot',
-                                onPressed: () {
-                                  print("Hello spot");
-                                  _toggleAddMenu(); // referme le petit menu
-                                  _navigateToAddSpotScreen();
+                                onPressed: () { // referme le petit menu
+                                  // _navigateToAddSpotScreen(); Mise en commentaire pour l'instant. A voir quand on mettra les routes TO DO
 
                                 },
                               ),
