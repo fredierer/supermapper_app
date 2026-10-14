@@ -43,7 +43,10 @@ class _AddSpotScreenState extends State<AddSpotScreen> {
         //Verif title and description filled
         if(!_isDetailsValid || _latitude == null || _longitude == null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Please fill all the mandatory information.')),
+            const SnackBar(
+              content: Text('Please fill all the mandatory information.'),
+              behavior: SnackBarBehavior.floating,
+            ),
           ); 
           return;
         }
@@ -83,7 +86,10 @@ class _AddSpotScreenState extends State<AddSpotScreen> {
       if (!mounted) return;
       setState(() => _isSaving = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not save the spot. Please try again.')),
+        const SnackBar(
+          content: Text('Could not save the spot. Please try again.'),
+          behavior: SnackBarBehavior.floating,
+        ),
       );
     }
   }

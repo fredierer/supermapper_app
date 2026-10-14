@@ -46,7 +46,10 @@ class SettingsScreen extends StatelessWidget {
                 ElevatedButton.icon(
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Not available yet.')),
+                      const SnackBar(
+                        content: Text('Not available yet.'),
+                        behavior: SnackBarBehavior.floating,
+                      ),    
                     );
                   },
                   icon: const Icon(
