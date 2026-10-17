@@ -1,3 +1,4 @@
+import 'package:country_coder/country_coder.dart';
 import 'package:flutter/material.dart';
 import 'package:supermapper_app/shells/homeShell.dart';
 import 'package:supermapper_app/theme.dart';
@@ -13,6 +14,8 @@ Future<void> main() async {
     url: dotenv.env['SUPABASE_URL']!,
     publishableKey: dotenv.env['SUPABASE_PUBLISHABLEKEY']!,
   );
+
+  CountryCoder.instance.load();
 
   runApp(const MastroApp());
 }

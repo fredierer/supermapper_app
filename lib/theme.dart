@@ -82,6 +82,10 @@ final appTheme = ThemeData(
   //  ),
   //),
 
+  badgeTheme: const BadgeThemeData(
+    backgroundColor: AppColors.deepOrange,
+  ),
+
   // 5bis. Icon
   iconTheme: IconThemeData(
     size: 24,

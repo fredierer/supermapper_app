@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supermapper_app/configuration/feedback_category.dart';
 import 'package:supermapper_app/screens/filter_screen.dart';
 import 'package:supermapper_app/screens/search_screen.dart';
 import 'package:supermapper_app/widgets/map.dart';
@@ -20,11 +21,24 @@ class MapScreen extends StatefulWidget {
 class MapScreenState extends State<MapScreen> {
 
   final SpotService _spotService = SpotService();
-  List<Spot> _spots = [];
+  List<Spot> _fetchedSpots = [];
+  List<Spot> get _filteredSpots {
+    if (!_isFiltered) return _fetchedSpots;
+
+    return _fetchedSpots.where((spot) {
+      final categoryOk = _categoriesFiltered.isEmpty || _categoriesFiltered.contains(spot.category);
+      final countryOk = _countriesFiltered.isEmpty || _countriesFiltered.contains(spot.countryCode);
+      return categoryOk && countryOk;
+    }).toList();
+  }
   int? _selectedSpotId;
 
   double? _targetLat;
   double? _targetLng;
+
+  bool get _isFiltered => _categoriesFiltered.isNotEmpty || _countriesFiltered.isNotEmpty;  
+  Set<FeedbackCategory> _categoriesFiltered = {};
+  Set<String> _countriesFiltered = {};
 
   @override
   void initState() {
@@ -34,12 +48,17 @@ class MapScreenState extends State<MapScreen> {
 
   Future<void> fetchSpotsData() async {
     final spots = await _spotService.getSpots();
+    if (!mounted) return;
     setState(() {
-      _spots = spots; // Met à jour l'interface quand les données arrivent
+      _fetchedSpots = spots; // Met à jour l'interface quand les données arrivent
     });
   }
 
   void _navigateToSearchScreen() async {
+    
+    setState(() {
+      _selectedSpotId = null;
+    });
 
     final dynamic result = await Navigator.of(context).push(
       customSlidefromLeft(const SearchScreen()),
@@ -70,16 +89,25 @@ class MapScreenState extends State<MapScreen> {
   }
 
   void _navigateToFilterScreen() async {
+    
+    setState(() {
+      _selectedSpotId = null;
+    });
 
-    final dynamic selectedSpotId = await Navigator.of(context).push(
-      customSlidefromRight(const FilterScreen()),
+    final result = await Navigator.of(context).push<({Set<FeedbackCategory> categories, Set<String> countries})>(
+      customSlidefromRight(FilterScreen(
+        initialCategories: _categoriesFiltered,
+        initialCountries: _countriesFiltered,
+        )
+      ),
     );
 
-    if (selectedSpotId != null) {
-      setState(() {
-        _selectedSpotId = selectedSpotId as int; 
-      });
-    }
+    if (result == null) return;
+
+    setState(() {
+      _categoriesFiltered = result.categories;
+      _countriesFiltered = result.countries;
+    });
   }
 
 
@@ -89,7 +117,7 @@ class MapScreenState extends State<MapScreen> {
         children: [
           
           MapWidget(
-            spots: _spots,
+            spots: _filteredSpots,
             targetLat: _targetLat,
             targetLng: _targetLng,
             onSpotSelected: (spotId) {
@@ -99,30 +127,32 @@ class MapScreenState extends State<MapScreen> {
             },
           ),
           SafeArea(
-                child: Padding(
-                  padding: EdgeInsetsGeometry.symmetric(horizontal: 20, vertical: 10),
-                  child: Expanded(
-                    child : Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ToolNavButton(
-                              icon: Icons.search,
-                              onPressed: _navigateToSearchScreen,
-                            ),
-                            ToolNavButton(
-                              icon: Icons.filter_list,
-                              onPressed: _navigateToFilterScreen,
-                            ),
-
-                          ],
+            child: Padding(
+              padding: EdgeInsetsGeometry.symmetric(horizontal: 20, vertical: 10),
+              child : Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ToolNavButton(
+                        icon: Icons.search,
+                        onPressed: _navigateToSearchScreen,
+                      ),
+                      Badge(
+                        isLabelVisible: _isFiltered,
+                        alignment: AlignmentDirectional.topStart,
+                        smallSize: 16,
+                        child: ToolNavButton(
+                          icon: Icons.filter_list,
+                          onPressed: _navigateToFilterScreen,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ),
+                ],
+              ),
+            ),
           ),
 
           if (_selectedSpotId != null)

@@ -106,7 +106,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                     final title = spot['title'] ?? 'No title';
                                     final description = spot['description'] ?? '';
                                     final categoryString = spot['category'];
-                                    final spotCategory = FeedbackCategory.fromString(categoryString);
+                                    final feedbackCategory = FeedbackCategory.fromString(categoryString);
                                     
                                     return Padding(
                                       padding: EdgeInsetsGeometry.fromLTRB(0, 0, 0, 10),
@@ -137,7 +137,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                               crossAxisAlignment: CrossAxisAlignment.center,
                                               children: [
                                                 Text(
-                                                  spotCategory.emoji, 
+                                                  feedbackCategory.emoji, 
                                                   style: const TextStyle(fontSize: 24),
                                                 ),
                                                 const SizedBox(width: 15),

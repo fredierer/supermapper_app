@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-Route customSlidefromLeft(Widget page) {
-  return PageRouteBuilder(
+Route<T> customSlidefromLeft<T>(Widget page) {
+  return PageRouteBuilder<T>(
     // Durée de la transition (optionnel)
     transitionDuration: const Duration(milliseconds: 500),
     
@@ -27,8 +27,8 @@ Route customSlidefromLeft(Widget page) {
   );
 }
 
-Route customSlidefromRight(Widget page) {
-  return PageRouteBuilder(
+Route<T> customSlidefromRight<T>(Widget page) {
+  return PageRouteBuilder<T>(
     transitionDuration: const Duration(milliseconds: 500),
     
     pageBuilder: (context, animation, secondaryAnimation) => page,
@@ -53,8 +53,8 @@ Route customSlidefromRight(Widget page) {
 
 
 
-Route customSlidefromBottom(Widget page) {
-  return PageRouteBuilder(
+Route<T> customSlidefromBottom<T>(Widget page) {
+  return PageRouteBuilder<T>(
     // Durée de la transition (optionnel)
     transitionDuration: const Duration(milliseconds: 800),
     

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supermapper_app/theme.dart';
 import 'package:supermapper_app/configuration/feedback_category.dart';
+import 'package:flutter/foundation.dart';
 
 String countryCodeToEmoji(String countryCode) {
   // Convertit un code ISO à 2 lettres (ex: "FR") en drapeaux Unicode
@@ -18,6 +19,7 @@ class CountryItem {
     required this.code,
   });
 }
+
 class RegionItem {
   final String name;
   final bool isContinent;
@@ -33,16 +35,27 @@ class RegionItem {
 }
 
 class FilterScreen extends StatefulWidget{
-  const FilterScreen({super.key});
+  const FilterScreen({
+    super.key,
+    this.initialCategories = const {},
+    this.initialCountries = const {},
+  });
+
+  final Set<FeedbackCategory> initialCategories;
+  final Set<String> initialCountries;
 
   @override
   State<FilterScreen> createState() => _FilterScreenState();
 }
 
-
 class _FilterScreenState extends State<FilterScreen> {
 
-  Set<FeedbackCategory> selectedCategories = {};
+  late Set<FeedbackCategory> selectedCategories = {...widget.initialCategories};
+  late Set<String> selectedRegions = {...widget.initialCountries};
+
+  bool get _hasChanges =>
+    !setEquals(selectedCategories, widget.initialCategories) ||
+    !setEquals(selectedRegions, widget.initialCountries);
 
   final List<RegionItem> regions = [
     RegionItem(
@@ -280,7 +293,6 @@ class _FilterScreenState extends State<FilterScreen> {
     ),
   ];
 
-  Set<String> selectedRegions = {};
 
   @override
   Widget build(BuildContext context) {
@@ -392,35 +404,46 @@ class _FilterScreenState extends State<FilterScreen> {
                     final region = regions[index];
                     return Column(
                       children: [
-                        ListTile(
-                          title: Text(region.name),
-                          trailing: region.isContinent ? Icon(region.isExpanded ? Icons.expand_less : Icons.expand_more,) : null,
-                          onTap: () {
-                            setState(() {
-                              region.isExpanded = !region.isExpanded;
-                            });
-                          },
+                        Padding(
+                          padding : EdgeInsets.fromLTRB(0,0,0,5),
+                          child : ListTile(
+                            title: Text(region.name),
+                            trailing: region.isContinent ? Icon(region.isExpanded ? Icons.expand_less : Icons.expand_more,) : null,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(color: Colors.grey.shade300, width: 1),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            onTap: () {
+                              setState(() {
+                                region.isExpanded = !region.isExpanded;
+                              });
+                            },
+                          ),
                         ),
                         if (region.isExpanded && region.countries != null)
                           ...region.countries!.map((country) {
-                            final isSelected = selectedRegions.contains(country.name);
+                            final isSelected = selectedRegions.contains(country.code);
                             
                             return Padding(
-                              padding: const EdgeInsets.only(left: 20),
+                              padding: const EdgeInsets.fromLTRB(20,0,0,5),
                               child: ListTile(
                                 leading: Text(
                                   countryCodeToEmoji(country.code),
                                   style: const TextStyle(fontSize: 22), // Ajuste la taille de l'emoji
                                 ),
                                 title: Text(country.name),
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(color: Colors.grey.shade300, width: 1),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
                                 trailing: Checkbox(
                                   value: isSelected,
                                   onChanged: (value) {
                                     setState(() {
                                       if (value == true) {
-                                        selectedRegions.add(country.name);
+                                        selectedRegions.add(country.code);
                                       } else {
-                                        selectedRegions.remove(country.name);
+                                        selectedRegions.remove(country.code);
                                       }
                                     });
                                   },
@@ -444,9 +467,9 @@ class _FilterScreenState extends State<FilterScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context, selectedCategories);
-                },
+                onPressed: _hasChanges
+                  ? () => Navigator.pop(context, (categories: selectedCategories, countries : selectedRegions))
+                  : null,
                 child: SizedBox(
                   width: 150,
                   height : 40,
@@ -454,16 +477,6 @@ class _FilterScreenState extends State<FilterScreen> {
                 ),
               ),
 
-
-              ElevatedButton(
-                onPressed: () {Navigator.pop(context);},
-                child: SizedBox(
-                  width: 150,
-                  height : 40,
-                  child:Center(child: Text("Cancel")),
-                ),
-              ),
-              
 
             ],
           )

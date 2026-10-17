@@ -2,6 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:supermapper_app/configuration/feedback_category.dart'; 
+import 'package:country_coder/country_coder.dart';
+
+String getCountryCodeFromLatLng(double lat, double lng) {
+  final countries = CountryCoder.instance;
+  countries.load();
+  return countries.iso1A2Code(lon: lng, lat: lat) ?? '';
+}
+
 class Spot {
   final int id;
   final String title;
@@ -9,6 +17,7 @@ class Spot {
   final String description;
   final double lat;
   final double lng;
+  final String countryCode;
 
   Spot({
     required this.id,
@@ -17,16 +26,21 @@ class Spot {
     required this.description,
     required this.lat,
     required this.lng,
+    required this.countryCode,
   });
 
   factory Spot.fromJson(Map<String, dynamic> json) {
+    final lat = (json['lat'] as num?)?.toDouble() ?? 0.0;
+    final lng = (json['lng'] as num?)?.toDouble() ?? 0.0;
+
     return Spot(
       id: json['id'],
       title: json['title'] ?? '',
       category: FeedbackCategory.fromString(json['category'] ?? ''),
       description: json['description'] ?? '', 
-      lat : (json['lat'] as num?)?.toDouble() ?? 0.0,
-      lng: (json['lng'] as num?)?.toDouble() ?? 0.0,
+      lat : lat,
+      lng: lng,
+      countryCode: getCountryCodeFromLatLng(lat, lng),
     );
   }
 
