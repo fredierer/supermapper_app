@@ -24,31 +24,29 @@ class _SearchScreenState extends State<SearchScreen> {
   Timer? _debounce;  
   int _requestId = 0; 
 
-  Future<void> _searchSpotsFromDatabase(String query, int requestId) async {
+  Future<List<Map<String, dynamic>>> _searchSpotsFromDatabase(String query) async {
     try {
       final response = await Supabase.instance.client
           .from('spots')
           .select()
           .textSearch('fts', query, type: TextSearchType.websearch);
 
-      // Écran fermé, ou une recherche plus récente existe : on ignore.
-      if (!mounted || requestId != _requestId) return;
-      setState(() {
-        _databaseResults = List<Map<String, dynamic>>.from(response);
-      });
+      return List<Map<String, dynamic>>.from(response);
+
     } catch (e) {
       debugPrint('Error while searching in database : $e');
+      return [];
     }
   }
 
-  Future<void> _searchPlacesFromService(String query, int requestId) async {
+  Future<List<PlaceResult>> _searchPlacesFromService(String query) async {
     try {
-      final places = await _placeService.search(query);
-
-      if (!mounted || requestId != _requestId) return;
-      setState(() => _placeResults = places);
+      return await _placeService
+        .search(query)
+        .timeout(const Duration(seconds: 5));
     } catch (e) {
       debugPrint('Place search error: $e');
+      return [];
     }
   }
 
@@ -56,13 +54,18 @@ class _SearchScreenState extends State<SearchScreen> {
   Future<void> _runSearch(String query) async {
     final requestId = ++_requestId;
 
-    await Future.wait([
-      _searchSpotsFromDatabase(query, requestId),
-      _searchPlacesFromService(query, requestId),
-    ]);
+    final (spots, places) = await (
+      _searchSpotsFromDatabase(query),
+      _searchPlacesFromService(query),
+    ).wait;
 
     if (!mounted || requestId != _requestId) return;
-    setState(() => _isLoading = false);
+    setState(() {
+      _databaseResults = spots;
+      _placeResults = places;
+      _isLoading = false;
+    }
+    );
   }
 
   void _onQueryChanged(String query) {
@@ -201,12 +204,12 @@ class _SearchScreenState extends State<SearchScreen> {
 
     if (!hasQuery) return const SizedBox.shrink();
 
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     if (!hasResults) {
-      return Center(
-        child: _isLoading
-            ? const CircularProgressIndicator()
-            : const Text('No results ...'),
-      );
+      return const Center(child: Text('No results ...'));
     }
 
     return ListView(
