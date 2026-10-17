@@ -35,6 +35,7 @@ class MapScreenState extends State<MapScreen> {
 
   double? _targetLat;
   double? _targetLng;
+  double? _zoom;
 
   bool get _isFiltered => _categoriesFiltered.isNotEmpty || _countriesFiltered.isNotEmpty;  
   Set<FeedbackCategory> _categoriesFiltered = {};
@@ -54,7 +55,7 @@ class MapScreenState extends State<MapScreen> {
     });
   }
 
-  void _navigateToSearchScreen() async {
+  Future<void> _navigateToSearchScreen() async {
     
     setState(() {
       _selectedSpotId = null;
@@ -64,31 +65,33 @@ class MapScreenState extends State<MapScreen> {
       customSlidefromLeft(const SearchScreen()),
     );
 
+    if(!mounted) return;
     if (result == null || result is! Map<String, dynamic>) return; //No move if no spot selected from search
 
     //getting data from selected spot
-    final spotId = result['id'] as int;
+    final spotId = result['id'] as int?;
     final lat = result['lat'] as double?;
     final lng = result['lng'] as double?;
+    final zoom = result['zoom'] as double?;
 
     //set Target lat and lng to move the map
     if (lat != null && lng != null) {
       setState(() {
         _targetLat = lat;
         _targetLng = lng;
+        _zoom = zoom;
       });
 
-      await Future.delayed(const Duration(milliseconds: 800)); //delay
-    }
-
-    //set selectedSpot to display spot Info Popup
-    setState(() {
-      _selectedSpotId = spotId;
-    });
-    
+      if(spotId != null) {
+        await Future.delayed(const Duration(milliseconds: 800)); //delay
+        setState(() {
+          _selectedSpotId = spotId; //set selectedSpot to display spot Info Popup
+        });
+      }  
+    }    
   }
 
-  void _navigateToFilterScreen() async {
+  Future<void> _navigateToFilterScreen() async {
     
     setState(() {
       _selectedSpotId = null;
@@ -120,6 +123,7 @@ class MapScreenState extends State<MapScreen> {
             spots: _filteredSpots,
             targetLat: _targetLat,
             targetLng: _targetLng,
+            targetZoom : _zoom,
             onSpotSelected: (spotId) {
               setState(() {
                 _selectedSpotId = spotId;

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:supermapper_app/screens/addSpotScreens/add_spot_screen.dart';
 import 'package:supermapper_app/screens/map_screen.dart';
 import 'package:supermapper_app/screens/settings_screen.dart';
-import 'package:supermapper_app/services/spots_service.dart';
 import 'package:supermapper_app/theme.dart';
 import 'package:supermapper_app/widgets/AddFeedbackButton.dart';
 import 'package:supermapper_app/widgets/navBarButton.dart';
@@ -30,17 +29,17 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
 
   bool _addMenuOpen = false;
   
-  void _toggleAddMenu() {
-    setState(() {
-      _addMenuOpen = !_addMenuOpen;
-    });
-
-    if(_addMenuOpen) {
-      _addButtonController.forward();
-    } else {
-      _addButtonController.reverse();
-    }
-  }
+//  void _toggleAddMenu() {
+//    setState(() {
+//      _addMenuOpen = !_addMenuOpen;
+//    });
+//
+//    if(_addMenuOpen) {
+//      _addButtonController.forward();
+//    } else {
+//      _addButtonController.reverse();
+//    }
+//  }
 
   Future<void> _navigateToAddSpotScreen() async {
     final added = await Navigator.of(context).push(
@@ -50,6 +49,7 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
       _mapKey.currentState?.fetchSpotsData();
     }
   }
+  
   @override
   void initState() {
     super.initState();

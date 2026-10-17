@@ -10,6 +10,7 @@ class MapWidget extends StatefulWidget {
   final List<Spot> spots;
   final double? targetLat; //Parameter used to move the map to a desired position
   final double? targetLng; //Parameter used to move the map to a desired position
+  final double? targetZoom; //Parameter to set a target zoom when place selected from search
   final ValueChanged<int>? onSpotSelected; //Callback function used to display a menu when a spot is selected from the map
   final double? initialLat; //Parameter used to set an initial value of Latitude, so the map can center on something
   final double? initialLng; //Parameter used to set an initial value of Longitude, so the map can center on something
@@ -20,6 +21,7 @@ class MapWidget extends StatefulWidget {
     this.spots = const [],
     this.targetLat,
     this.targetLng,
+    this.targetZoom,
     this.onSpotSelected,
     this.initialLat,
     this.initialLng,
@@ -70,12 +72,11 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
     if (widget.targetLat != null && widget.targetLng != null) {
       if (widget.targetLat != oldWidget.targetLat || widget.targetLng != oldWidget.targetLng) {
         
+        final destination = LatLng(widget.targetLat!, widget.targetLng!); 
+        final zoom = widget.targetZoom ?? 8.0; 
+        
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _animatedMapMove(
-            LatLng(widget.targetLat!, widget.targetLng!), 
-            14.0,
-            0.0,
-          );
+          _animatedMapMove(destination, zoom, 0.0);
         });
       }
     }

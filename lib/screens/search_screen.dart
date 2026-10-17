@@ -1,7 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:supermapper_app/configuration/feedback_category.dart';
+import 'package:supermapper_app/services/places_service.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -11,40 +13,214 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-
   final TextEditingController _searchController = TextEditingController();
-  List<Map<String, dynamic>> _searchResults = [];
+  final _placeService = PlaceService();
+
+  List<Map<String, dynamic>> _databaseResults = []; // spots from database
+  List<PlaceResult> _placeResults = [];             // country, city, ...
+
   bool _isLoading = false;
 
-  Future<void> _searchSpots(String query) async {
-    if (query.trim().isEmpty) {
-      setState(() {
-        _searchResults = [];
-        _isLoading = false;
-      });
-      return;
-    }
+  Timer? _debounce;  
+  int _requestId = 0; 
 
-    setState(() {
-      _isLoading = true;
-    });
-
+  Future<void> _searchSpotsFromDatabase(String query, int requestId) async {
     try {
       final response = await Supabase.instance.client
           .from('spots')
           .select()
           .textSearch('fts', query, type: TextSearchType.websearch);
 
+      // Écran fermé, ou une recherche plus récente existe : on ignore.
+      if (!mounted || requestId != _requestId) return;
       setState(() {
-        _searchResults = List<Map<String, dynamic>>.from(response);
-        _isLoading = false;
+        _databaseResults = List<Map<String, dynamic>>.from(response);
       });
     } catch (e) {
-      print('Error while searching in database : $e');
+      debugPrint('Error while searching in database : $e');
+    }
+  }
+
+  Future<void> _searchPlacesFromService(String query, int requestId) async {
+    try {
+      final places = await _placeService.search(query);
+
+      if (!mounted || requestId != _requestId) return;
+      setState(() => _placeResults = places);
+    } catch (e) {
+      debugPrint('Place search error: $e');
+    }
+  }
+
+  // Lance les deux recherches en parallèle.
+  Future<void> _runSearch(String query) async {
+    final requestId = ++_requestId;
+
+    await Future.wait([
+      _searchSpotsFromDatabase(query, requestId),
+      _searchPlacesFromService(query, requestId),
+    ]);
+
+    if (!mounted || requestId != _requestId) return;
+    setState(() => _isLoading = false);
+  }
+
+  void _onQueryChanged(String query) {
+    _debounce?.cancel();
+
+    if (query.trim().length < 2) {
+      _requestId++; // invalide les recherches encore en cours
       setState(() {
+        _databaseResults = [];
+        _placeResults = [];
         _isLoading = false;
       });
+      return;
     }
+
+    setState(() => _isLoading = true);
+    _debounce = Timer(
+      const Duration(milliseconds: 500),
+      () => _runSearch(query.trim()),
+    );
+  }
+
+  void _selectSpot(Map<String, dynamic> spot) {
+    Navigator.pop(context, {
+      'id': spot['id'],
+      'lat': (spot['lat'] as num?)?.toDouble(),
+      'lng': (spot['lng'] as num?)?.toDouble(),
+    });
+  }
+
+  void _selectPlace(PlaceResult place) {
+    Navigator.pop(context, {
+      'id': null,
+      'lat': place.lat,
+      'lng': place.lng,
+      'zoom': place.zoom,
+    });
+  }
+
+  Widget _buildSectionTitle(String text) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: Colors.grey,
+          fontSize: 14,
+          letterSpacing: 1.5,
+        ),
+      ),
+    );
+  }
+
+  // Carte commune aux spots et aux lieux : un seul endroit pour le style.
+  Widget _buildResultCard({
+    required Widget leading,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Material(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                leading,
+                const SizedBox(width: 15),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      if (subtitle.isNotEmpty) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          subtitle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.grey.shade600,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSpotTile(Map<String, dynamic> spot) {
+    final category = FeedbackCategory.fromString(spot['category']);
+    return _buildResultCard(
+      leading: Text(category.emoji, style: const TextStyle(fontSize: 24)),
+      title: spot['title'] ?? 'No title',
+      subtitle: spot['description'] ?? '',
+      onTap: () => _selectSpot(spot),
+    );
+  }
+
+  Widget _buildPlaceTile(PlaceResult place) {
+    return _buildResultCard(
+      leading: const Icon(Icons.place_outlined, size: 24),
+      title: place.name,
+      subtitle: place.subtitle,
+      onTap: () => _selectPlace(place),
+    );
+  }
+
+  Widget _buildResults() {
+    final hasQuery = _searchController.text.trim().length >= 2;
+    final hasResults = _databaseResults.isNotEmpty || _placeResults.isNotEmpty;
+
+    if (!hasQuery) return const SizedBox.shrink();
+
+    if (!hasResults) {
+      return Center(
+        child: _isLoading
+            ? const CircularProgressIndicator()
+            : const Text('No results ...'),
+      );
+    }
+
+    return ListView(
+      children: [
+        if (_databaseResults.isNotEmpty) ...[
+          _buildSectionTitle('SPOTS'),
+          ..._databaseResults.map(_buildSpotTile),
+        ],
+        if (_placeResults.isNotEmpty) ...[
+          _buildSectionTitle('PLACES'),
+          ..._placeResults.map(_buildPlaceTile),
+        ],
+      ],
+    );
   }
 
   @override
@@ -55,8 +231,6 @@ class _SearchScreenState extends State<SearchScreen> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -64,117 +238,26 @@ class _SearchScreenState extends State<SearchScreen> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.arrow_back_ios_new),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+                    onPressed: () => Navigator.pop(context),
                   ),
                   const SizedBox(width: 20),
                   Expanded(
                     child: TextField(
-                      controller: _searchController, // Important pour suivre le texte
+                      controller: _searchController,
                       autofocus: true,
-                      onChanged: (value) {
-                        if (value.length > 1) {
-                          _searchSpots(value);
-                        } else {
-                          _searchSpots(''); // Réinitialise si l'utilisateur efface tout
-                        }
-                      },
-                      decoration: InputDecoration(
-                        hintStyle: const TextStyle(color: Colors.grey),
+                      onChanged: _onQueryChanged,
+                      decoration: const InputDecoration(
+                        hintStyle: TextStyle(color: Colors.grey),
                         labelText: 'Search',
-                        hintText: 'Seoul restaurant, ...',
-                        border: const OutlineInputBorder(),
+                        hintText: 'Seoul, Lisbon, ...',
+                        border: OutlineInputBorder(),
                       ),
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 20),
-              Expanded(
-                child: _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : _searchController.text.trim().isEmpty
-                        ? const SizedBox.shrink() // Rien n'est affiché tant que l'utilisateur n'a rien tapé
-                        : _searchResults.isEmpty
-                            ? const Center(child: Text("No results ..."))
-                            : SingleChildScrollView(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: _searchResults.map((spot) {
-                                    final title = spot['title'] ?? 'No title';
-                                    final description = spot['description'] ?? '';
-                                    final categoryString = spot['category'];
-                                    final feedbackCategory = FeedbackCategory.fromString(categoryString);
-                                    
-                                    return Padding(
-                                      padding: EdgeInsetsGeometry.fromLTRB(0, 0, 0, 10),
-                                      child : Material(
-                                        color: Colors.white, 
-                                        borderRadius: BorderRadius.circular(12),
-                                        elevation: 0, 
-                                        child: InkWell(
-                                          onTap: () {
-                                            final spotId = spot['id'];
-                                            final lat = spot['lat'];
-                                            final lng = spot['lng'];
-
-                                            Navigator.pop(context, {
-                                              'id': spotId,
-                                              'lat': lat,
-                                              'lng': lng,
-                                            });
-                                          },
-                                          borderRadius: BorderRadius.circular(12),
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(color: Colors.grey.shade300),
-                                              borderRadius: BorderRadius.circular(12),
-                                            ),
-                                            child: Row(
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  feedbackCategory.emoji, 
-                                                  style: const TextStyle(fontSize: 24),
-                                                ),
-                                                const SizedBox(width: 15),
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text(
-                                                        title,
-                                                        style: const TextStyle(
-                                                          fontWeight: FontWeight.bold,
-                                                          fontSize: 16,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(height: 4),
-                                                      Text(
-                                                        description,
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow.ellipsis,
-                                                        style: TextStyle(
-                                                          color: Colors.grey.shade600,
-                                                          fontSize: 13,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-              )
+              Expanded(child: _buildResults()),
             ],
           ),
         ),
@@ -184,6 +267,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _searchController.dispose();
     super.dispose();
   }
