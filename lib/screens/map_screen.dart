@@ -38,6 +38,10 @@ class MapScreenState extends State<MapScreen> {
   double? _targetLng;
   double? _zoom;
 
+  double? _cameraLat;
+  double? _cameraLng;
+  double? _cameraZoom;
+
   bool get _isFiltered => _categoriesFiltered.isNotEmpty || _countriesFiltered.isNotEmpty;  
   Set<FeedbackCategory> _categoriesFiltered = {};
   Set<String> _countriesFiltered = {};
@@ -50,6 +54,14 @@ class MapScreenState extends State<MapScreen> {
   void initState() {
     super.initState();
     fetchSpotsData();
+  }
+
+  ({double lat, double lng, double zoom})? get currentCamera {
+    final lat = _cameraLat;
+    final lng = _cameraLng;
+    final zoom = _cameraZoom;
+    if (lat == null || lng == null || zoom == null) return null;
+    return (lat: lat, lng: lng, zoom: zoom);
   }
 
   Future<void> fetchSpotsData() async {
@@ -144,10 +156,18 @@ class MapScreenState extends State<MapScreen> {
             targetLat: _targetLat,
             targetLng: _targetLng,
             targetZoom : _zoom,
+            initialLat: 38.9,
+            initialLng: 2.11,
+            initialZoom: 3.5,
             onSpotSelected: (spotId) {
               setState(() {
                 _selectedSpotId = spotId;
               });
+            },
+            onCenterChanged: (lat, lng, zoom) {
+              _cameraLat = lat;
+              _cameraLng = lng;
+              _cameraZoom = zoom;
             },
             boundary: _boundary,
           ),

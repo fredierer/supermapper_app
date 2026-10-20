@@ -42,8 +42,15 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
 //  }
 
   Future<void> _navigateToAddSpotScreen() async {
+
+    final camera = _mapKey.currentState?.currentCamera;
+
     final added = await Navigator.of(context).push(
-      customSlidefromBottom(AddSpotScreen()),
+      customSlidefromBottom(AddSpotScreen(
+        initialLat: camera?.lat,
+        initialLng: camera?.lng, 
+        initialZoom: camera?.zoom,  
+      )),
     );
     if (added == true) {
       _mapKey.currentState?.fetchSpotsData();

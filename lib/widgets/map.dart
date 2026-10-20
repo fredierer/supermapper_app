@@ -16,8 +16,10 @@ class MapWidget extends StatefulWidget {
   final ValueChanged<int>? onSpotSelected; //Callback function used to display a menu when a spot is selected from the map
   final double? initialLat; //Parameter used to set an initial value of Latitude, so the map can center on something
   final double? initialLng; //Parameter used to set an initial value of Longitude, so the map can center on something
-  final void Function(double lat, double lng)? onCenterChanged; //Callback function to give the position of the center of the map when it moved
+  final double? initialZoom;
+  final void Function(double lat, double lng, double zoom,)? onCenterChanged; //Callback function to give the position of the center of the map when it moved
   final List<BoundaryResult> boundary; //List of set of points used to display th eboundaries of a place
+
 
   const MapWidget({
     super.key,
@@ -28,6 +30,7 @@ class MapWidget extends StatefulWidget {
     this.onSpotSelected,
     this.initialLat,
     this.initialLng,
+    this.initialZoom,
     this.onCenterChanged,
     this.boundary = const [],
   });
@@ -67,8 +70,8 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
 }
 
   void _reportCenter() {
-    final center = _mapController.camera.center;
-    widget.onCenterChanged?.call(center.latitude, center.longitude);
+    final camera = _mapController.camera;
+    widget.onCenterChanged?.call(camera.center.latitude, camera.center.longitude, camera.zoom,);
   }
 
   @override
@@ -128,10 +131,14 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
       mapController: _mapController,
       options: MapOptions(
         initialCenter: LatLng(widget.initialLat ?? 0, widget.initialLng ?? 0),
-        initialZoom: widget.initialLat != null ? 14 : 3,
+        initialZoom: widget.initialZoom ?? 4.0,
         onMapReady: _reportCenter,
         onPositionChanged: (camera, hasGesture) {
-           _reportCenter();
+          _reportCenter();
+          //print('Zoom: ${camera.zoom.toStringAsFixed(2)}');
+          //print('Lat: ${camera.center.latitude}');
+          //print('Lng: ${camera.center.longitude}');
+
         },
         maxZoom: 100,
         minZoom: 3,

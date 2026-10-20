@@ -9,13 +9,14 @@ class AddSpotStepMap extends StatefulWidget {
     super.key,
     required this.initialLatitude,
     required this.initialLongitude,
+    required this.initialZoom,
     required this.onLocationChanged,
   });
 
-
   final double? initialLatitude;
   final double? initialLongitude;
-  final void Function(double lat, double lng) onLocationChanged;
+  final double? initialZoom;
+  final void Function(double lat, double lng, double zoom) onLocationChanged;
 
   @override
   State<AddSpotStepMap> createState() => _AddSpotStepMapState();
@@ -138,6 +139,7 @@ class _AddSpotStepMapState extends State<AddSpotStepMap> {
           child: MapWidget(
             initialLat: widget.initialLatitude,
             initialLng: widget.initialLongitude,
+            initialZoom: widget.initialZoom,
             onCenterChanged: widget.onLocationChanged,
             targetLat: _targetLat,
             targetLng: _targetLng,

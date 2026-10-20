@@ -7,7 +7,16 @@ import 'package:supermapper_app/services/spots_service.dart';
 import 'package:supermapper_app/theme.dart';
 
 class AddSpotScreen extends StatefulWidget {
-  const AddSpotScreen({super.key});
+  const AddSpotScreen({
+    super.key,
+    this.initialLat,
+    this.initialLng,
+    this.initialZoom,
+  });
+
+  final double? initialLat;
+  final double? initialLng;
+  final double? initialZoom;
 
   @override
   State<AddSpotScreen> createState() => _AddSpotScreenState();
@@ -21,6 +30,7 @@ class _AddSpotScreenState extends State<AddSpotScreen> {
   FeedbackCategory? _categorySelected;
   double? _latitude;
   double? _longitude;
+  double? _zoom;
 
   final _spotService = SpotService();
 
@@ -65,7 +75,7 @@ class _AddSpotScreenState extends State<AddSpotScreen> {
     }
   }
 
-  void _onLocationChanged(double lat, double lng) {
+  void _onLocationChanged(double lat, double lng, double zoom,) {
     _latitude = lat;
     _longitude = lng;
   }
@@ -94,6 +104,13 @@ class _AddSpotScreenState extends State<AddSpotScreen> {
       
       );
     }
+  }
+  @override
+  void initState() {
+    super.initState();
+    _latitude = widget.initialLat;
+    _longitude = widget.initialLng;
+    _zoom = widget.initialZoom;
   }
 
   @override
@@ -163,6 +180,7 @@ class _AddSpotScreenState extends State<AddSpotScreen> {
                 onLocationChanged: _onLocationChanged,
                 initialLatitude: _latitude,
                 initialLongitude: _longitude,
+                initialZoom: _zoom,
               ),
           1 => AddSpotStepDetails(
                 titleController: _titleController,
