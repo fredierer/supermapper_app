@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:supermapper_app/services/places_service.dart';
 import 'package:supermapper_app/widgets/map.dart';
 import 'dart:async';
+
+import 'package:supermapper_app/widgets/userPositionButton.dart';
 
 
 class AddSpotStepMap extends StatefulWidget {
@@ -34,7 +37,8 @@ class _AddSpotStepMapState extends State<AddSpotStepMap> {
 
   double? _targetLat;
   double? _targetLng;
-
+  
+  
   void _onQueryChanged(String query) {
     _debounce?.cancel();
 
@@ -143,6 +147,7 @@ class _AddSpotStepMapState extends State<AddSpotStepMap> {
             onCenterChanged: widget.onLocationChanged,
             targetLat: _targetLat,
             targetLng: _targetLng,
+            bottomAttributionPadding: 50,
           ),
         ),
         Center(
@@ -228,11 +233,24 @@ class _AddSpotStepMapState extends State<AddSpotStepMap> {
                         }).toList(),
                       ),
                     ),
+                
               ],
             ) 
             
           )
-        )
+        ),
+        Positioned(
+          bottom: 80,
+          right: 20,
+          child: UserPositionButton(
+            onPositionFetched: (lat, lng, zoom) {
+              setState(() {
+                _targetLat = lat;
+                _targetLng = lng;
+              });              
+            },
+          ),
+        ),
       ],
     );
   }

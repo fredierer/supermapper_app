@@ -19,7 +19,7 @@ class MapWidget extends StatefulWidget {
   final double? initialZoom;
   final void Function(double lat, double lng, double zoom,)? onCenterChanged; //Callback function to give the position of the center of the map when it moved
   final List<BoundaryResult> boundary; //List of set of points used to display th eboundaries of a place
-
+  final double? bottomAttributionPadding;
 
   const MapWidget({
     super.key,
@@ -33,6 +33,7 @@ class MapWidget extends StatefulWidget {
     this.initialZoom,
     this.onCenterChanged,
     this.boundary = const [],
+    this.bottomAttributionPadding,
   });
 
   @override
@@ -52,24 +53,25 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
     _initLocation();
   }
 
-  Future<void> _initLocation() async {
-  if (!await Geolocator.isLocationServiceEnabled()) return;
-
-  var permission = await Geolocator.checkPermission();
-  if (permission == LocationPermission.denied) {
-    permission = await Geolocator.requestPermission();
-  }
-
-  final granted = permission == LocationPermission.whileInUse ||
-      permission == LocationPermission.always;
-
-  if (!mounted) return;
-  setState(() => _locationGranted = granted);
-}
-
+  
   void _reportCenter() {
     final camera = _mapController.camera;
     widget.onCenterChanged?.call(camera.center.latitude, camera.center.longitude, camera.zoom,);
+  }
+
+  Future<void> _initLocation() async {
+    if (!await Geolocator.isLocationServiceEnabled()) return;
+
+    var permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    final granted = permission == LocationPermission.whileInUse ||
+        permission == LocationPermission.always;
+
+    if (!mounted) return;
+    setState(() => _locationGranted = granted);
   }
 
   @override
@@ -194,7 +196,7 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
         Align(
           alignment: Alignment.bottomRight,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 10, 110),
+            padding: EdgeInsets.fromLTRB(10, 0, 10, widget.bottomAttributionPadding ?? 50),
             child: GestureDetector(
               onTap: () async {
                 final Uri url = Uri.parse('https://carto.com/attributions');

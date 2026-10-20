@@ -12,6 +12,7 @@ import 'package:supermapper_app/widgets/spotInfo.dart';
 import 'dart:ui';
 
 import 'package:supermapper_app/widgets/toolNavButton.dart';
+import 'package:supermapper_app/widgets/userPositionButton.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -181,6 +182,7 @@ class MapScreenState extends State<MapScreen> {
               _cameraZoom = zoom;
             },
             boundary: _boundary,
+            bottomAttributionPadding: 110,
           ),
           SafeArea(
             child: Padding(
@@ -288,6 +290,19 @@ class MapScreenState extends State<MapScreen> {
               ),
             ),
           ),
+
+          Positioned(
+          bottom: 120,
+          right: 20,
+          child: UserPositionButton(
+            onPositionFetched: (lat, lng, zoom) {
+              setState(() {
+                _targetLat = lat;
+                _targetLng = lng;
+              });
+            },
+          ),
+        ),
 
           if (_selectedSpotId != null)
             Positioned.fill(
