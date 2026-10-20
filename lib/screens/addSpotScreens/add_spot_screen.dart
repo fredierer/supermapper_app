@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supermapper_app/configuration/feedback_category.dart';
 import 'package:supermapper_app/screens/addSpotScreens/add_spot_stepDetails.dart';
+import 'package:supermapper_app/screens/addSpotScreens/add_spot_stepLocation.dart';
 import 'package:supermapper_app/screens/addSpotScreens/add_spot_stepMap.dart';
 import 'package:supermapper_app/services/spots_service.dart';
 import 'package:supermapper_app/theme.dart';
@@ -25,8 +26,8 @@ class _AddSpotScreenState extends State<AddSpotScreen> {
 
   bool _isSaving = false;
 
-  static const _titles = ['Choose location', 'Spot details'];
-  static const _subtitles = ['Pan and zoom to place the pin', 'Specify details about your spot'];
+  static const _titles = ['Choose location', 'Spot details', 'Spot Location'];
+  static const _subtitles = ['Pan and zoom to place the pin', 'Specify details about your spot', 'Subtitle'];
 
   bool get _isDetailsValid =>
       _titleController.text.trim().isNotEmpty &&
@@ -105,74 +106,75 @@ class _AddSpotScreenState extends State<AddSpotScreen> {
         if (!didPop) _back();
       },
       child: Scaffold(
-        body: Column(
-          children: [
-            //Header
-            Container(
-              color: AppColors.surfaceLight,
-              child: SafeArea(
-                bottom : false,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        onPressed: _back,
-                        icon: const Icon(Icons.arrow_back_ios_new_outlined, size: 24),
-                      ),
-                      Column(
-                        children : [
-                          Text(
-                            _titles[_step],
-                            style: const TextStyle(color: Colors.black, fontSize: 18),
-                          ),
-                          Text(
-                            _subtitles[_step],
-                            style: const TextStyle(color: Colors.grey, fontSize: 14),
-                          ),
-                        ]
-                      ),
-                      ElevatedButton(
-                        onPressed: _next,
-                        style: ElevatedButton.styleFrom(minimumSize: const Size(90, 40)),
-                        child: _isSaving
-                            ? const SizedBox(
-                                width: 18,
-                                height: 18,
-                                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white,),
-                              )
-                            : Text(_step == _titles.length - 1 ? 'Save' : 'Next'),
-                      ),
-                    ],
-                  ),
-                ),
+        appBar: AppBar(
+          backgroundColor: AppColors.surfaceLight,
+          surfaceTintColor: Colors.transparent,
+          elevation: 4,
+          scrolledUnderElevation: 4,
+          shadowColor: Colors.black54,
+          toolbarHeight: 76,
+          automaticallyImplyLeading: false,
+          leadingWidth: 68,
+          leading: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 5, 0, 5),
+            child: IconButton(
+              onPressed: _back,
+              style: IconButton.styleFrom(
+                shape: CircleBorder(),
               ),
+              icon: const Icon(Icons.arrow_back_ios_new_outlined, size: 24),
             ),
-            
-            //Body
-            Expanded(
-              child: switch (_step) {
-                0 => AddSpotStepMap(
-                  onLocationChanged: _onLocationChanged,
-                  initialLatitude: _latitude,
-                  initialLongitude: _longitude,
-                ),
-                1 => AddSpotStepDetails(
-                  titleController: _titleController,
-                  descriptionController: _descriptionController,
-                  category: _categorySelected,
-                  onCategoryChanged: (value) {
-                    setState(() {
-                      _categorySelected = value;
-                    });
-                  },
-                ),
-                _ => const SizedBox.shrink(),
-              },
+          ),
+          centerTitle: true,
+          title: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                _titles[_step],
+                style: const TextStyle(color: Colors.black, fontSize: 18),
+              ),
+              Text(
+                _subtitles[_step],
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(color: Colors.grey, fontSize: 14),
+              ),
+            ],
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: ElevatedButton(
+                onPressed: _next,
+                style: ElevatedButton.styleFrom(minimumSize: const Size(90, 40)),
+                child: _isSaving
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      )
+                    : Text(_step == _titles.length - 1 ? 'Save' : 'Next'),
+              ),
             ),
           ],
         ),
+        body: switch (_step) {
+          0 => AddSpotStepMap(
+                onLocationChanged: _onLocationChanged,
+                initialLatitude: _latitude,
+                initialLongitude: _longitude,
+              ),
+          1 => AddSpotStepDetails(
+                titleController: _titleController,
+                descriptionController: _descriptionController,
+                category: _categorySelected,
+                onCategoryChanged: (value) {
+                  setState(() => _categorySelected = value);
+                },
+              ),
+          2 => AddSpotStepLocation(),
+          _ => const SizedBox.shrink(),
+        },
       ),
     );
   }

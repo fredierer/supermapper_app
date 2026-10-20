@@ -53,7 +53,7 @@ class PlaceResult {
 
 class PlaceService {
 
-  Future<List<PlaceResult>> search(String query) async {
+  Future<List<PlaceResult>> search(String query, {int maxResults = 10}) async {
 
     final text = query.trim();
     
@@ -78,6 +78,7 @@ class PlaceService {
     return (data['features'] as List)
       .map((f) => PlaceResult.fromFeature(f as Map<String, dynamic>))
       .where((p) => _placeTypes.contains(p.type) && p.name.isNotEmpty)
+      .take(maxResults)
       .toList();
   }
 }
