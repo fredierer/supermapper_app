@@ -303,6 +303,7 @@ class _FilterScreenState extends State<FilterScreen> {
         scrolledUnderElevation: 0, 
         surfaceTintColor: Colors.transparent,
         elevation: 0,
+        toolbarHeight: 80.0,
         leadingWidth: 80,
         leading: Padding(
           padding: EdgeInsetsGeometry.fromLTRB(20,0,0,0),
@@ -321,6 +322,38 @@ class _FilterScreenState extends State<FilterScreen> {
             fontSize: 28,
           ),
         ),
+        actions: [
+          ElevatedButton.icon(
+            icon: Icon(Icons.cleaning_services_outlined),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white, // Fond blanc quand actif
+              foregroundColor: Colors.red,   // Couleur du texte et de l'icône quand actif
+              elevation: 0,                  // Supprime l'ombre (optionnel, pour un look plus plat)
+              side: BorderSide(
+                color: (selectedCategories.isNotEmpty || selectedRegions.isNotEmpty)
+                  ? Colors.red        // Couleur si des filtres sont actifs
+                  : Colors.grey.shade300, // Couleur si aucun filtre n'est actif (grisé)
+              width: 1,
+              ), // Contour rouge
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12), // Cohérent avec vos autres bordures
+              ),
+              // Optionnel : personnaliser l'aspect grisé quand il est désactivé (quand onPressed est null)
+              disabledBackgroundColor: Colors.grey.shade100,
+              disabledForegroundColor: Colors.grey.shade400,
+            ),
+            onPressed: (selectedCategories.isNotEmpty || selectedRegions.isNotEmpty) 
+              ? () {
+                setState(() {
+                  selectedCategories.clear();
+                  selectedRegions.clear();
+                });
+              } 
+              : null, 
+            label: Text("Clear all filters"), 
+          )
+        ],
+        actionsPadding: EdgeInsets.fromLTRB(0, 10, 15, 10),
       ),
       
       body: SafeArea(
@@ -335,7 +368,7 @@ class _FilterScreenState extends State<FilterScreen> {
               Container(
                 width: double.infinity,
                 color: AppColors.surfaceLight,   
-                padding: const EdgeInsets.fromLTRB(0, 30, 0, 10),
+                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                 child: const Text(
                   "CATEGORIES",
                   style: TextStyle(
@@ -461,21 +494,23 @@ class _FilterScreenState extends State<FilterScreen> {
           )
         ),
         bottomNavigationBar: BottomAppBar(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           color: AppColors.surfaceLight,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              ElevatedButton(
-                onPressed: _hasChanges
-                  ? () => Navigator.pop(context, (categories: selectedCategories, countries : selectedRegions))
-                  : null,
-                child: SizedBox(
-                  width: 150,
-                  height : 40,
-                  child:Center(child: Text("Apply Filters")),
-                ),
-              ),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: _hasChanges
+                    ? () => Navigator.pop(context, (categories: selectedCategories, countries : selectedRegions))
+                    : null,
+                  child: SizedBox(
+                    child:Center(child: Text("Apply Changes")),
+                  ),
+                ),  
+              )
+              
 
 
             ],
