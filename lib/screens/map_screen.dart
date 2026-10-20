@@ -3,6 +3,7 @@ import 'package:supermapper_app/configuration/feedback_category.dart';
 import 'package:supermapper_app/screens/filter_screen.dart';
 import 'package:supermapper_app/screens/search_screen.dart';
 import 'package:supermapper_app/services/places_service.dart';
+import 'package:supermapper_app/theme.dart';
 import 'package:supermapper_app/widgets/map.dart';
 import 'package:supermapper_app/transitions/customSlideTransition.dart';
 import 'package:supermapper_app/services/spots_service.dart';
@@ -48,7 +49,10 @@ class MapScreenState extends State<MapScreen> {
 
   final _placeService = PlaceService();
   List<BoundaryResult> _boundary = [];
+  bool _boundariesDisplay = false;
   int _boundaryRequestId = 0;
+  String? _placeTitle;
+  String? _placeSubtitles;
 
   @override
   void initState() {
@@ -109,7 +113,12 @@ class MapScreenState extends State<MapScreen> {
     }
 
     setState(() => _boundary = []);         
-    if (place != null) _loadBoundary(place);  
+    if (place != null) {
+      _boundariesDisplay = true;
+      _loadBoundary(place);
+      _placeTitle = place.name;
+      _placeSubtitles = place.subtitle;
+    }   
 
   }
 
@@ -139,7 +148,9 @@ class MapScreenState extends State<MapScreen> {
   final requestId = ++_boundaryRequestId;
   try {
     final shapes = await _placeService.fetchBoundary(place);
+
     if (!mounted || requestId != _boundaryRequestId) return;
+
     setState(() => _boundary = shapes);
   } catch (e) {
     debugPrint('Boundary error: $e');
@@ -184,6 +195,84 @@ class MapScreenState extends State<MapScreen> {
                         icon: Icons.search,
                         onPressed: _navigateToSearchScreen,
                       ),
+
+                      SizedBox(width: 20,),
+                      
+                      if(_boundariesDisplay)
+                        Expanded(
+                          child: Container(
+                            height: 70.0, // Hauteur fixe
+                            decoration: BoxDecoration(
+                              color: AppColors.surfaceLight.withAlpha(180), // Couleur de background
+                              borderRadius: BorderRadius.circular(12.0), // Coins arrondis
+                              border: Border.all(
+                                color: AppColors.amber, // Couleur du contour
+                                width: 2.0,              // Épaisseur du contour
+                              ),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsetsGeometry.all(10),
+                              child : Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    height: 36.0,
+                                    width: 36.0,
+                                    child: Icon(Icons.place_outlined, size: 32.0, color: Colors.black,),
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        _placeTitle ?? '',
+                                        style: TextStyle(
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.bold, // Titre principal
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      if (_placeSubtitles != null && _placeSubtitles!.isNotEmpty) ...[
+                                        const SizedBox(height: 2.0),
+                                        Text(
+                                          _placeSubtitles ?? '',
+                                          style: TextStyle(
+                                            fontSize: 12.0,
+                                            fontWeight: FontWeight.normal, // Sous-titre
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ]
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 36.0,
+                                    width: 36.0,
+                                    child: IconButton(
+                                      padding: EdgeInsets.zero,
+                                      constraints: const BoxConstraints(),
+                                      icon : Icon(Icons.close_outlined, 
+                                        size: 24.0, 
+                                        color: Colors.grey,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _boundary = [];
+                                          _boundariesDisplay = false;
+                                          _targetLat = null;
+                                          _targetLng = null;
+                                        });
+                                      } 
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      
+                      SizedBox(width: 20,),
+                      
                       Badge(
                         isLabelVisible: _isFiltered,
                         alignment: AlignmentDirectional.topStart,

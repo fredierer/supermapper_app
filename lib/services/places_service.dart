@@ -116,8 +116,12 @@ class PlaceService {
     
     final key = '${place.osmType}$id'; //Give key to this osmId
 
+    print("CACHE : ");
+    print(_boundaryCache);
+
     final cached = _boundaryCache[key]; // verify if this osmId is already in cache
     if (cached != null) {
+      print("On retourne le cache");
       return cached; //if already in cache, we return the cached boundaries
     } 
 
@@ -136,12 +140,14 @@ class PlaceService {
     }
 
     final data = jsonDecode(response.body) as List;
+    print(data);
     if (data.isEmpty) return [];
 
     final geometry = (data.first as Map<String, dynamic>)['geojson'] as Map<String, dynamic>?; //get geormetry
     final shapes = geometry == null ? <BoundaryResult>[] : _parseGeometry(geometry);
 
     _boundaryCache[key] = shapes; //store shapes in cache
+
     return shapes;
 
   }

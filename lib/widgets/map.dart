@@ -46,8 +46,6 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
 
   bool _locationGranted = false;
 
-  
-
   @override
   void initState() {
     super.initState();
@@ -126,6 +124,7 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
 
     final boundaryColor = AppColors.orange;
+    
 
     return FlutterMap( 
       mapController: _mapController,
@@ -151,7 +150,7 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
           urlTemplate: 'https://basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png?key=cb1_301t_1_f5198b589013a43fe135d463',
           userAgentPackageName: 'app.supermapper.app',
         ),
-        if (widget.boundary.isNotEmpty)
+        if (widget.boundary.isNotEmpty) ...[
           PolygonLayer(
             polygons: widget.boundary
                 .map((shape) => Polygon(
@@ -163,7 +162,23 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
                     ))
                 .toList(),
           ),
-
+          if(widget.targetLat != null && widget.targetLng != null)
+            MarkerLayer(
+              markers: [
+                Marker(
+                  point: LatLng(widget.targetLat!, widget.targetLng!),
+                  width: 40.0,
+                  height: 40.0,
+                  child: const Icon(
+                    Icons.location_pin,
+                    color: AppColors.amber,
+                    size: 40.0,
+                  ),
+                ),
+              ],
+            ),
+        ],
+          
         if (_locationGranted) const CurrentLocationLayer(),
         
         MarkerLayer(
