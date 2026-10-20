@@ -89,7 +89,10 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
       extendBody: true,
       body: Stack(
         children: [
-          _screens[_currentIndex],
+          IndexedStack(
+            index: _currentIndex,
+            children: _screens, // Conserve tous les écrans en mémoire
+          ),
           SafeArea(
             child: IgnorePointer(
               ignoring: !_addMenuOpen,
