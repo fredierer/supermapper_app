@@ -42,7 +42,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Future<List<PlaceResult>> _searchPlacesFromService(String query) async {
     try {
       return await _placeService
-        .search(query)
+        .searchPlaces(query)
         .timeout(const Duration(seconds: 5));
     } catch (e) {
       debugPrint('Place search error: $e');
@@ -50,7 +50,6 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
-  // Lance les deux recherches en parallèle.
   Future<void> _runSearch(String query) async {
     final requestId = ++_requestId;
 
@@ -102,6 +101,7 @@ class _SearchScreenState extends State<SearchScreen> {
       'lat': place.lat,
       'lng': place.lng,
       'zoom': place.zoom,
+      'place' : place,
     });
   }
 
@@ -119,7 +119,6 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  // Carte commune aux spots et aux lieux : un seul endroit pour le style.
   Widget _buildResultCard({
     required Widget leading,
     required String title,

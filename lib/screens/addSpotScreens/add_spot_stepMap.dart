@@ -54,7 +54,7 @@ class _AddSpotStepMapState extends State<AddSpotStepMap> {
     setState(() => _isLoading = true);
     try {
       final places = await _placeService
-          .search(query, maxResults: 3)
+          .searchPlaces(query, maxResults: 3)
           .timeout(const Duration(seconds: 15));
 
       if (!mounted || requestId != _requestId) return;

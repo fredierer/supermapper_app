@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:supermapper_app/services/places_service.dart';
+import 'package:supermapper_app/theme.dart';
 import 'package:supermapper_app/widgets/spot.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
@@ -15,6 +17,7 @@ class MapWidget extends StatefulWidget {
   final double? initialLat; //Parameter used to set an initial value of Latitude, so the map can center on something
   final double? initialLng; //Parameter used to set an initial value of Longitude, so the map can center on something
   final void Function(double lat, double lng)? onCenterChanged; //Callback function to give the position of the center of the map when it moved
+  final List<BoundaryResult> boundary; //List of set of points used to display th eboundaries of a place
 
   const MapWidget({
     super.key,
@@ -26,6 +29,7 @@ class MapWidget extends StatefulWidget {
     this.initialLat,
     this.initialLng,
     this.onCenterChanged,
+    this.boundary = const [],
   });
 
   @override
@@ -38,6 +42,8 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
   final MapController _mapController = MapController(); 
 
   bool _locationGranted = false;
+
+  
 
   @override
   void initState() {
@@ -115,13 +121,18 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+
+    final boundaryColor = AppColors.orange;
+
     return FlutterMap( 
       mapController: _mapController,
       options: MapOptions(
         initialCenter: LatLng(widget.initialLat ?? 0, widget.initialLng ?? 0),
         initialZoom: widget.initialLat != null ? 14 : 3,
         onMapReady: _reportCenter,
-        onPositionChanged: (camera, hasGesture) => _reportCenter(),
+        onPositionChanged: (camera, hasGesture) {
+           _reportCenter();
+        },
         maxZoom: 100,
         minZoom: 3,
         interactionOptions: const InteractionOptions(
@@ -133,6 +144,18 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
           urlTemplate: 'https://basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png?key=cb1_301t_1_f5198b589013a43fe135d463',
           userAgentPackageName: 'app.supermapper.app',
         ),
+        if (widget.boundary.isNotEmpty)
+          PolygonLayer(
+            polygons: widget.boundary
+                .map((shape) => Polygon(
+                      points: shape.outer,
+                      holePointsList: shape.holes,
+                      color: boundaryColor.withAlpha(40), 
+                      borderColor: boundaryColor,
+                      borderStrokeWidth: 2,
+                    ))
+                .toList(),
+          ),
 
         if (_locationGranted) const CurrentLocationLayer(),
         

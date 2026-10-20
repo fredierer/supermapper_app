@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supermapper_app/configuration/feedback_category.dart';
 import 'package:supermapper_app/screens/filter_screen.dart';
 import 'package:supermapper_app/screens/search_screen.dart';
+import 'package:supermapper_app/services/places_service.dart';
 import 'package:supermapper_app/widgets/map.dart';
 import 'package:supermapper_app/transitions/customSlideTransition.dart';
 import 'package:supermapper_app/services/spots_service.dart';
@@ -41,6 +42,10 @@ class MapScreenState extends State<MapScreen> {
   Set<FeedbackCategory> _categoriesFiltered = {};
   Set<String> _countriesFiltered = {};
 
+  final _placeService = PlaceService();
+  List<BoundaryResult> _boundary = [];
+  int _boundaryRequestId = 0;
+
   @override
   void initState() {
     super.initState();
@@ -73,6 +78,7 @@ class MapScreenState extends State<MapScreen> {
     final lat = result['lat'] as double?;
     final lng = result['lng'] as double?;
     final zoom = result['zoom'] as double?;
+    final place = result['place'] as PlaceResult?;
 
     //set Target lat and lng to move the map
     if (lat != null && lng != null) {
@@ -88,7 +94,11 @@ class MapScreenState extends State<MapScreen> {
           _selectedSpotId = spotId; //set selectedSpot to display spot Info Popup
         });
       }  
-    }    
+    }
+
+    setState(() => _boundary = []);         
+    if (place != null) _loadBoundary(place);  
+
   }
 
   Future<void> _navigateToFilterScreen() async {
@@ -113,6 +123,16 @@ class MapScreenState extends State<MapScreen> {
     });
   }
 
+  Future<void> _loadBoundary(PlaceResult place) async {
+  final requestId = ++_boundaryRequestId;
+  try {
+    final shapes = await _placeService.fetchBoundary(place);
+    if (!mounted || requestId != _boundaryRequestId) return;
+    setState(() => _boundary = shapes);
+  } catch (e) {
+    debugPrint('Boundary error: $e');
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -129,6 +149,7 @@ class MapScreenState extends State<MapScreen> {
                 _selectedSpotId = spotId;
               });
             },
+            boundary: _boundary,
           ),
           SafeArea(
             child: Padding(

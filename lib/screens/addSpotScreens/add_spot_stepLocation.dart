@@ -26,7 +26,7 @@ class _AddSpotStepLocationState extends State<AddSpotStepLocation> {
   Future<List<PlaceResult>> _searchPlacesFromService(String query) async {
     try {
       return await _placeService
-        .search(query)
+        .searchPlaces(query)
         .timeout(const Duration(seconds: 15));
     } catch (e) {
       debugPrint('Place search error: $e');
