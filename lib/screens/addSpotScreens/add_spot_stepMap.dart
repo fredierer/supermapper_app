@@ -218,9 +218,6 @@ class _AddSpotStepMapState extends State<AddSpotStepMap> {
                                 _targetLat = place.lat;
                                 _targetLng = place.lng;
 
-                                print(place.lat);
-                                print(place.lng);
-
                                 //Clear search bar
                                 _searchController.clear();
                                 _placesSearched.clear();

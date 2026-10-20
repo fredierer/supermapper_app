@@ -116,12 +116,8 @@ class PlaceService {
     
     final key = '${place.osmType}$id'; //Give key to this osmId
 
-    print("CACHE : ");
-    print(_boundaryCache);
-
     final cached = _boundaryCache[key]; // verify if this osmId is already in cache
     if (cached != null) {
-      print("On retourne le cache");
       return cached; //if already in cache, we return the cached boundaries
     } 
 

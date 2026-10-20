@@ -38,7 +38,7 @@ class SpotService {
       });
 
     } catch(e) {
-      print('Error while adding a spot : $e');
+      debugPrint('Error while adding a spot : $e');
       rethrow;
     }
 

@@ -290,7 +290,6 @@ class MapScreenState extends State<MapScreen> {
               ),
             ),
           ),
-
           Positioned(
           bottom: 120,
           right: 20,
@@ -328,19 +327,20 @@ class MapScreenState extends State<MapScreen> {
                 ),
 
                 Center(
-                  child: SingleChildScrollView(
-                    child: SpotInfo(
-                      spotId: _selectedSpotId!,
-                      onClose: () {
-                        setState(() {
-                          _selectedSpotId = null;
-                          _targetLat = null;
-                          _targetLng = null;
-                        });
-                      },
-                    ),
+                  child: SpotInfo(
+                    spotId: _selectedSpotId!,
+                    onClose: () {
+                      setState(() {
+                        _selectedSpotId = null;
+                        _targetLat = null;
+                        _targetLng = null;
+                      });
+                    },
                   ),
-                ),
+              ),
+                
+                
+                
               ],
             ),
           ),
