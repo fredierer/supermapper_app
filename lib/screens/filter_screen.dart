@@ -435,6 +435,7 @@ class _FilterScreenState extends State<FilterScreen> {
                   itemCount: regions.length,
                   itemBuilder: (context, index) {
                     final region = regions[index];
+                    final hasSelectedCountry = region.countries?.any((country) => selectedRegions.contains(country.code)) ?? false;
                     return Column(
                       children: [
                         Padding(
@@ -443,7 +444,10 @@ class _FilterScreenState extends State<FilterScreen> {
                             title: Text(region.name),
                             trailing: region.isContinent ? Icon(region.isExpanded ? Icons.expand_less : Icons.expand_more,) : null,
                             shape: RoundedRectangleBorder(
-                              side: BorderSide(color: Colors.grey.shade300, width: 1),
+                              side: BorderSide(  
+                                color: hasSelectedCountry ? AppColors.amber : Colors.grey.shade300, 
+                                width: 2,
+                              ),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             onTap: () {
@@ -460,13 +464,18 @@ class _FilterScreenState extends State<FilterScreen> {
                             return Padding(
                               padding: const EdgeInsets.fromLTRB(20,0,0,5),
                               child: ListTile(
+                                contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                                 leading: Text(
                                   countryCodeToEmoji(country.code),
                                   style: const TextStyle(fontSize: 22), // Ajuste la taille de l'emoji
                                 ),
                                 title: Text(country.name),
                                 shape: RoundedRectangleBorder(
-                                  side: BorderSide(color: Colors.grey.shade300, width: 1),
+                                  side: BorderSide(
+                                    color: isSelected ? AppColors.amber : Colors.grey.shade300, 
+                                    width: 2,
+                                    strokeAlign: BorderSide.strokeAlignInside,
+                                  ),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 trailing: Checkbox(
