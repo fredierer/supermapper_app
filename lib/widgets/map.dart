@@ -194,7 +194,7 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
         ),
 
         Align(
-          alignment: Alignment.bottomRight,
+          alignment: Alignment.bottomLeft,
           child: Padding(
             padding: EdgeInsets.fromLTRB(10, 0, 10, widget.bottomAttributionPadding ?? 50),
             child: GestureDetector(

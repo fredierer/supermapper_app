@@ -237,7 +237,7 @@ class _AddSpotStepMapState extends State<AddSpotStepMap> {
           )
         ),
         Positioned(
-          bottom: 80,
+          bottom: 50,
           right: 20,
           child: UserPositionButton(
             onPositionFetched: (lat, lng, zoom) {
