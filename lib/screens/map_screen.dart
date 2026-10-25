@@ -186,105 +186,108 @@ class MapScreenState extends State<MapScreen> {
           ),
           SafeArea(
             child: Padding(
-              padding: EdgeInsetsGeometry.symmetric(horizontal: 20, vertical: 10),
+              padding: EdgeInsetsGeometry.fromLTRB(20, 0, 20, 10),
               child : Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ToolNavButton(
-                        icon: Icons.search,
-                        onPressed: _navigateToSearchScreen,
-                      ),
+                  SizedBox(
+                    height: 70,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ToolNavButton(
+                          icon: Icons.search,
+                          onPressed: _navigateToSearchScreen,
+                        ),
 
-                      SizedBox(width: 20,),
-                      
-                      if(_boundariesDisplay)
-                        Expanded(
-                          child: Container(
-                            height: 70.0, // Hauteur fixe
-                            decoration: BoxDecoration(
-                              color: AppColors.surfaceLight.withAlpha(180), // Couleur de background
-                              borderRadius: BorderRadius.circular(12.0), // Coins arrondis
-                              border: Border.all(
-                                color: AppColors.amber, // Couleur du contour
-                                width: 2.0,              // Épaisseur du contour
+                        SizedBox(width: 20,),
+                        
+                        if(_boundariesDisplay)
+                          Expanded(
+                            child: Container(
+                              height: 70.0, // Hauteur fixe
+                              decoration: BoxDecoration(
+                                color: AppColors.surfaceLight.withAlpha(180), // Couleur de background
+                                borderRadius: BorderRadius.circular(12.0), // Coins arrondis
+                                border: Border.all(
+                                  color: AppColors.amber, // Couleur du contour
+                                  width: 2.0,              // Épaisseur du contour
+                                ),
                               ),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsetsGeometry.all(10),
-                              child : Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    height: 36.0,
-                                    width: 36.0,
-                                    child: Icon(Icons.place_outlined, size: 32.0, color: Colors.black,),
-                                  ),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        _placeTitle ?? '',
-                                        style: TextStyle(
-                                          fontSize: 18.0,
-                                          fontWeight: FontWeight.bold, // Titre principal
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                      if (_placeSubtitles != null && _placeSubtitles!.isNotEmpty) ...[
-                                        const SizedBox(height: 2.0),
+                              child: Padding(
+                                padding: EdgeInsetsGeometry.all(10),
+                                child : Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      height: 36.0,
+                                      width: 36.0,
+                                      child: Icon(Icons.place_outlined, size: 32.0, color: Colors.black,),
+                                    ),
+                                    Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
                                         Text(
-                                          _placeSubtitles ?? '',
+                                          _placeTitle ?? '',
                                           style: TextStyle(
-                                            fontSize: 12.0,
-                                            fontWeight: FontWeight.normal, // Sous-titre
-                                            color: Colors.grey,
+                                            fontSize: 18.0,
+                                            fontWeight: FontWeight.bold, // Titre principal
+                                            color: Colors.black87,
                                           ),
                                         ),
-                                      ]
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 36.0,
-                                    width: 36.0,
-                                    child: IconButton(
-                                      padding: EdgeInsets.zero,
-                                      constraints: const BoxConstraints(),
-                                      icon : Icon(Icons.close_outlined, 
-                                        size: 24.0, 
-                                        color: Colors.grey,
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          _boundary = [];
-                                          _boundariesDisplay = false;
-                                          _targetLat = null;
-                                          _targetLng = null;
-                                        });
-                                      } 
+                                        if (_placeSubtitles != null && _placeSubtitles!.isNotEmpty) ...[
+                                          const SizedBox(height: 2.0),
+                                          Text(
+                                            _placeSubtitles ?? '',
+                                            style: TextStyle(
+                                              fontSize: 12.0,
+                                              fontWeight: FontWeight.normal, // Sous-titre
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ]
+                                      ],
                                     ),
-                                  ),
-                                ],
+                                    SizedBox(
+                                      height: 36.0,
+                                      width: 36.0,
+                                      child: IconButton(
+                                        padding: EdgeInsets.zero,
+                                        constraints: const BoxConstraints(),
+                                        icon : Icon(Icons.close_outlined, 
+                                          size: 24.0, 
+                                          color: Colors.grey,
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            _boundary = [];
+                                            _boundariesDisplay = false;
+                                            _targetLat = null;
+                                            _targetLng = null;
+                                          });
+                                        } 
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      
-                      SizedBox(width: 20,),
-                      
-                      Badge(
-                        isLabelVisible: _isFiltered,
-                        alignment: AlignmentDirectional.topStart,
-                        smallSize: 16,
-                        child: ToolNavButton(
-                          icon: Icons.filter_list,
-                          onPressed: _navigateToFilterScreen,
-                        ),
-                      ),
-                    ],
+                        
+                        SizedBox(width: 20,),
+                        
+                        Badge(
+                          isLabelVisible: _isFiltered,
+                          alignment: AlignmentDirectional.topStart,
+                          smallSize: 16,
+                          child: ToolNavButton(
+                            icon: Icons.filter_list,
+                            onPressed: _navigateToFilterScreen,
+                          ),
+                        ),                    
+                      ],
+                    ),
                   ),
                 ],
               ),
