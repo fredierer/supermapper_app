@@ -47,6 +47,8 @@ dependencies:
   geolocator: ^14.1.1
   country_coder: ^1.2.0
   flutter_map_marker_cluster: ^8.2.2
+  map_launcher: ^7.0.0
+  flutter_svg: ^2.3.0
 
 dev_dependencies:
   flutter_test:
