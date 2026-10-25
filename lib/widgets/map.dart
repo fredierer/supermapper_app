@@ -3,10 +3,12 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:supermapper_app/services/places_service.dart';
 import 'package:supermapper_app/theme.dart';
+import 'package:supermapper_app/widgets/clusterBubble.dart';
 import 'package:supermapper_app/widgets/spot.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 
 class MapWidget extends StatefulWidget {
   final List<Spot> spots;
@@ -44,8 +46,8 @@ class MapWidget extends StatefulWidget {
 
 class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
   final MapController _mapController = MapController(); 
-
   bool _locationGranted = false;
+  List<Marker> _spotMarkers = [];
 
   @override
   void initState() {
@@ -74,9 +76,22 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
     setState(() => _locationGranted = granted);
   }
 
+  void _buildSpotMarkers() {
+    _spotMarkers = widget.spots.map((spot) {
+      return spot.toMarker(
+        onTap: () => widget.onSpotSelected?.call(spot.id),
+      );
+    }).toList();
+  }
+
+
   @override
   void didUpdateWidget(covariant MapWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
+
+    if (widget.spots != oldWidget.spots) {
+      _buildSpotMarkers();
+    }
 
     if (widget.targetLat != null && widget.targetLng != null) {
       if (widget.targetLat != oldWidget.targetLat || widget.targetLng != oldWidget.targetLng) {
@@ -183,14 +198,17 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
           
         if (_locationGranted) const CurrentLocationLayer(),
         
-        MarkerLayer(
-          markers: widget.spots.map((spot) {
-            return spot.toMarker(
-              onTap: () {
-                widget.onSpotSelected?.call(spot.id);
-              },
-            );
-          }).toList(),
+        MarkerClusterLayerWidget(
+          options: MarkerClusterLayerOptions(
+            maxClusterRadius: 40,          // rayon (px) dans lequel les points fusionnent
+            size: const Size(40, 40),      // taille du widget de cluster
+            alignment: Alignment.center,
+            padding: const EdgeInsets.all(50), 
+            maxZoom: 12,                   
+            zoomToBoundsOnClick: true,     
+            markers: _spotMarkers,         
+            builder: (context, markers) => ClusterBubble(count: markers.length),
+          ),
         ),
 
         Align(
@@ -201,7 +219,7 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
               onTap: () async {
                 final Uri url = Uri.parse('https://carto.com/attributions');
                 if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-                  throw Exception('Impossible d\'ouvrir $url');
+                  throw Exception('Impossible to open $url');
                 }
               },
               child: const Text(
