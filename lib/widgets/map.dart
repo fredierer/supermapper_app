@@ -9,6 +9,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
+import 'dart:async';
+import 'package:supermapper_app/services/pois_service.dart';
 
 class MapWidget extends StatefulWidget {
   final List<Spot> spots;
@@ -21,7 +23,7 @@ class MapWidget extends StatefulWidget {
   final double? initialZoom;
   final void Function(double lat, double lng, double zoom,)? onCenterChanged; //Callback function to give the position of the center of the map when it moved
   final List<BoundaryResult> boundary; //List of set of points used to display th eboundaries of a place
-  final double? bottomAttributionPadding;
+  final double? bottomAttributionPadding; //Value of padding from the bottom of the map
 
   const MapWidget({
     super.key,
@@ -45,9 +47,16 @@ class MapWidget extends StatefulWidget {
 
 
 class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
-  final MapController _mapController = MapController(); 
-  bool _locationGranted = false;
-  List<Marker> _spotMarkers = [];
+  final MapController _mapController = MapController(); //Map Controller
+  bool _locationGranted = false; //User location authorization
+  List<Marker> _spotMarkers = []; //List of spot to fetch from Supabase
+
+  static const _minZoom = 15.0; //Minimum zoom value needed to fetch data from Overpass
+  static const _minInterval = Duration(seconds: 2); //Minimum time value before sending a new request to Overpass
+  List<Poi> _pois = []; //List of POI to be fetch from Overpass
+  Timer? _poiTimer; //Timer to control frequency of request to Overpass
+  DateTime _lastPoiFetch = DateTime.fromMillisecondsSinceEpoch(0); //Timestamp of the last POI fetch from Overpass
+  bool _isFetchingPois = false; //Boolean to store current fetching state
 
   @override
   void initState() {
@@ -55,10 +64,10 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
     _initLocation();
   }
 
-  
   void _reportCenter() {
     final camera = _mapController.camera;
     widget.onCenterChanged?.call(camera.center.latitude, camera.center.longitude, camera.zoom,);
+    _schedulePoiFetch();
   }
 
   Future<void> _initLocation() async {
@@ -83,7 +92,6 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
       );
     }).toList();
   }
-
 
   @override
   void didUpdateWidget(covariant MapWidget oldWidget) {
@@ -137,6 +145,52 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
     controller.forward();
   }
 
+  void _schedulePoiFetch() {
+    final camera = _mapController.camera;
+
+    if (camera.zoom < _minZoom) {
+      if (_pois.isNotEmpty) setState(() => _pois = []);
+      return;
+    }
+
+    if (_isFetchingPois) return;
+
+    if (DateTime.now().difference(_lastPoiFetch) < _minInterval) return;
+
+    _loadPois();
+  }
+
+  Future<void> _loadPois() async {
+
+    print("______________ LOADING POIS ______________");
+
+    final camera = _mapController.camera;
+    if (camera.zoom < _minZoom) return;
+
+    _isFetchingPois = true;
+    _lastPoiFetch = DateTime.now();
+    final bounds = camera.visibleBounds;
+
+    try {
+      final pois = await fetchPois(
+        south: bounds.south,
+        west: bounds.west,
+        north: bounds.north,
+        east: bounds.east,
+      );
+
+      print("______________ POIS ______________");
+      print(pois);
+
+      if (!mounted || _mapController.camera.zoom < _minZoom) return;
+      setState(() => _pois = pois);
+    } catch (e) {
+      debugPrint('POI fetch failed: $e');
+    } finally {
+      _isFetchingPois = false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -148,10 +202,14 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
       options: MapOptions(
         initialCenter: LatLng(widget.initialLat ?? 0, widget.initialLng ?? 0),
         initialZoom: widget.initialZoom ?? 4.0,
-        onMapReady: _reportCenter,
+        onMapReady: () {
+          _reportCenter();
+          _schedulePoiFetch();
+        },
         onPositionChanged: (camera, hasGesture) {
           _reportCenter();
-          //print('Zoom: ${camera.zoom.toStringAsFixed(2)}');
+          _schedulePoiFetch();
+          print('Zoom: ${camera.zoom.toStringAsFixed(2)}');
           //print('Lat: ${camera.center.latitude}');
           //print('Lng: ${camera.center.longitude}');
 
@@ -167,6 +225,30 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
           urlTemplate: 'https://basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png?key=cb1_301t_1_f5198b589013a43fe135d463',
           userAgentPackageName: 'app.supermapper.app',
         ),
+        
+        MarkerLayer(
+          markers: _pois.map((poi) {
+            final style = filters[poi.category]; // null si 'unknown'
+            return Marker(
+              point: LatLng(poi.lat, poi.lng),
+              width: 32,
+              height: 32,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: style?.color ?? Colors.grey,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 2),
+                ),
+                child: Icon(
+                  style?.icon ?? Icons.place,
+                  color: Colors.white,
+                  size: 18,
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+
         if (widget.boundary.isNotEmpty) ...[
           PolygonLayer(
             polygons: widget.boundary
@@ -211,6 +293,8 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
           ),
         ),
 
+
+
         Align(
           alignment: Alignment.bottomLeft,
           child: Padding(
@@ -233,7 +317,15 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
             ),
           ),
         ),
+      
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _poiTimer?.cancel();
+    _mapController.dispose();
+    super.dispose();
   }
 }

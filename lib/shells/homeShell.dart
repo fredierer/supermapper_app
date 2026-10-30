@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supermapper_app/screens/addSpotScreens/add_spot_screen.dart';
 import 'package:supermapper_app/screens/map_screen.dart';
 import 'package:supermapper_app/screens/settings_screen.dart';
+import 'package:supermapper_app/services/pois_service.dart';
 import 'package:supermapper_app/theme.dart';
 import 'package:supermapper_app/widgets/AddFeedbackButton.dart';
 import 'package:supermapper_app/widgets/navBarButton.dart';
