@@ -30,49 +30,7 @@ class SettingsScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: double.infinity,
-                  color: AppColors.surfaceLight,   
-                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                  child: const Text(
-                    "MY ACCOUNT",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 18,
-                      letterSpacing: 1.5,
-                    ),
-                  ),
-                ),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Not available yet.'),
-                        behavior: SnackBarBehavior.floating,
-                      ),    
-                    );
-                  },
-                  icon: const Icon(
-                    Icons.person_add_alt_1_outlined,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                  label: const Text(
-                    'Sign In', 
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.amber, 
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  ),
-                )
+                
               ]
             ),
           )

@@ -6,7 +6,8 @@ class ToolNavButton extends StatelessWidget {
   final Color textColor;
   final Color backgroundColor;
   final VoidCallback onPressed;
-  final EdgeInsets padding;
+  final double size;      // taille du bouton (carré / rond)
+  final double iconSize;  // taille de l'icône
 
   const ToolNavButton({
     super.key,
@@ -14,19 +15,24 @@ class ToolNavButton extends StatelessWidget {
     required this.onPressed,
     this.textColor = Colors.white,
     this.backgroundColor = AppColors.amber,
-    this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    this.size = 48,
+    this.iconSize = 24,
   });
 
   @override
   Widget build(BuildContext context) {
     return IconButton(
+      onPressed: onPressed,
+      iconSize: iconSize,
+      icon: Icon(icon, color: textColor),
       style: IconButton.styleFrom(
         backgroundColor: backgroundColor,
         elevation: 2,
         shadowColor: Colors.black,
+        fixedSize: Size(size, size),
+        padding: EdgeInsets.zero, // l'icône reste centrée quelle que soit la taille
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap, // évite la zone de tap forcée à 48px
       ),
-      onPressed: onPressed,
-      icon: Icon(icon, color: textColor),
     );
   }
 }

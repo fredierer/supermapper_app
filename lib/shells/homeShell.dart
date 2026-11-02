@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:supermapper_app/screens/addSpotScreens/add_spot_screen.dart';
+import 'package:supermapper_app/screens/home_screen.dart';
 import 'package:supermapper_app/screens/map_screen.dart';
+import 'package:supermapper_app/screens/profile_screen.dart';
 import 'package:supermapper_app/screens/settings_screen.dart';
 import 'package:supermapper_app/theme.dart';
-import 'package:supermapper_app/widgets/AddFeedbackButton.dart';
 import 'package:supermapper_app/widgets/navBarButton.dart';
 import 'package:supermapper_app/transitions/customSlideTransition.dart';
 
@@ -19,7 +20,9 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
   
   int _currentIndex = 0;
   late final List<Widget> _screens = [
-    MapScreen(key: _mapKey,),
+    HomeScreen(onProfileButtonPressed: _navigateToProfileScreen, onMapCardPressed : _navigateToMapScreen),
+    MapScreen(key: _mapKey, onAddButtonPressed: _navigateToAddSpotScreen),
+    ProfileScreen(),
     SettingsScreen(),
   ];
   late AnimationController _addButtonController;
@@ -28,18 +31,6 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
   late final Animation<Offset> _routeOffsetAnimation;
 
   bool _addMenuOpen = false;
-  
-//  void _toggleAddMenu() {
-//    setState(() {
-//      _addMenuOpen = !_addMenuOpen;
-//    });
-//
-//    if(_addMenuOpen) {
-//      _addButtonController.forward();
-//    } else {
-//      _addButtonController.reverse();
-//    }
-//  }
 
   Future<void> _navigateToAddSpotScreen() async {
 
@@ -55,6 +46,18 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
     if (added == true) {
       _mapKey.currentState?.fetchSpotsData();
     }
+  }
+
+  void _navigateToProfileScreen() {
+    setState(() {
+      _currentIndex = 2;
+    });
+  }
+
+  void _navigateToMapScreen() {
+    setState(() {
+      _currentIndex = 1;
+    });
   }
   
   @override
@@ -91,62 +94,8 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
         children: [
           IndexedStack(
             index: _currentIndex,
-            children: _screens, // Conserve tous les écrans en mémoire
-          ),
-          SafeArea(
-            child: IgnorePointer(
-              ignoring: !_addMenuOpen,
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: SizedBox(
-                  height: 300,
-                  child : AnimatedBuilder(
-                    animation: _curvedAnimation,
-                    builder: (context, child) {
-                      final double opacity = _addButtonController.value.clamp(0.0, 1.0);
-                      return Stack(
-                        alignment: Alignment.bottomCenter,
-                        clipBehavior: Clip.none,
-                        children: [
-                          SlideTransition(
-                            position: _spotOffsetAnimation,
-                            child: Opacity(
-                              opacity: opacity,
-                              child: AddFeedBackButton(
-                                icon: Icons.add_location_alt_outlined,
-                                textColor: Colors.black,
-                                label: 'Add a spot',
-                                onPressed: () { // referme le petit menu
-                                  // _navigateToAddSpotScreen(); Mise en commentaire pour l'instant. A voir quand on mettra les routes TO DO
-
-                                },
-                              ),
-                            ),
-                          ),
-
-                          // Bouton Route
-                          SlideTransition(
-                            position: _routeOffsetAnimation,
-                            child: Opacity(
-                              opacity: opacity,
-                              child: AddFeedBackButton(
-                                icon: Icons.route_outlined,
-                                textColor: Colors.black,
-                                label: 'Add a route',
-                                onPressed: () {
-                                  
-                                },
-                              )
-                            )
-                          )
-                        ]
-                      );
-                    }
-                  )
-                )
-              )
-            ),
-          ),
+            children: _screens,
+          ),    
         ]
       ),         
       
@@ -156,48 +105,47 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
         shadowColor: Colors.black,
         shape: const CircularNotchedRectangle(),
         notchMargin: _currentIndex == 0 ? 12.0 : 0.0, 
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
+        child: Padding(
+          padding: EdgeInsetsGeometry.symmetric(horizontal: 20),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
               //Bouton gauche (Map)
               NavBarButton(
-                icon: Icons.map_outlined,
+                icon: Icons.home_filled,
                 textColor: _currentIndex == 0 ? Colors.black : Colors.grey,
                 onPressed: () {setState(() => _currentIndex = 0);},
               ),
-            
+              
+              //const SizedBox(width: 40),
+              
+              NavBarButton(
+                icon: Icons.map_outlined,
+                textColor: _currentIndex == 1 ? Colors.black : Colors.grey,
+                onPressed: () {setState(() => _currentIndex = 1);},
+              ),
 
-            // Espace vide au centre pour laisser place au bouton flottant
-            const SizedBox(width: 120), 
+              //const SizedBox(width: 120), 
 
-            //Bouton droite (Settings)
-            NavBarButton(
-              icon: Icons.settings_outlined,
-              textColor: _currentIndex == 1 ? Colors.black : Colors.grey,
-              onPressed: () {setState(() => _currentIndex = 1);},
-            ),
-          ],
-        ),
-      ),
+              //Bouton droite (Settings)
+              NavBarButton(
+                icon: Icons.person_outline_outlined,
+                textColor: _currentIndex == 2 ? Colors.black : Colors.grey,
+                onPressed: () {setState(() => _currentIndex = 2);},
+              ),
 
-      floatingActionButton: Visibility(
-          visible: _currentIndex == 0,
-          child: RawMaterialButton(
-            onPressed: _navigateToAddSpotScreen,
-            fillColor: AppColors.darkNavy,
-            elevation: 4,
-            shape: const CircleBorder(),
-            constraints: const BoxConstraints(
-              minWidth: 100,
-              minHeight: 100,
-            ),
-            child: const Icon(Icons.add, size: 64, color: Colors.white),
+              //const SizedBox(width: 40),
+
+              NavBarButton(
+                icon: Icons.settings_outlined,
+                textColor: _currentIndex == 3 ? Colors.black : Colors.grey,
+                onPressed: () {setState(() => _currentIndex = 3);},
+              ),
+            ],
           ),
-        ),      
-
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-
+        ),
+      ), 
     );
     
   }

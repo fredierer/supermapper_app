@@ -15,7 +15,13 @@ import 'package:supermapper_app/widgets/toolNavButton.dart';
 import 'package:supermapper_app/widgets/userPositionButton.dart';
 
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+  final VoidCallback onAddButtonPressed;
+
+  const MapScreen({
+    super.key,
+    required this.onAddButtonPressed,
+  });
+
 
   @override
   State<MapScreen> createState() => MapScreenState();
@@ -293,18 +299,50 @@ class MapScreenState extends State<MapScreen> {
               ),
             ),
           ),
-          Positioned(
-          bottom: 120,
-          right: 20,
-          child: UserPositionButton(
-            onPositionFetched: (lat, lng, zoom) {
-              setState(() {
-                _targetLat = lat;
-                _targetLng = lng;
-              });
-            },
+          
+          
+          SafeArea(
+            child: Align(
+              alignment: Alignment.bottomRight,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 20, 24),
+                child: UserPositionButton(
+                  onPositionFetched: (lat, lng, zoom) {
+                    setState(() {
+                      _targetLat = lat;
+                      _targetLng = lng;
+                    });
+                  },
+                ),
+              ),
+            ),
           ),
-        ),
+         
+
+          SafeArea(
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 24),
+                child: FilledButton.icon(
+                  onPressed: widget.onAddButtonPressed,
+                  icon: const Icon(Icons.add, size: 36),
+                  label: const Text('New feedback'),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white,
+                    elevation: 2,
+                    textStyle: TextStyle(fontSize: 18.0),
+                    fixedSize: const Size(200, 56), // largeur et hauteur fixes
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+              
 
           if (_selectedSpotId != null)
             Positioned.fill(
