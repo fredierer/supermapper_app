@@ -1,5 +1,6 @@
 import 'package:country_coder/country_coder.dart';
 import 'package:flutter/material.dart';
+import 'package:supermapper_app/screens/auth_gate.dart';
 import 'package:supermapper_app/shells/homeShell.dart';
 import 'package:supermapper_app/theme.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -28,7 +29,7 @@ class MastroApp extends StatelessWidget {
     return MaterialApp(
       title: 'Supermapper',
       theme: appTheme,
-      home: HomeShell(),
+      home: AuthGate(),
     );
   }
 }

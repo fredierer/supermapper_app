@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:supermapper_app/theme.dart';
 import 'package:supermapper_app/widgets/statCard.dart';
 
@@ -134,22 +135,51 @@ final List<PersonalContribution> recentContributions = [
                   ],
                 ),
               
-                SizedBox(height: 10.0,),
-                
-                Container(
-                  width: double.infinity,
-                  color: AppColors.surfaceLight,   
-                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                  child: const Text(
-                    "YOUR CONTRIBUTIONS",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 26,
-                      letterSpacing: 1.5,
-                    ),
-                  ),
+                SizedBox(
+                  height: 10.0,
                 ),
 
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      color: AppColors.surfaceLight,   
+                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                      child: const Text(
+                        "YOUR CONTRIBUTIONS",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 26,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(
+                      height: 52,
+                      child: FilledButton(
+                        onPressed: () {
+                          // Navigator.push(...) vers l'écran avec toutes les contributions
+                        },
+                        style: FilledButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          foregroundColor: Colors.black45,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text('See All'),
+                      ),
+                    ),
+
+                  ]
+                ),
+
+                SizedBox(
+                  height: 5.0,
+                  width: double.infinity,
+                ),
+                
                 GridView.builder(
                   shrinkWrap: true, // la grille prend juste la hauteur de son contenu
                   physics: const NeverScrollableScrollPhysics(), // c'est la page qui scrolle, pas la grille
@@ -197,26 +227,27 @@ final List<PersonalContribution> recentContributions = [
                   },
                 ),
 
-                const SizedBox(height: 16),
-
+                SizedBox(
+                  height: 15.0,
+                  width: double.infinity,
+                ),
+                
                 SizedBox(
                   width: double.infinity,
                   height: 52,
-                  child: FilledButton(
-                    onPressed: () {
-                      // Navigator.push(...) vers l'écran avec toutes les contributions
-                    },
+                  child: FilledButton.icon(
+                    onPressed: () => Supabase.instance.client.auth.signOut(),
+                    icon: const Icon(Icons.logout),
+                    label: const Text('Disconnect'),
                     style: FilledButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      foregroundColor: Colors.white,
+                      backgroundColor: const Color.fromARGB(255, 245, 98, 87),   // fond rouge
+                      foregroundColor: Colors.white, // icône + texte noirs
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text('See All'),
                   ),
                 ),
-
                 
               ]
             ),
