@@ -7,7 +7,8 @@ class SpotService {
   final SupabaseClient _client = Supabase.instance.client;
 
   Future<List<Spot>> getSpots() async {
-    try {
+    try { 
+
       final response = await _client.from('spots').select();
 
       final List<Spot> spots = (response as List)
@@ -19,6 +20,19 @@ class SpotService {
       debugPrint('Error while fetching the spots : $e');
       rethrow;
     }
+  }
+
+  Future<List<Spot>> getUserSpots() async {
+    final userId = _client.auth.currentUser?.id;
+    if (userId == null) return [];
+
+    final response = await _client
+        .from('spots')
+        .select()
+        .eq('creator_id', userId)
+        .order('created_at', ascending: false);
+
+    return response.map((json) => Spot.fromJson(json)).toList();
   }
 
   Future<void> addSpot ({

@@ -18,6 +18,7 @@ class Spot {
   final double lat;
   final double lng;
   final String countryCode;
+  final DateTime creationDate;
 
   Spot({
     required this.id,
@@ -27,6 +28,7 @@ class Spot {
     required this.lat,
     required this.lng,
     required this.countryCode,
+    required this.creationDate,
   });
 
   factory Spot.fromJson(Map<String, dynamic> json) {
@@ -41,6 +43,7 @@ class Spot {
       lat : lat,
       lng: lng,
       countryCode: getCountryCodeFromLatLng(lat, lng),
+      creationDate: DateTime.parse(json['created_at'] as String),
     );
   }
 

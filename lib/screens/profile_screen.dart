@@ -1,56 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supermapper_app/services/spots_service.dart';
 import 'package:supermapper_app/theme.dart';
+import 'package:supermapper_app/widgets/contributionCard.dart';
+import 'package:supermapper_app/widgets/spot.dart';
 import 'package:supermapper_app/widgets/statCard.dart';
 
-class PersonalContribution {
-  final String title;
-  final String description;
-  final String date;
-  final String place;
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
 
-  const PersonalContribution({
-    required this.title,
-    required this.description,
-    required this.date,
-    required this.place,
-  });
+  @override
+  State<ProfileScreen> createState() => ProfileScreenState();
 }
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreenState extends State<ProfileScreen> {
+  static const _recentCount = 4;
 
-final List<PersonalContribution> recentContributions = [
-    PersonalContribution(
-      title: 'Café Bonaparte',
-      description: 'Super spot pour travailler, wifi rapide et prises à chaque table.',
-      date: '28/10/2026 09:12',
-      place: "Paris, France",
-    ),
-    PersonalContribution(
-      title: 'Parc des Buttes',
-      description: 'Très calme en semaine, idéal pour un pique-nique.',
-      date: '27/10/2026 17:40',
-      place: "Paris, France",
-    ),
-    PersonalContribution(
-      title: 'Chez Marcel',
-      description: 'Bon rapport qualité-prix, service rapide le midi.',
-      date: '25/10/2026 12:05',
-      place: "Marseille, France",
-    ),
-    PersonalContribution(
-      title: 'Point de vue Sacré-Cœur',
-      description: 'Vue superbe au coucher du soleil, mais beaucoup de monde.',
-      date: '24/10/2026 19:30',
-      place: "Paris, France",
-    ),
-    PersonalContribution(
-      title: 'Librairie du Canal',
-      description: 'Petite librairie indépendante avec un coin lecture.',
-      date: '22/10/2026 14:18',
-      place: "Lyon, France",
-    ),
-  ];
+  final _spotService = SpotService();
+  late Future<List<Spot>> _spotsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _spotsFuture = _spotService.getUserSpots();
+  }
+
+  void reload() {
+    setState(() {
+      _spotsFuture = _spotService.getUserSpots();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,202 +38,186 @@ final List<PersonalContribution> recentContributions = [
       extendBody: true,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsetsGeometry.symmetric(horizontal: 20, vertical: 0),
-          child: Container(
-            color: AppColors.surfaceLight,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 200.0,
-                  width: double.infinity,
-                  child: Align(
-                    alignment: AlignmentGeometry.bottomCenter,
-                    child: CircleAvatar(
-                      backgroundColor: Colors.black12,
-                      radius: 60.0,
-                      child: Icon(Icons.person, size: 50.0, color: Colors.black54,),
-                    ),
-                  ),
-                ),
-                
-                Padding(
-                  padding: EdgeInsetsGeometry.fromLTRB(0, 10, 0, 0), 
-                  child: Align(
-                    alignment: AlignmentGeometry.center, 
-                    child : Text("Rémy", 
-                      style: TextStyle(
-                        fontSize: 40.0,
-                        fontWeight: FontWeight.bold,
-                      ) 
-                    )
-                  ),
-                ),
-
-                Container(
-                  width: double.infinity,
-                  color: AppColors.surfaceLight,   
-                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                  child: const Text(
-                    "STATISTICS",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 26,
-                      letterSpacing: 1.5,
-                    ),
-                  ),
-                ),
-
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  spacing: 12.0,
-                  children: [
-                    Expanded(
-                      child: StatCard(
-                        icon: Icons.edit_location_alt_outlined,
-                        value: '42',
-                        label: 'Contributions',
-                      ),
-                    ),
-                    Expanded(
-                      child: StatCard(
-                        icon: Icons.public,
-                        value: '7',
-                        label: 'Pays',
-                      ),
-                    ),
-                    Expanded(
-                      child: StatCard(
-                        icon: Icons.trending_up,
-                        value: '3 / sem.',
-                        label: 'Fréquence',
-                      ),
-                    ),
-                  ],
-                ),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               
-                SizedBox(
-                  height: 10.0,
-                ),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      color: AppColors.surfaceLight,   
-                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                      child: const Text(
-                        "YOUR CONTRIBUTIONS",
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 26,
-                          letterSpacing: 1.5,
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(
-                      height: 52,
-                      child: FilledButton(
-                        onPressed: () {
-                          // Navigator.push(...) vers l'écran avec toutes les contributions
-                        },
-                        style: FilledButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          foregroundColor: Colors.black45,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text('See All'),
-                      ),
-                    ),
-
-                  ]
-                ),
-
-                SizedBox(
-                  height: 5.0,
-                  width: double.infinity,
-                ),
-                
-                GridView.builder(
-                  shrinkWrap: true, // la grille prend juste la hauteur de son contenu
-                  physics: const NeverScrollableScrollPhysics(), // c'est la page qui scrolle, pas la grille
-                  padding: EdgeInsets.zero,
-                  itemCount: 4, // 2 x 2
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    mainAxisExtent: 160, // hauteur fixe de chaque carte
-                  ),
-                  itemBuilder: (context, index) {
-                    final contribution = recentContributions[index];
-                    return Material(
-                      color: Colors.white,
-                      elevation: 2,
-                      borderRadius: BorderRadius.circular(16),
-                      child: Padding(
-                        padding: const EdgeInsets.all(14),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              contribution.title,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              contribution.description,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(fontSize: 14, color: Colors.black54),
-                            ),
-                            const Spacer(),
-                            Text(
-                              contribution.date,
-                              style: const TextStyle(fontSize: 12, color: Colors.grey),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-
-                SizedBox(
-                  height: 15.0,
-                  width: double.infinity,
-                ),
-                
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: FilledButton.icon(
-                    onPressed: () => Supabase.instance.client.auth.signOut(),
-                    icon: const Icon(Icons.logout),
-                    label: const Text('Disconnect'),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 245, 98, 87),   // fond rouge
-                      foregroundColor: Colors.white, // icône + texte noirs
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+              const _ProfileHeader(),
+              
+              FutureBuilder<List<Spot>>(
+                future: _spotsFuture,
+                builder: _buildSpotsSection,
+              ),
+              
+              const SizedBox(height: 15),
+              
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: FilledButton.icon(
+                  onPressed: () => Supabase.instance.client.auth.signOut(),
+                  icon: const Icon(Icons.logout),
+                  label: const Text('Disconnect'),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 245, 98, 87),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                 ),
-                
-              ]
-            ),
-          )
-        )
-      ), 
+              ),
+
+            ],
+          ),
+        ),
+      ),
     );
   }
 
+  Widget _buildSpotsSection(
+    BuildContext context,
+    AsyncSnapshot<List<Spot>> snapshot,
+  ) {
+    if (snapshot.connectionState != ConnectionState.done) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 48),
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (snapshot.hasError) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 32),
+        child: Center(
+          child: Column(
+            children: [
+              const Text('Impossible de charger tes contributions.'),
+              TextButton(onPressed: reload, child: const Text('Réessayer')),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final spots = snapshot.requireData;
+    final recentSpots = spots.take(_recentCount).toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        
+        const _SectionTitle('STATISTICS'),
+        
+        Row(
+          spacing: 12,
+          children: [
+            Expanded(
+              child: StatCard(
+                icon: Icons.edit_location_alt_outlined,
+                value: '${spots.length}', // vraie valeur
+                label: 'Contributions',
+              ),
+            ),
+            
+          ],
+        ),
+        
+        const SizedBox(height: 10),
+        
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            
+            const _SectionTitle('YOUR CONTRIBUTIONS'),
+            
+            TextButton(
+              onPressed: () {
+                // Navigator.push(...) vers l'écran avec toutes les contributions
+              },
+              style: TextButton.styleFrom(foregroundColor: Colors.black45),
+              child: const Text('See All'),
+            ),
+          ],
+        ),
+        
+        const SizedBox(height: 5),
+        
+        if (recentSpots.isEmpty)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 24),
+            child: Text('Aucune contribution pour l\'instant.'),
+          )
+        
+        else
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: EdgeInsets.zero,
+            itemCount: recentSpots.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              mainAxisExtent: 160,
+            ),
+            itemBuilder: (context, index) =>
+                ContributionCard(spot: recentSpots[index]),
+          ),
+      ],
+    );
+  }
+}
+
+class _ProfileHeader extends StatelessWidget {
+  const _ProfileHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(
+          height: 200,
+          width: double.infinity,
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: CircleAvatar(
+              backgroundColor: Colors.black12,
+              radius: 60,
+              child: Icon(Icons.person, size: 50, color: Colors.black54),
+            ),
+          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.only(top: 10),
+          child: Text(
+            'Rémy',
+            style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: Colors.grey,
+          fontSize: 26,
+          letterSpacing: 1.5,
+        ),
+      ),
+    );
+  }
 }

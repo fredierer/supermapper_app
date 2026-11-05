@@ -17,12 +17,13 @@ class HomeShell extends StatefulWidget {
 
 class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMixin {
   final _mapKey = GlobalKey<MapScreenState>();
+  final _profileKey = GlobalKey<ProfileScreenState>();
   
   int _currentIndex = 0;
   late final List<Widget> _screens = [
     HomeScreen(onProfileButtonPressed: _navigateToProfileScreen, onMapCardPressed : _navigateToMapScreen),
     MapScreen(key: _mapKey, onAddButtonPressed: _navigateToAddSpotScreen),
-    ProfileScreen(),
+    ProfileScreen(key: _profileKey),
     SettingsScreen(),
   ];
   late AnimationController _addButtonController;
@@ -51,6 +52,7 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
   void _navigateToProfileScreen() {
     setState(() {
       _currentIndex = 2;
+      _profileKey.currentState?.reload();
     });
   }
 
@@ -132,7 +134,12 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
               NavBarButton(
                 icon: Icons.person_outline_outlined,
                 textColor: _currentIndex == 2 ? Colors.black : Colors.grey,
-                onPressed: () {setState(() => _currentIndex = 2);},
+                onPressed: () {
+                  setState(() {
+                    _profileKey.currentState?.reload();
+                    _currentIndex = 2;
+                  });
+                },
               ),
 
               //const SizedBox(width: 40),
