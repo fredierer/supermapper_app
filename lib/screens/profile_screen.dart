@@ -60,8 +60,8 @@ class ProfileScreenState extends State<ProfileScreen> {
                   icon: const Icon(Icons.logout),
                   label: const Text('Disconnect'),
                   style: FilledButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 245, 98, 87),
-                    foregroundColor: Colors.white,
+                    backgroundColor: const Color.fromARGB(255, 255, 183, 178),
+                    foregroundColor: const Color.fromARGB(255, 0, 0, 0),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

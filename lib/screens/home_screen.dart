@@ -1,7 +1,10 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:supermapper_app/services/spots_service.dart';
 import 'package:supermapper_app/theme.dart';
+import 'package:supermapper_app/widgets/spot.dart';
+import 'package:intl/intl.dart';
 
 class Contribution {
   final String title;
@@ -35,16 +38,29 @@ class SavedSpot {
   });
 }
 
-class HomeScreen extends StatelessWidget {
 
+class HomeScreen extends StatefulWidget {
   final VoidCallback onProfileButtonPressed;
   final VoidCallback onMapCardPressed;
 
-  HomeScreen({
+  const HomeScreen({
     super.key,
     required this.onProfileButtonPressed,
     required this.onMapCardPressed,
   });
+
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  
+  final _spotService = SpotService();
+  late Future<List<Spot>> _recentSpots;
+
+  static final _dateFormat = DateFormat('dd/MM/yyyy HH:mm');
+
 
   final List<Contribution> recentContributions = [
     Contribution(
@@ -123,6 +139,12 @@ class HomeScreen extends StatelessWidget {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _recentSpots = _spotService.getSpots(max: 5);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.surfaceLight,
@@ -139,14 +161,14 @@ class HomeScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Hi, Rémy",
+                    Text("Hi, username",
                       style: TextStyle(
                         fontSize: 52.0,
                         fontWeight: FontWeight.bold,
                       ),  
                     ),
                     IconButton(
-                      onPressed: onProfileButtonPressed,
+                      onPressed: widget.onProfileButtonPressed,
                       iconSize: 12,
                       icon: Icon(Icons.person, color: Colors.black, size: 25.0,),
                       style: IconButton.styleFrom(
@@ -180,72 +202,84 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
 
-                LayoutBuilder(builder: (context, constraints) {
-                  return SizedBox(
-                    height: 150.0,
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      clipBehavior: Clip.none, 
-                      itemCount: 5,
-                      separatorBuilder: (_, _) => const SizedBox(width: 12),
-                      itemBuilder: (context, index) {
-                        final contribution = recentContributions[index];
-                        return SizedBox(
-                          width: 200.0,
-                          child: Material(
-                            color: Colors.white,
-                            elevation: 2,
-                            borderRadius: BorderRadius.circular(16),
-                            child: Padding(
-                              padding: const EdgeInsets.all(14),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    contribution.title,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    contribution.description,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(fontSize: 14, color: Colors.black54),
-                                  ),
-                                  const Spacer(),
-                                  Row(
-                                    children: [
-                                      const Icon(Icons.person_outline, size: 16, color: Colors.black),
-                                      const SizedBox(width: 4),
-                                      Expanded(
-                                        child: Text(
-                                          contribution.author,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(fontSize: 12, color: Colors.black),
-                                        ),
+                FutureBuilder<List<Spot>>(
+                  future: _recentSpots,
+                  builder: (recent, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const SizedBox(
+                        height: 150.0,
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    }
+
+                    if (snapshot.hasError) {
+                      return SizedBox(
+                        height: 150.0,
+                        child: Center(child: Text('Erreur : ${snapshot.error}')),
+                      );
+                    }
+
+                    final spots = snapshot.data ?? [];
+
+                    if (spots.isEmpty) {
+                      return const SizedBox(
+                        height: 150.0,
+                        child: Center(child: Text('Aucune contribution pour le moment')),
+                      );
+                    }
+
+                    return SizedBox(
+                      height: 150.0,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        clipBehavior: Clip.none,
+                        itemCount: spots.length,
+                        separatorBuilder: (_, _) => const SizedBox(width: 12),
+                        itemBuilder: (context, index) {
+                          final spot = spots[index];
+                          return SizedBox(
+                            width: 200.0,
+                            child: Material(
+                              color: Colors.white,
+                              elevation: 2,
+                              borderRadius: BorderRadius.circular(16),
+                              child: Padding(
+                                padding: const EdgeInsets.all(14),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      spot.title,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    contribution.date,
-                                    style: const TextStyle(fontSize: 12, color: Colors.black),
-                                  ),
-                                ],
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      spot.description,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(fontSize: 14, color: Colors.black54),
+                                    ),
+                                    const Spacer(),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      _dateFormat.format(spot.creationDate),
+                                      style: const TextStyle(fontSize: 12, color: Colors.black),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        );
-                      }
-                    )
-                  );
-                }),
+                          );
+                        }
+                      )
+                    );
+                  }
+                ),
 
                 SizedBox(
                   width: double.infinity,
@@ -258,7 +292,7 @@ class HomeScreen extends StatelessWidget {
                   spacing: 12.0,
                   children: [
                     FilledButton.icon(
-                      onPressed: onMapCardPressed,
+                      onPressed: widget.onMapCardPressed,
                       icon: const Icon(Icons.map_outlined, size: 20),
                       label: const Text('Map'),
                       style: FilledButton.styleFrom(
@@ -274,7 +308,7 @@ class HomeScreen extends StatelessWidget {
                     ),
 
                     FilledButton.icon(
-                      onPressed: onProfileButtonPressed,
+                      onPressed: widget.onProfileButtonPressed,
                       icon: const Icon(Icons.person, size: 20),
                       label: const Text('Profile'),
                       style: FilledButton.styleFrom(
@@ -298,86 +332,86 @@ class HomeScreen extends StatelessWidget {
                   height: 30.0,
                 ),
 
-                Container(
-                  width: double.infinity,
-                  color: AppColors.surfaceLight,   
-                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                  child: const Text(
-                    "SAVED SPOTS",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 26,
-                      letterSpacing: 1.5,
-                    ),
-                  ),
-                ),
+              //  Container(
+              //    width: double.infinity,
+              //    color: AppColors.surfaceLight,   
+              //    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+              //    child: const Text(
+              //      "SAVED SPOTS",
+              //      style: TextStyle(
+              //        color: Colors.grey,
+              //        fontSize: 26,
+              //        letterSpacing: 1.5,
+              //      ),
+              //    ),
+              //  ),
 
-                LayoutBuilder(builder: (context, constraints) {
-                  return SizedBox(
-                    height: 200.0,
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      clipBehavior: Clip.none, 
-                      itemCount: 3,
-                      separatorBuilder: (_, _) => const SizedBox(width: 12),
-                      itemBuilder: (context, index) {
-                        final savedSpot = savedSpots[index];
-                        return SizedBox(
-                          width: 250.0,
-                          child: Material(
-                            color: Colors.white,
-                            elevation: 2,
-                            borderRadius: BorderRadius.circular(16),
-                            child: Padding(
-                              padding: const EdgeInsets.all(14),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    savedSpot.title,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    savedSpot.description,
-                                    maxLines: 3,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(fontSize: 14, color: Colors.black54),
-                                  ),
-                                  const Spacer(),
-                                  Row(
-                                    children: [
-                                      const Icon(Icons.person_outline, size: 16, color: Colors.black),
-                                      const SizedBox(width: 4),
-                                      Expanded(
-                                        child: Text(
-                                          savedSpot.author,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(fontSize: 12, color: Colors.black),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    savedSpot.date,
-                                    style: const TextStyle(fontSize: 12, color: Colors.black),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      }
-                    )
-                  );
-                }),
+              //  LayoutBuilder(builder: (context, constraints) {
+              //    return SizedBox(
+              //      height: 200.0,
+              //      child: ListView.separated(
+              //        scrollDirection: Axis.horizontal,
+              //        clipBehavior: Clip.none, 
+              //        itemCount: 3,
+              //        separatorBuilder: (_, _) => const SizedBox(width: 12),
+              //        itemBuilder: (context, index) {
+              //          final savedSpot = savedSpots[index];
+              //          return SizedBox(
+              //            width: 250.0,
+              //            child: Material(
+              //              color: Colors.white,
+              //              elevation: 2,
+              //              borderRadius: BorderRadius.circular(16),
+              //              child: Padding(
+              //                padding: const EdgeInsets.all(14),
+              //                child: Column(
+              //                  crossAxisAlignment: CrossAxisAlignment.start,
+              //                  children: [
+              //                    Text(
+              //                      savedSpot.title,
+              //                      maxLines: 1,
+              //                      overflow: TextOverflow.ellipsis,
+              //                      style: const TextStyle(
+              //                        fontSize: 18,
+              //                        fontWeight: FontWeight.bold,
+              //                      ),
+              //                    ),
+              //                    const SizedBox(height: 6),
+              //                    Text(
+              //                      savedSpot.description,
+              //                      maxLines: 3,
+              //                      overflow: TextOverflow.ellipsis,
+              //                      style: const TextStyle(fontSize: 14, color: Colors.black54),
+              //                    ),
+              //                    const Spacer(),
+              //                    Row(
+              //                      children: [
+              //                        const Icon(Icons.person_outline, size: 16, color: Colors.black),
+              //                        const SizedBox(width: 4),
+              //                        Expanded(
+              //                          child: Text(
+              //                            savedSpot.author,
+              //                            maxLines: 1,
+              //                            overflow: TextOverflow.ellipsis,
+              //                            style: const TextStyle(fontSize: 12, color: Colors.black),
+              //                          ),
+              //                        ),
+              //                      ],
+              //                    ),
+              //                    const SizedBox(height: 2),
+              //                    Text(
+              //                      savedSpot.date,
+              //                      style: const TextStyle(fontSize: 12, color: Colors.black),
+              //                    ),
+              //                  ],
+              //                ),
+              //              ),
+              //            ),
+              //          );
+              //        }
+              //      )
+              //    );
+              //  }),
 
               ]
             ),
