@@ -42,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _register() async {
     if (_passwordController.text != _confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Les mots de passe ne correspondent pas')),
+        const SnackBar(content: Text('Password and confirmation are not the same')),
       );
       return;
     }
