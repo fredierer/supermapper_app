@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 class AppColors {
   static const Color yellow = Color(0xFFFFBA08);
   static const Color amber = Color(0xFFFAA307);
@@ -31,13 +33,7 @@ final appTheme = ThemeData(
   scaffoldBackgroundColor: AppColors.surfaceLight,
 
   // 3. Textes
-  textTheme: const TextTheme(
-    displayLarge: TextStyle(color: AppColors.darkNavy, fontWeight: FontWeight.bold),
-    titleLarge: TextStyle(color: AppColors.darkNavy, fontWeight: FontWeight.w600),
-    bodyLarge: TextStyle(color: AppColors.darkNavy, fontSize: 16),
-    bodyMedium: TextStyle(color: AppColors.darkNavy, fontSize: 14),
-    labelLarge: TextStyle(color: AppColors.darkNavy, fontWeight: FontWeight.w500),
-  ),
+  textTheme: GoogleFonts.spaceMonoTextTheme(),
 
   // 4. TextField (InputDecoration)
   inputDecorationTheme: InputDecorationTheme(
