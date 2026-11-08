@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:supermapper_app/configuration/feedback_category.dart';
+import 'package:supermapper_app/configuration/contribution_category.dart';
 import 'package:supermapper_app/screens/addSpotScreens/add_spot_stepDetails.dart';
 import 'package:supermapper_app/screens/addSpotScreens/add_spot_stepLocation.dart';
 import 'package:supermapper_app/screens/addSpotScreens/add_spot_stepMap.dart';
@@ -27,7 +27,7 @@ class _AddSpotScreenState extends State<AddSpotScreen> {
   int _step = 0;
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  FeedbackCategory? _categorySelected;
+  ContributionCategory? _categorySelected;
   double? _latitude;
   double? _longitude;
   double? _zoom;
@@ -36,8 +36,8 @@ class _AddSpotScreenState extends State<AddSpotScreen> {
 
   bool _isSaving = false;
 
-  static const _titles = ['Choose location', 'Spot details', 'Spot Location'];
-  static const _subtitles = ['Pan and zoom to place the pin', 'Specify details about your spot', 'Subtitle'];
+  static const _titles = ['Choose location', 'Spot details'];
+  static const _subtitles = ['Pan and zoom', 'Specify details'];
 
   bool get _isDetailsValid =>
       _titleController.text.trim().isNotEmpty &&
@@ -163,7 +163,7 @@ class _AddSpotScreenState extends State<AddSpotScreen> {
               padding: const EdgeInsets.only(right: 20),
               child: ElevatedButton(
                 onPressed: _next,
-                style: ElevatedButton.styleFrom(minimumSize: const Size(90, 40)),
+//                style: ElevatedButton.styleFrom(minimumSize: const Size(90, 40)),
                 child: _isSaving
                     ? const SizedBox(
                         width: 18,

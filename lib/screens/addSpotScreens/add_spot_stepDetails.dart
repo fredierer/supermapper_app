@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:supermapper_app/configuration/feedback_category.dart';
+import 'package:supermapper_app/configuration/contribution_category.dart';
 
 class AddSpotStepDetails extends StatefulWidget {
   const AddSpotStepDetails({
@@ -12,8 +12,8 @@ class AddSpotStepDetails extends StatefulWidget {
 
   final TextEditingController titleController;
   final TextEditingController descriptionController;
-  final FeedbackCategory? category;
-  final ValueChanged<FeedbackCategory?> onCategoryChanged;
+  final ContributionCategory? category;
+  final ValueChanged<ContributionCategory?> onCategoryChanged;
 
   @override
   State<AddSpotStepDetails> createState() => _AddSpotStepDetailsState();
@@ -60,7 +60,7 @@ class _AddSpotStepDetailsState extends State<AddSpotStepDetails> {
            Listener(
             // Ferme le clavier du champ Title avant d'ouvrir la liste
             onPointerDown: (_) => FocusScope.of(context).unfocus(),
-            child: DropdownMenu<FeedbackCategory>(
+            child: DropdownMenu<ContributionCategory>(
               initialSelection: widget.category,
               expandedInsets: EdgeInsets.zero, // pleine largeur, menu aligné sur le champ
               label: const Text('Category'),
@@ -93,7 +93,7 @@ class _AddSpotStepDetailsState extends State<AddSpotStepDetails> {
                   RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
               ),
-              dropdownMenuEntries: FeedbackCategory.values
+              dropdownMenuEntries: ContributionCategory.values
                   .map(
                     (c) => DropdownMenuEntry(
                       value: c,

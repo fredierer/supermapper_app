@@ -132,23 +132,23 @@ class ProfileScreenState extends State<ProfileScreen> {
             
             const _SectionTitle('YOUR CONTRIBUTIONS'),
             
-            TextButton(
-              onPressed: () {
-                // Navigator.push(...) vers l'écran avec toutes les contributions
-              },
-              style: TextButton.styleFrom(foregroundColor: Colors.black45),
-              child: const Text('See All'),
-            ),
+            //TextButton(
+            //  onPressed: () {
+            //    // Navigator.push(...) vers l'écran avec toutes les contributions
+            //  },
+            //  style: TextButton.styleFrom(foregroundColor: Colors.black45),
+            //  child: const Text('See All'),
+            //),
           ],
         ),
         
         const SizedBox(height: 5),
         
         if (recentSpots.isEmpty)
-          const Padding(
+          const Center(child:Padding(
             padding: EdgeInsets.symmetric(vertical: 24),
-            child: Text('Aucune contribution pour l\'instant.'),
-          )
+            child: Text('No contribution for now 😢'),
+          ))
         
         else
           GridView.builder(

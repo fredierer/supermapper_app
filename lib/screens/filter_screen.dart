@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supermapper_app/theme.dart';
-import 'package:supermapper_app/configuration/feedback_category.dart';
+import 'package:supermapper_app/configuration/contribution_category.dart';
 import 'package:flutter/foundation.dart';
 
 String countryCodeToEmoji(String countryCode) {
@@ -41,7 +41,7 @@ class FilterScreen extends StatefulWidget{
     this.initialCountries = const {},
   });
 
-  final Set<FeedbackCategory> initialCategories;
+  final Set<ContributionCategory> initialCategories;
   final Set<String> initialCountries;
 
   @override
@@ -50,7 +50,7 @@ class FilterScreen extends StatefulWidget{
 
 class _FilterScreenState extends State<FilterScreen> {
 
-  late Set<FeedbackCategory> selectedCategories = {...widget.initialCategories};
+  late Set<ContributionCategory> selectedCategories = {...widget.initialCategories};
   late Set<String> selectedRegions = {...widget.initialCountries};
 
   bool get _hasChanges =>
@@ -385,7 +385,7 @@ class _FilterScreenState extends State<FilterScreen> {
                 child :Wrap(
                   spacing: 10,  // Espace horizontal
                   runSpacing: 10,  // Espace vertical
-                  children: FeedbackCategory.values.map((category) {
+                  children: ContributionCategory.values.map((category) {
                       
                       final isSelected = selectedCategories.contains(category);
 

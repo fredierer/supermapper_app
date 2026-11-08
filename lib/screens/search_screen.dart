@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:supermapper_app/configuration/feedback_category.dart';
+import 'package:supermapper_app/configuration/contribution_category.dart';
 import 'package:supermapper_app/services/places_service.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -179,7 +179,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _buildSpotTile(Map<String, dynamic> spot) {
-    final category = FeedbackCategory.fromString(spot['category']);
+    final category = ContributionCategory.fromString(spot['category']);
     return _buildResultCard(
       leading: Text(category.emoji, style: const TextStyle(fontSize: 24)),
       title: spot['title'] ?? 'No title',

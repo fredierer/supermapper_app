@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supermapper_app/theme.dart';
 
-class AddFeedBackButton extends StatelessWidget {
+class AddSpotButton extends StatelessWidget {
   final IconData icon;
   final String label;
   final Color textColor;
@@ -9,7 +9,7 @@ class AddFeedBackButton extends StatelessWidget {
   final VoidCallback onPressed;
   final EdgeInsets padding;
 
-  const AddFeedBackButton({
+  const AddSpotButton({
     super.key,
     required this.icon,
     required this.label,

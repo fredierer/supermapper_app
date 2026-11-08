@@ -89,20 +89,24 @@ final appTheme = ThemeData(
 
   // 6. FilterChip (et Chips en général)
   chipTheme: ChipThemeData(
-    backgroundColor: AppColors.white,
-    disabledColor: Colors.grey.shade200,
-    selectedColor: AppColors.amber,
-    secondarySelectedColor: AppColors.deepOrange,
-    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-    labelStyle: const TextStyle(color: AppColors.darkNavy, fontWeight: FontWeight.w500),
-    secondaryLabelStyle: const TextStyle(color: AppColors.white, fontWeight: FontWeight.w500),
-    brightness: Brightness.light,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(20),
-      side: const BorderSide(color: Colors.grey, width: 1),
-    ),
-    checkmarkColor: AppColors.white,
+  backgroundColor: AppColors.white,
+  disabledColor: Colors.grey.shade200,
+  selectedColor: AppColors.amber,
+  secondarySelectedColor: AppColors.deepOrange,
+  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+  labelStyle: GoogleFonts.spaceMono(fontSize: 14, color: AppColors.darkNavy),
+  secondaryLabelStyle: GoogleFonts.spaceMono(
+    fontSize: 14,
+    color: AppColors.white,
+    fontWeight: FontWeight.w500,
   ),
+  brightness: Brightness.light,
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(20),
+    side: const BorderSide(color: Colors.grey, width: 1),
+  ),
+  checkmarkColor: AppColors.white,
+),
 
   // 7. ListTile
   listTileTheme: ListTileThemeData(
@@ -153,10 +157,6 @@ final appTheme = ThemeData(
       disabledForegroundColor: Colors.grey.shade600,
       elevation: 2,
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-      textStyle: const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.bold,
-      ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
@@ -169,15 +169,6 @@ final appTheme = ThemeData(
     elevation: 8,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(20),
-    ),
-    titleTextStyle: const TextStyle(
-      color: AppColors.darkNavy,
-      fontSize: 20,
-      fontWeight: FontWeight.bold,
-    ),
-    contentTextStyle: const TextStyle(
-      color: AppColors.darkNavy,
-      fontSize: 15,
     ),
   ),
 

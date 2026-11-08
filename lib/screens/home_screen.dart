@@ -161,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Hi, username",
+                    Text("Hi, ",
                       style: TextStyle(
                         fontSize: 52.0,
                         fontWeight: FontWeight.bold,
@@ -224,7 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     if (spots.isEmpty) {
                       return const SizedBox(
                         height: 150.0,
-                        child: Center(child: Text('Aucune contribution pour le moment')),
+                        child: Center(child: Text('No contribution for now 😢')),
                       );
                     }
 
@@ -300,7 +300,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         foregroundColor: Colors.white,
                         fixedSize: const Size.fromHeight(50),
                         elevation: 2,
-                        textStyle: TextStyle(fontSize: 14.0),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -316,7 +315,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         foregroundColor: Colors.white,
                         fixedSize: const Size.fromHeight(50),
                         elevation: 2,
-                        textStyle: TextStyle(fontSize: 14.0),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),

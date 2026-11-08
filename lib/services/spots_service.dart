@@ -1,5 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:supermapper_app/configuration/feedback_category.dart';
+import 'package:supermapper_app/configuration/contribution_category.dart';
 import 'package:supermapper_app/widgets/spot.dart';
 import 'package:flutter/foundation.dart';
 
@@ -50,7 +50,7 @@ class SpotService {
   Future<void> addSpot ({
     required String title,
     required String description,
-    required FeedbackCategory category,
+    required ContributionCategory category,
     required double latitude,
     required double longitude,
   }) async {

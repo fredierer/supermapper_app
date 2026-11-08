@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:supermapper_app/configuration/feedback_category.dart';
+import 'package:supermapper_app/configuration/contribution_category.dart';
 import 'package:supermapper_app/screens/filter_screen.dart';
 import 'package:supermapper_app/screens/search_screen.dart';
 import 'package:supermapper_app/services/places_service.dart';
@@ -51,7 +51,7 @@ class MapScreenState extends State<MapScreen> {
   double? _cameraZoom;
 
   bool get _isFiltered => _categoriesFiltered.isNotEmpty || _countriesFiltered.isNotEmpty;  
-  Set<FeedbackCategory> _categoriesFiltered = {};
+  Set<ContributionCategory> _categoriesFiltered = {};
   Set<String> _countriesFiltered = {};
 
   final _placeService = PlaceService();
@@ -135,7 +135,7 @@ class MapScreenState extends State<MapScreen> {
       _selectedSpotId = null;
     });
 
-    final result = await Navigator.of(context).push<({Set<FeedbackCategory> categories, Set<String> countries})>(
+    final result = await Navigator.of(context).push<({Set<ContributionCategory> categories, Set<String> countries})>(
       customSlidefromRight(FilterScreen(
         initialCategories: _categoriesFiltered,
         initialCountries: _countriesFiltered,
@@ -327,13 +327,15 @@ class MapScreenState extends State<MapScreen> {
                 child: FilledButton.icon(
                   onPressed: widget.onAddButtonPressed,
                   icon: const Icon(Icons.add, size: 36),
-                  label: const Text('New feedback'),
+                  label: const Text(
+                    'Add a spot',
+                    style: TextStyle(fontSize: 16.0),
+                    ),
                   style: FilledButton.styleFrom(
                     backgroundColor: Colors.black,
                     foregroundColor: Colors.white,
                     elevation: 2,
-                    textStyle: TextStyle(fontSize: 18.0),
-                    fixedSize: const Size(200, 56), // largeur et hauteur fixes
+                    fixedSize: const Size(220, 56), // largeur et hauteur fixes
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
