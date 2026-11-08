@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:supermapper_app/services/profile_service.dart';
 import 'package:supermapper_app/services/spots_service.dart';
 import 'package:supermapper_app/theme.dart';
 import 'package:supermapper_app/widgets/spot.dart';
@@ -18,12 +19,14 @@ class HomeScreen extends StatefulWidget {
   });
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<HomeScreen> createState() => HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class HomeScreenState extends State<HomeScreen> {
   final _spotService = SpotService();
+  final _profileService = ProfileService();
   late Future<List<Spot>> _recentSpots;
+  late Future<String> _username;
 
   static final _dateFormat = DateFormat('dd/MM/yyyy HH:mm');
 
@@ -31,6 +34,14 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _recentSpots = _spotService.getSpots(max: 5);
+    _username = _profileService.getCurrentUsername();
+    reload();
+  }
+
+  void reload() {
+    setState(() {
+      _username = _profileService.getCurrentUsername();
+    });
   }
 
   @override
@@ -44,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(),
+              _buildHeader(_username),
               const SizedBox(height: 30),
               const _SectionTitle('NEW SPOTS'),
               const SizedBox(height: 4),
@@ -58,17 +69,32 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(Future<String> title) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          'Hi,',
-          style: GoogleFonts.spaceMono(
-            fontSize: 50,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
+        FutureBuilder<String>(
+          future: title,
+          builder: (context, snapshot) {
+            String title = 'Hi';
+            if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+              title = 'Hi ${snapshot.data!}';
+            }
+            
+            return Flexible(
+              child: Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.spaceMono(
+                  fontSize: 50,
+                  letterSpacing: 4.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+            );
+          },
         ),
         IconButton(
           onPressed: widget.onProfileButtonPressed,

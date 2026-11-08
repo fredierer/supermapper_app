@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supermapper_app/services/profile_service.dart';
 import 'package:supermapper_app/services/spots_service.dart';
 import 'package:supermapper_app/theme.dart';
 import 'package:supermapper_app/widgets/contributionCard.dart';
 import 'package:supermapper_app/widgets/spot.dart';
 import 'package:supermapper_app/widgets/statCard.dart';
 
-const double _borderWidth = 2.0;
+const double _borderWidth = 3.0;
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -20,12 +21,18 @@ class ProfileScreenState extends State<ProfileScreen> {
   static const _recentCount = 4;
 
   final _spotService = SpotService();
+  final _profileService = ProfileService();
+
   late Future<List<Spot>> _spotsFuture;
+  late Future<String> _username;
+
+  final _supabase = Supabase.instance.client;
 
   @override
   void initState() {
     super.initState();
     _spotsFuture = _spotService.getUserSpots();
+    _username = _profileService.getCurrentUsername();
   }
 
   void reload() {
@@ -63,7 +70,33 @@ class ProfileScreenState extends State<ProfileScreen> {
     );
 
     if (confirmed != true) return;
-    await Supabase.instance.client.auth.signOut();
+    await _supabase.auth.signOut();
+  }
+
+  Future<void> _usernameChanged(String newUsername) async {
+    if (newUsername.trim().isEmpty) return;
+
+    try {
+      // Appel de votre service pour sauvegarder en base (ajustez le nom de la méthode selon votre ProfileService)
+      await _profileService.updateUsername(newUsername.trim());
+
+      // On met à jour le Future du username pour rafraîchir l'affichage
+      setState(() {
+        _username = Future.value(newUsername.trim());
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Username updated successfully!')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to update username: $e')),
+        );
+      }
+    }
   }
 
   @override
@@ -77,7 +110,14 @@ class ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _ProfileHeader(onDisconnect: _disconnect),
+              FutureBuilder<String>(
+                future: _username,
+                builder: (context, snapshot) => _ProfileHeader(
+                  onDisconnect: _disconnect,
+                  username: snapshot.data ?? '',
+                  onUsernameChanged: _usernameChanged,
+                ),
+              ),
               const SizedBox(height: 10),
               FutureBuilder<List<Spot>>(
                 future: _spotsFuture,
@@ -190,35 +230,108 @@ ButtonStyle _amberButtonStyle() {
   );
 }
 
-class _ProfileHeader extends StatelessWidget {
-  const _ProfileHeader({required this.onDisconnect});
+class _ProfileHeader extends StatefulWidget {
+  const _ProfileHeader({
+    required this.onDisconnect,
+    required this.username,
+    required this.onUsernameChanged,
+  });
 
   final VoidCallback onDisconnect;
+  final String username;
+  final ValueChanged<String> onUsernameChanged;
+
+  @override
+  State<_ProfileHeader> createState() => _ProfileHeaderState();
+}
+
+class _ProfileHeaderState extends State<_ProfileHeader> {
+  // 1. État local pour gérer le mode édition
+  bool _isEditing = false;
+  late final TextEditingController _textController;
+
+  @override
+  void initState() {
+    super.initState();
+    _textController = TextEditingController(text: widget.username);
+  }
+
+  @override
+  void didUpdateWidget(covariant _ProfileHeader oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Met à jour le texte si le username change depuis l'extérieur
+    if (oldWidget.username != widget.username && !_isEditing) {
+      _textController.text = widget.username;
+    }
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
+
+  void _toggleEdit() {
+    setState(() {
+      if (_isEditing) {
+        // Sauvegarde : on notifie le parent du nouveau pseudo
+        widget.onUsernameChanged(_textController.text);
+      }
+      _isEditing = !_isEditing;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+  const double _borderWidth = 2.0;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Disconnect : petit bouton carré en haut à droite
-        Align(
-          alignment: Alignment.centerRight,
-          child: IconButton(
-            onPressed: onDisconnect,
-            tooltip: 'Disconnect',
-            icon: const Icon(Icons.logout, size: 22, color: AppColors.errorRed),
-            style: IconButton.styleFrom(
-              backgroundColor: Colors.white,
-              fixedSize: const Size(48, 48),
-              padding: EdgeInsets.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              side: const BorderSide(color: AppColors.errorRed, width: _borderWidth),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(
+              onPressed: _isEditing? null : widget.onDisconnect,
+              tooltip: 'Disconnect',
+              icon: Icon(Icons.logout, size: 22, color: _isEditing? Colors.grey : AppColors.errorRed),
+              style: IconButton.styleFrom(
+                backgroundColor: Colors.white,
+                disabledBackgroundColor: Colors.white,
+                fixedSize: const Size(48, 48),
+                padding: EdgeInsets.zero,
+                side: BorderSide(color: _isEditing? Colors.grey : AppColors.errorRed, width: _borderWidth),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
-          ),
+            IconButton(
+              onPressed: _toggleEdit,
+              tooltip: _isEditing ? 'Save' : 'Edit username',
+              icon: Icon(
+                _isEditing ? Icons.save : Icons.edit,
+                size: 24,
+                color: Colors.black,
+              ),
+              style: IconButton.styleFrom(
+                backgroundColor: Colors.white,
+                fixedSize: const Size(48, 48),
+                padding: EdgeInsets.zero,
+                side: const BorderSide(color: Colors.black, width: _borderWidth),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+        
+
+
+          ],
         ),
+
         const SizedBox(height: 8),
         Center(
           child: Container(
@@ -233,14 +346,41 @@ class _ProfileHeader extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        Text(
-          'Rémy',
-          textAlign: TextAlign.center,
-          style: GoogleFonts.spaceMono(
-            fontSize: 36,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
+        
+        // Conteneur centré pour la ligne pseudo + bouton
+        Center(
+          child : Flexible(
+            child: _isEditing
+              ? ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 250),
+                  child: TextField(
+                    controller: _textController,
+                    autofocus: true,
+                    maxLength: 36,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.spaceMono(
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                    decoration: const InputDecoration(
+                      isDense: true,
+                      contentPadding: EdgeInsets.all(5.0),
+                      border: UnderlineInputBorder(),
+                    ),
+                  ),
+                )
+              : Text(
+                widget.username,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.spaceMono(
+                        fontSize: 36,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+            ),
         ),
       ],
     );

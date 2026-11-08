@@ -25,11 +25,13 @@ class _HomeShellState extends State<HomeShell> {
 
   final _mapKey = GlobalKey<MapScreenState>();
   final _profileKey = GlobalKey<ProfileScreenState>();
+  final _homeKey = GlobalKey<HomeScreenState>();
 
   int _currentIndex = _homeIndex;
 
   late final List<Widget> _screens = [
     HomeScreen(
+      key: _homeKey,
       onProfileButtonPressed: () => _goTo(_profileIndex),
       onMapCardPressed: () => _goTo(_mapIndex),
     ),
@@ -40,9 +42,14 @@ class _HomeShellState extends State<HomeShell> {
 
   void _goTo(int index) {
     setState(() => _currentIndex = index);
+    if (index == _homeIndex) {
+      _homeKey.currentState?.reload();
+    }
+      
     if (index == _profileIndex) {
       _profileKey.currentState?.reload();
     }
+  
   }
 
   Future<void> _navigateToAddSpotScreen() async {
