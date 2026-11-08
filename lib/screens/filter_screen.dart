@@ -314,16 +314,31 @@ class _FilterScreenState extends State<FilterScreen> {
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        toolbarHeight: 80.0,
-        leadingWidth: 80,
+        toolbarHeight: 50.0,
+        leadingWidth: 70,
         leading: Padding(
           padding: EdgeInsetsGeometry.fromLTRB(20,0,0,0),
           child: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(Icons.arrow_back_ios_new_outlined, size: 24, color: Colors.black),
-          ),
+                    icon: const Icon(
+                      Icons.arrow_back_ios_new,
+                      size: 22,
+                      color: Colors.black,
+                    ),
+                    onPressed: () => Navigator.pop(context),
+                    style: IconButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      fixedSize: const Size(52, 52),
+                      padding: EdgeInsets.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      side: const BorderSide(
+                        color: Colors.black,
+                        width: _borderWidth,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
         ),
         titleSpacing: 15,
         title: Text("Filter",
@@ -344,7 +359,7 @@ class _FilterScreenState extends State<FilterScreen> {
               disabledBackgroundColor: Colors.white,
               disabledForegroundColor: Colors.grey.shade400,
               elevation: 2,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.symmetric(horizontal:12),
               textStyle: GoogleFonts.spaceMono(fontSize: 12),
               side: BorderSide(
                 color: (selectedCategories.isNotEmpty || selectedRegions.isNotEmpty)
@@ -367,7 +382,7 @@ class _FilterScreenState extends State<FilterScreen> {
             label: Text("Clear all filters"),
           )
         ],
-        actionsPadding: EdgeInsets.fromLTRB(0, 10, 15, 10),
+        actionsPadding: EdgeInsets.fromLTRB(0, 0, 15, 0),
       ),
 
       body: SafeArea(
