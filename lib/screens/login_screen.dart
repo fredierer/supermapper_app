@@ -32,6 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
         password: _passwordController.text,
       );
     } on AuthException catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -45,10 +46,9 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       return;
     }
-    
+
     setState(() => _isLoading = true);
-
-
+    
     try {
       final response = await _supabase.auth.signUp(
         email: _emailController.text.trim(),
@@ -73,10 +73,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _onSubmit() {
     if(_isRegister) {
-      print("START REGISTER");
       _register ();
     } else {
-      print("START SIGN IN");
       _signIn();
     }
   }
