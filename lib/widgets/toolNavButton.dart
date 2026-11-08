@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:supermapper_app/theme.dart';
 
+const double _borderWidth = 3.0;
+
 class ToolNavButton extends StatelessWidget {
   final IconData icon;
   final Color textColor;
   final Color backgroundColor;
   final VoidCallback onPressed;
-  final double size;      // taille du bouton (carré / rond)
+  final double size;      // taille du bouton (carré)
   final double iconSize;  // taille de l'icône
 
   const ToolNavButton({
     super.key,
     required this.icon,
     required this.onPressed,
-    this.textColor = Colors.white,
+    this.textColor = Colors.black,
     this.backgroundColor = AppColors.amber,
     this.size = 48,
     this.iconSize = 24,
@@ -32,6 +34,10 @@ class ToolNavButton extends StatelessWidget {
         fixedSize: Size(size, size),
         padding: EdgeInsets.zero, // l'icône reste centrée quelle que soit la taille
         tapTargetSize: MaterialTapTargetSize.shrinkWrap, // évite la zone de tap forcée à 48px
+        side: const BorderSide(color: Colors.black, width: _borderWidth),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
       ),
     );
   }

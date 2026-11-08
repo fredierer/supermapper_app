@@ -14,6 +14,8 @@ import 'dart:ui';
 import 'package:supermapper_app/widgets/toolNavButton.dart';
 import 'package:supermapper_app/widgets/userPositionButton.dart';
 
+const double _borderWidth = 3.0;
+
 class MapScreen extends StatefulWidget {
   final VoidCallback onAddButtonPressed;
 
@@ -213,11 +215,11 @@ class MapScreenState extends State<MapScreen> {
                             child: Container(
                               height: 70.0, // Hauteur fixe
                               decoration: BoxDecoration(
-                                color: AppColors.surfaceLight.withAlpha(180), // Couleur de background
-                                borderRadius: BorderRadius.circular(12.0), // Coins arrondis
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(14.0),
                                 border: Border.all(
-                                  color: AppColors.amber, // Couleur du contour
-                                  width: 2.0,              // Épaisseur du contour
+                                  color: Colors.black,
+                                  width: _borderWidth,
                                 ),
                               ),
                               child: Padding(
@@ -237,9 +239,9 @@ class MapScreenState extends State<MapScreen> {
                                         Text(
                                           _placeTitle ?? '',
                                           style: TextStyle(
-                                            fontSize: 18.0,
-                                            fontWeight: FontWeight.bold, // Titre principal
-                                            color: Colors.black87,
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
                                           ),
                                         ),
                                         if (_placeSubtitles != null && _placeSubtitles!.isNotEmpty) ...[
@@ -247,10 +249,10 @@ class MapScreenState extends State<MapScreen> {
                                           Text(
                                             _placeSubtitles ?? '',
                                             style: TextStyle(
-                                              fontSize: 12.0,
-                                              fontWeight: FontWeight.normal, // Sous-titre
-                                              color: Colors.grey,
-                                            ),
+                                            fontSize: 11.0,
+                                            fontWeight: FontWeight.normal,
+                                            color: Colors.black54,
+                                          ),
                                           ),
                                         ]
                                       ],
@@ -261,10 +263,10 @@ class MapScreenState extends State<MapScreen> {
                                       child: IconButton(
                                         padding: EdgeInsets.zero,
                                         constraints: const BoxConstraints(),
-                                        icon : Icon(Icons.close_outlined, 
-                                          size: 24.0, 
-                                          color: Colors.grey,
-                                        ),
+                                        icon : Icon(Icons.close_outlined,
+                                        size: 24.0,
+                                        color: Colors.black,
+                                      ),
                                         onPressed: () {
                                           setState(() {
                                             _boundary = [];
@@ -287,6 +289,7 @@ class MapScreenState extends State<MapScreen> {
                           isLabelVisible: _isFiltered,
                           alignment: AlignmentDirectional.topStart,
                           smallSize: 16,
+                          backgroundColor: Colors.black,
                           child: ToolNavButton(
                             icon: Icons.filter_list,
                             onPressed: _navigateToFilterScreen,
@@ -332,12 +335,13 @@ class MapScreenState extends State<MapScreen> {
                     style: TextStyle(fontSize: 16.0),
                     ),
                   style: FilledButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
+                    backgroundColor: AppColors.amber,
+                    foregroundColor: Colors.black,
                     elevation: 2,
-                    fixedSize: const Size(220, 56), // largeur et hauteur fixes
+                    fixedSize: const Size(220, 56),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(14),
+                      side: const BorderSide(color: Colors.black, width: _borderWidth),
                     ),
                   ),
                 ),

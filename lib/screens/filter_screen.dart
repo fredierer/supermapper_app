@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:supermapper_app/theme.dart';
 import 'package:supermapper_app/configuration/contribution_category.dart';
 import 'package:flutter/foundation.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+const double _borderWidth = 2.0;
 
 String countryCodeToEmoji(String countryCode) {
   // Convertit un code ISO à 2 lettres (ex: "FR") en drapeaux Unicode
@@ -293,6 +296,14 @@ class _FilterScreenState extends State<FilterScreen> {
     ),
   ];
 
+  static const _tileShape = RoundedRectangleBorder(
+    side: BorderSide(
+      color: Colors.black,
+      width: _borderWidth,
+      strokeAlign: BorderSide.strokeAlignInside,
+    ),
+    borderRadius: BorderRadius.all(Radius.circular(20)),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -300,7 +311,7 @@ class _FilterScreenState extends State<FilterScreen> {
       extendBody: true,
       appBar: AppBar(
         backgroundColor: AppColors.surfaceLight,
-        scrolledUnderElevation: 0, 
+        scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         toolbarHeight: 80.0,
@@ -310,52 +321,55 @@ class _FilterScreenState extends State<FilterScreen> {
           child: IconButton(
             onPressed: () {
               Navigator.pop(context);
-            }, 
-            icon: Icon(Icons.arrow_back_ios_new_outlined, size: 24,)
+            },
+            icon: Icon(Icons.arrow_back_ios_new_outlined, size: 24, color: Colors.black),
           ),
         ),
         titleSpacing: 15,
-        title: const Text("Filter",
-          style: TextStyle(
+        title: Text("Filter",
+          style: GoogleFonts.spaceMono(
             fontWeight: FontWeight.bold,
-            letterSpacing: 1.0,
             fontSize: 28,
+            color: Colors.black,
           ),
         ),
         actions: [
           ElevatedButton.icon(
-            icon: Icon(Icons.cleaning_services_outlined),
+            icon: Icon(Icons.cleaning_services_outlined, size: 18),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white, // Fond blanc quand actif
-              foregroundColor: Colors.red,   // Couleur du texte et de l'icône quand actif
-              elevation: 0,                  // Supprime l'ombre (optionnel, pour un look plus plat)
+              backgroundColor: Colors.white,
+              foregroundColor: (selectedCategories.isNotEmpty || selectedRegions.isNotEmpty)
+                  ? AppColors.errorRed
+                  : Colors.grey.shade400,
+              disabledBackgroundColor: Colors.white,
+              disabledForegroundColor: Colors.grey.shade400,
+              elevation: 2,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              textStyle: GoogleFonts.spaceMono(fontSize: 12),
               side: BorderSide(
                 color: (selectedCategories.isNotEmpty || selectedRegions.isNotEmpty)
-                  ? Colors.red        // Couleur si des filtres sont actifs
-                  : Colors.grey.shade300, // Couleur si aucun filtre n'est actif (grisé)
-              width: 1,
-              ), // Contour rouge
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12), // Cohérent avec vos autres bordures
+                  ? AppColors.errorRed
+                  : Colors.grey.shade400,
+                width: _borderWidth,
               ),
-              // Optionnel : personnaliser l'aspect grisé quand il est désactivé (quand onPressed est null)
-              disabledBackgroundColor: Colors.grey.shade100,
-              disabledForegroundColor: Colors.grey.shade400,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
             ),
-            onPressed: (selectedCategories.isNotEmpty || selectedRegions.isNotEmpty) 
+            onPressed: (selectedCategories.isNotEmpty || selectedRegions.isNotEmpty)
               ? () {
                 setState(() {
                   selectedCategories.clear();
                   selectedRegions.clear();
                 });
-              } 
-              : null, 
-            label: Text("Clear all filters"), 
+              }
+              : null,
+            label: Text("Clear all filters"),
           )
         ],
         actionsPadding: EdgeInsets.fromLTRB(0, 10, 15, 10),
       ),
-      
+
       body: SafeArea(
         child: Padding(
           padding: EdgeInsetsGeometry.symmetric(horizontal: 20, vertical: 0),
@@ -363,17 +377,18 @@ class _FilterScreenState extends State<FilterScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              
+
               //Filter by category
               Container(
                 width: double.infinity,
-                color: AppColors.surfaceLight,   
+                color: AppColors.surfaceLight,
                 padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                 child: const Text(
                   "CATEGORIES",
                   style: TextStyle(
-                    color: Colors.grey,
+                    color: Colors.black,
                     fontSize: 18,
+                    fontWeight: FontWeight.bold,
                     letterSpacing: 1.5,
                   ),
                 ),
@@ -383,23 +398,32 @@ class _FilterScreenState extends State<FilterScreen> {
                 color: AppColors.surfaceLight,
                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                 child :Wrap(
-                  spacing: 10,  // Espace horizontal
-                  runSpacing: 10,  // Espace vertical
+                  spacing: 10,
+                  runSpacing: 10,
                   children: ContributionCategory.values.map((category) {
-                      
+
                       final isSelected = selectedCategories.contains(category);
 
                       return FilterChip(
-                        avatar : isSelected 
-                          ? null 
+                        avatar : isSelected
+                          ? null
                           : Center(
                             child : Text(
-                              category.emoji, 
+                              category.emoji,
                               style: const TextStyle(fontSize: 12, height: 1.0)
                             ),
                           ),
-                        label: Text(category.label),
+                        label: Text(
+                          category.label,
+                          style: GoogleFonts.spaceMono(fontSize: 13, color: Colors.black),
+                        ),
+                        backgroundColor: Colors.white,
                         selectedColor: category.color,
+                        checkmarkColor: Colors.black,
+                        side: const BorderSide(color: Colors.black, width: _borderWidth),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                         selected: isSelected,
                         onSelected: (selected) {
                           setState(() {
@@ -415,21 +439,22 @@ class _FilterScreenState extends State<FilterScreen> {
                   ).toList(),
                 ),
               ),
-              
+
               //Filter by Countries, Region
               Container(
-                width: double.infinity, 
-                color: AppColors.surfaceLight,   
+                width: double.infinity,
+                color: AppColors.surfaceLight,
                 padding: const EdgeInsets.fromLTRB(0, 30, 0, 20),
                 child: const Text(
                   "REGIONS & COUNTRIES",
                   style: TextStyle(
-                    color: Colors.grey,
+                    color: Colors.black,
                     fontSize: 18,
+                    fontWeight: FontWeight.bold,
                     letterSpacing: 1.5,
                   ),
                 ),
-              ),             
+              ),
               Expanded(
                 child : ListView.builder(
                   itemCount: regions.length,
@@ -439,17 +464,17 @@ class _FilterScreenState extends State<FilterScreen> {
                     return Column(
                       children: [
                         Padding(
-                          padding : EdgeInsets.fromLTRB(0,0,0,5),
+                          padding : EdgeInsets.fromLTRB(0,0,0,8),
                           child : ListTile(
                             title: Text(region.name),
-                            trailing: region.isContinent ? Icon(region.isExpanded ? Icons.expand_less : Icons.expand_more,) : null,
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(  
-                                color: hasSelectedCountry ? AppColors.amber : Colors.grey.shade300, 
-                                width: 2,
-                              ),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                            trailing: region.isContinent
+                              ? Icon(
+                                  region.isExpanded ? Icons.expand_less : Icons.expand_more,
+                                  color: Colors.black,
+                                )
+                              : null,
+                            tileColor: hasSelectedCountry ? AppColors.amber : Colors.white,
+                            shape: _tileShape,
                             onTap: () {
                               setState(() {
                                 region.isExpanded = !region.isExpanded;
@@ -460,26 +485,27 @@ class _FilterScreenState extends State<FilterScreen> {
                         if (region.isExpanded && region.countries != null)
                           ...region.countries!.map((country) {
                             final isSelected = selectedRegions.contains(country.code);
-                            
+
                             return Padding(
-                              padding: const EdgeInsets.fromLTRB(20,0,0,5),
+                              padding: const EdgeInsets.fromLTRB(20,0,0,8),
                               child: ListTile(
                                 contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                                 leading: Text(
                                   countryCodeToEmoji(country.code),
-                                  style: const TextStyle(fontSize: 22), // Ajuste la taille de l'emoji
+                                  style: const TextStyle(fontSize: 22),
                                 ),
                                 title: Text(country.name),
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                    color: isSelected ? AppColors.amber : Colors.grey.shade300, 
-                                    width: 2,
-                                    strokeAlign: BorderSide.strokeAlignInside,
-                                  ),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
+                                tileColor: isSelected ? AppColors.amber : Colors.white,
+                                shape: _tileShape,
                                 trailing: Checkbox(
                                   value: isSelected,
+                                  fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+                                    return states.contains(WidgetState.selected)
+                                      ? Colors.black
+                                      : Colors.white;
+                                  }),
+                                  checkColor: Colors.white,
+                                  side: const BorderSide(color: Colors.black, width: _borderWidth),
                                   onChanged: (value) {
                                     setState(() {
                                       if (value == true) {
@@ -495,9 +521,9 @@ class _FilterScreenState extends State<FilterScreen> {
                           }),
                       ],
                     );
-                  } 
+                  }
                 ),
-              ),   
+              ),
             ]
           )
           )
@@ -514,14 +540,23 @@ class _FilterScreenState extends State<FilterScreen> {
                   onPressed: _hasChanges
                     ? () => Navigator.pop(context, (categories: selectedCategories, countries : selectedRegions))
                     : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.amber,
+                    foregroundColor: Colors.black,
+                    disabledBackgroundColor: Colors.grey.shade300,
+                    disabledForegroundColor: Colors.grey.shade600,
+                    elevation: 2,
+                    minimumSize: const Size.fromHeight(56),
+                    side: const BorderSide(color: Colors.black, width: _borderWidth),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
                   child: SizedBox(
                     child:Center(child: Text("Apply Changes")),
                   ),
-                ),  
+                ),
               )
-              
-
-
             ],
           )
         )

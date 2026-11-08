@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:supermapper_app/configuration/contribution_category.dart';
 import 'package:supermapper_app/services/places_service.dart';
+import 'package:supermapper_app/theme.dart';
+
+const double _borderWidth = 3.0;
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -111,8 +114,9 @@ class _SearchScreenState extends State<SearchScreen> {
       child: Text(
         text,
         style: const TextStyle(
-          color: Colors.grey,
-          fontSize: 14,
+          color: Colors.black,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
           letterSpacing: 1.5,
         ),
       ),
@@ -129,15 +133,15 @@ class _SearchScreenState extends State<SearchScreen> {
       padding: const EdgeInsets.only(bottom: 10),
       child: Material(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.black, width: _borderWidth),
+              borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -153,6 +157,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
+                          color: Colors.black,
                         ),
                       ),
                       if (subtitle.isNotEmpty) ...[
@@ -161,9 +166,9 @@ class _SearchScreenState extends State<SearchScreen> {
                           subtitle,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Colors.grey.shade600,
-                            fontSize: 13,
+                          style: const TextStyle(
+                            color: Colors.black54,
+                            fontSize: 12,
                           ),
                         ),
                       ],
@@ -190,7 +195,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Widget _buildPlaceTile(PlaceResult place) {
     return _buildResultCard(
-      leading: const Icon(Icons.place_outlined, size: 24),
+      leading: const Icon(Icons.place_outlined, size: 24, color: Colors.black),
       title: place.name,
       subtitle: place.subtitle,
       onTap: () => _selectPlace(place),
@@ -204,7 +209,16 @@ class _SearchScreenState extends State<SearchScreen> {
     if (!hasQuery) return const SizedBox.shrink();
 
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: SizedBox(
+          height: 32,
+          width: 32,
+          child: CircularProgressIndicator(
+            strokeWidth: 3,
+            color: Colors.black,
+          ),
+        ),
+      );
     }
 
     if (!hasResults) {
@@ -227,7 +241,13 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final fieldBorder = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20),
+      borderSide: const BorderSide(color: Colors.black, width: _borderWidth),
+    );
+
     return Scaffold(
+      backgroundColor: AppColors.surfaceLight,
       extendBody: true,
       body: SafeArea(
         child: Padding(
@@ -239,8 +259,25 @@ class _SearchScreenState extends State<SearchScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back_ios_new),
+                    icon: const Icon(
+                      Icons.arrow_back_ios_new,
+                      size: 22,
+                      color: Colors.black,
+                    ),
                     onPressed: () => Navigator.pop(context),
+                    style: IconButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      fixedSize: const Size(52, 52),
+                      padding: EdgeInsets.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      side: const BorderSide(
+                        color: Colors.black,
+                        width: _borderWidth,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
                   ),
                   const SizedBox(width: 20),
                   Expanded(
@@ -248,11 +285,21 @@ class _SearchScreenState extends State<SearchScreen> {
                       controller: _searchController,
                       autofocus: true,
                       onChanged: _onQueryChanged,
-                      decoration: const InputDecoration(
-                        hintStyle: TextStyle(color: Colors.grey),
+                      style: const TextStyle(color: Colors.black),
+                      cursorColor: Colors.black,
+                      decoration: InputDecoration(
+                        hintStyle: const TextStyle(color: Colors.black45),
                         labelText: 'Search',
+                        labelStyle: const TextStyle(color: Colors.black),
+                        floatingLabelStyle: const TextStyle(color: Colors.black),
                         hintText: 'Seoul, Lisbon, ...',
-                        border: OutlineInputBorder(),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 18,
+                        ),
+                        border: fieldBorder,
+                        enabledBorder: fieldBorder,
+                        focusedBorder: fieldBorder,
                       ),
                     ),
                   ),
