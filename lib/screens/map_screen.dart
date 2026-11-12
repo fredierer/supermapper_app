@@ -1,12 +1,17 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:supermapper_app/configuration/contribution_category.dart';
 import 'package:supermapper_app/screens/filter_screen.dart';
 import 'package:supermapper_app/screens/search_screen.dart';
+import 'package:supermapper_app/services/POI_service.dart';
 import 'package:supermapper_app/services/places_service.dart';
 import 'package:supermapper_app/theme.dart';
 import 'package:supermapper_app/widgets/map.dart';
 import 'package:supermapper_app/transitions/customSlideTransition.dart';
 import 'package:supermapper_app/services/spots_service.dart';
+import 'package:supermapper_app/widgets/poi.dart';
 import 'package:supermapper_app/widgets/spot.dart';
 import 'package:supermapper_app/widgets/spotInfo.dart';
 import 'dart:ui';
@@ -31,6 +36,7 @@ class MapScreen extends StatefulWidget {
 }
 class MapScreenState extends State<MapScreen> {
 
+  //Spots fetch from Supabase
   final SpotService _spotService = SpotService();
   List<Spot> _fetchedSpots = [];
   List<Spot> get _filteredSpots {
@@ -44,24 +50,46 @@ class MapScreenState extends State<MapScreen> {
   }
   int? _selectedSpotId;
 
+  //Position sur la map, target
   double? _targetLat;
   double? _targetLng;
   double? _zoom;
 
+  //Camera position
   double? _cameraLat;
   double? _cameraLng;
   double? _cameraZoom;
 
+  //Filtered from the filter_screen
   bool get _isFiltered => _categoriesFiltered.isNotEmpty || _countriesFiltered.isNotEmpty;  
   Set<ContributionCategory> _categoriesFiltered = {};
   Set<String> _countriesFiltered = {};
 
+  //Place service to display place from search_screen
   final _placeService = PlaceService();
   List<BoundaryResult> _boundary = [];
   bool _boundariesDisplay = false;
   int _boundaryRequestId = 0;
   String? _placeTitle;
   String? _placeSubtitles;
+
+  //POI service
+  final _poiService = PoiService();
+  List<Poi> _currentPois = [];
+  Timer? _debounceTimer;
+
+  Future<void> _loadPoisForCurrentBounds(double south, double west, double north, double east) async {
+    //Fucntion to fetch all the poi from database and set _currentPois so it can be displayed on the map
+    //Function called by _mapCenterChanged after a delay, to avoid calling it every millisecond
+
+    final pois = await _poiService.getPoi(south, west, north, east);
+
+    if (!mounted) return;
+
+    setState(() {
+      _currentPois = pois;
+    });
+  }
 
   @override
   void initState() {
@@ -166,6 +194,34 @@ class MapScreenState extends State<MapScreen> {
   }
 }
 
+  void _mapCenterChanged(double lat, double lng, double zoom, LatLngBounds bounds) {
+    // Callback function from the map widget. 
+    // Verify the zoom level, to avoid fetching the pois too soon.
+    // arguments based on camera position.
+
+    _cameraLat = lat;
+    _cameraLng = lng;
+    _cameraZoom = zoom;
+
+    if (zoom < 14.0) {
+      if (_currentPois.isNotEmpty) {
+        setState(() => _currentPois = []);
+      }
+      return;
+    }
+
+    if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
+
+    _debounceTimer = Timer(const Duration(milliseconds: 200), () {
+      _loadPoisForCurrentBounds(
+        bounds.south,
+        bounds.west,
+        bounds.north,
+        bounds.east,
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -173,6 +229,7 @@ class MapScreenState extends State<MapScreen> {
           
           MapWidget(
             spots: _filteredSpots,
+            pois: _currentPois,
             targetLat: _targetLat,
             targetLng: _targetLng,
             targetZoom : _zoom,
@@ -184,10 +241,8 @@ class MapScreenState extends State<MapScreen> {
                 _selectedSpotId = spotId;
               });
             },
-            onCenterChanged: (lat, lng, zoom) {
-              _cameraLat = lat;
-              _cameraLng = lng;
-              _cameraZoom = zoom;
+            onCenterChanged: (lat, lng, zoom, bounds) {
+              _mapCenterChanged(lat,lng, zoom, bounds);
             },
             boundary: _boundary,
             bottomAttributionPadding: 110,

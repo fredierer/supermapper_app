@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:supermapper_app/configuration/contribution_category.dart';
 import 'package:supermapper_app/screens/addSpotScreens/add_spot_stepDetails.dart';
 import 'package:supermapper_app/screens/addSpotScreens/add_spot_stepLocation.dart';
@@ -75,7 +76,7 @@ class _AddSpotScreenState extends State<AddSpotScreen> {
     }
   }
 
-  void _onLocationChanged(double lat, double lng, double zoom,) {
+  void _onLocationChanged(double lat, double lng, double zoom, LatLngBounds bounds) {
     _latitude = lat;
     _longitude = lng;
   }

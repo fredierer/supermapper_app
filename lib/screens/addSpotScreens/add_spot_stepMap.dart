@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:supermapper_app/services/places_service.dart';
 import 'package:supermapper_app/widgets/map.dart';
@@ -19,7 +20,7 @@ class AddSpotStepMap extends StatefulWidget {
   final double? initialLatitude;
   final double? initialLongitude;
   final double? initialZoom;
-  final void Function(double lat, double lng, double zoom) onLocationChanged;
+  final void Function(double lat, double lng, double zoom, LatLngBounds bounds) onLocationChanged;
 
   @override
   State<AddSpotStepMap> createState() => _AddSpotStepMapState();

@@ -1,9 +1,13 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:http/http.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:supermapper_app/services/places_service.dart';
 import 'package:supermapper_app/theme.dart';
 import 'package:supermapper_app/widgets/clusterBubble.dart';
+import 'package:supermapper_app/widgets/poi.dart';
 import 'package:supermapper_app/widgets/spot.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
@@ -12,6 +16,7 @@ import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 
 class MapWidget extends StatefulWidget {
   final List<Spot> spots;
+  final List<Poi> pois;
   final double? targetLat; //Parameter used to move the map to a desired position
   final double? targetLng; //Parameter used to move the map to a desired position
   final double? targetZoom; //Parameter to set a target zoom when place selected from search
@@ -19,13 +24,14 @@ class MapWidget extends StatefulWidget {
   final double? initialLat; //Parameter used to set an initial value of Latitude, so the map can center on something
   final double? initialLng; //Parameter used to set an initial value of Longitude, so the map can center on something
   final double? initialZoom;
-  final void Function(double lat, double lng, double zoom,)? onCenterChanged; //Callback function to give the position of the center of the map when it moved
+  final void Function(double lat, double lng, double zoom, LatLngBounds bounds)? onCenterChanged; //Callback function to give the position of the center of the map when it moved
   final List<BoundaryResult> boundary; //List of set of points used to display th eboundaries of a place
-  final double? bottomAttributionPadding;
+  final double? bottomAttributionPadding; //Padding given to the attribution from the bottom of the screen
 
   const MapWidget({
     super.key,
     this.spots = const [],
+    this.pois = const [],
     this.targetLat,
     this.targetLng,
     this.targetZoom,
@@ -48,17 +54,22 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
   final MapController _mapController = MapController(); 
   bool _locationGranted = false;
   List<Marker> _spotMarkers = [];
+  List<Marker> _poiMarkers = [];
+  bool _mapReady = false;
+  int _lastZoomBucket = -1;
 
   @override
   void initState() {
     super.initState();
     _initLocation();
+    _buildSpotMarkers();
+    _buildPoiMarkers();
   }
 
-  
   void _reportCenter() {
     final camera = _mapController.camera;
-    widget.onCenterChanged?.call(camera.center.latitude, camera.center.longitude, camera.zoom,);
+
+    widget.onCenterChanged?.call(camera.center.latitude, camera.center.longitude, camera.zoom, camera.visibleBounds);
   }
 
   Future<void> _initLocation() async {
@@ -84,6 +95,71 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
     }).toList();
   }
 
+  void _buildPoiMarkers() {
+    if (!_mapReady) return;
+
+    final zoom = _mapController.camera.zoom;
+    final visiblePois = _declutter(widget.pois, zoom);
+
+    _poiMarkers = visiblePois.map((poi) {
+      
+      return Marker(
+        point: LatLng(poi.lat, poi.lng),
+        width: 24,
+        height: 24,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => debugPrint('POI click : ${poi.name}'),
+          child: Icon(
+            poi.icon,
+            color: poi.color.withAlpha(100),
+            size: 18,
+          ),
+        ),
+        );
+    }).toList();
+  }
+
+  List<Poi> _declutter(List<Poi> pois, double zoom, {double minDistPx = 28}) {
+    // Take a list of POI and filters it to avoid POI collision on a map.
+    // Project POI position on screen and delete the least important based on priority (poi.priority)
+     
+    final camera = _mapController.camera;
+    final z = zoom.floorToDouble();
+
+    final candidates = pois.where((p) => zoom >= p.minZoom).toList()
+      ..sort((a, b) {
+        final byPrio = b.priority.compareTo(a.priority);
+        return byPrio != 0 ? byPrio : a.id.compareTo(b.id);
+      });
+
+    final grid = <(int, int), List<Offset>>{};
+    final kept = <Poi>[];
+
+    for (final poi in candidates) {
+      final p = camera.projectAtZoom(LatLng(poi.lat, poi.lng), z);
+      final cx = (p.dx / minDistPx).floor();
+      final cy = (p.dy / minDistPx).floor();
+
+      var collides = false;
+
+      for (var dx = -1; dx <= 1 && !collides; dx++) {
+        for (var dy = -1; dy <= 1 && !collides; dy++) {
+          for (final q in grid[(cx + dx, cy + dy)] ?? const <Offset>[]) {
+            if ((p - q).distance < minDistPx) { // getter : pas de parenthèses
+              collides = true;
+              break;
+            }
+          }
+        }
+      }
+      if (collides) continue;
+
+      grid.putIfAbsent((cx, cy), () => []).add(p);
+      kept.add(poi);
+    }
+    return kept;
+  }
 
   @override
   void didUpdateWidget(covariant MapWidget oldWidget) {
@@ -91,6 +167,10 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
 
     if (widget.spots != oldWidget.spots) {
       _buildSpotMarkers();
+    }
+
+    if (widget.pois != oldWidget.pois) {
+      _buildPoiMarkers();
     }
 
     if (widget.targetLat != null && widget.targetLng != null) {
@@ -148,9 +228,22 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
       options: MapOptions(
         initialCenter: LatLng(widget.initialLat ?? 0, widget.initialLng ?? 0),
         initialZoom: widget.initialZoom ?? 4.0,
-        onMapReady: _reportCenter,
+        onMapReady: () {
+          _mapReady = true;
+          _reportCenter();
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) setState(_buildPoiMarkers);
+          });
+        },
         onPositionChanged: (camera, hasGesture) {
           _reportCenter();
+
+          final bucket = (camera.zoom * 2).floor(); // un pas tous les 0.5 de zoom
+          if (bucket != _lastZoomBucket) {
+            _lastZoomBucket = bucket;
+            setState(_buildPoiMarkers);
+          }
+
           //print('Zoom: ${camera.zoom.toStringAsFixed(2)}');
           //print('Lat: ${camera.center.latitude}');
           //print('Lng: ${camera.center.longitude}');
@@ -167,6 +260,7 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
           urlTemplate: 'https://basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png?key=cb1_301t_1_f5198b589013a43fe135d463',
           userAgentPackageName: 'app.supermapper.app',
         ),
+
         if (widget.boundary.isNotEmpty) ...[
           PolygonLayer(
             polygons: widget.boundary
@@ -179,6 +273,7 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
                     ))
                 .toList(),
           ),
+
           if(widget.targetLat != null && widget.targetLng != null)
             MarkerLayer(
               markers: [
@@ -195,7 +290,12 @@ class _MapWidgetState extends State<MapWidget> with TickerProviderStateMixin {
               ],
             ),
         ],
-          
+        
+        if (_poiMarkers.isNotEmpty)
+          MarkerLayer(
+            markers: _poiMarkers,
+          ),
+
         if (_locationGranted) const CurrentLocationLayer(),
         
         MarkerClusterLayerWidget(
