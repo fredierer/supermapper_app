@@ -5,6 +5,7 @@ import 'package:supermapper_app/services/profile_service.dart';
 import 'package:supermapper_app/services/spots_service.dart';
 import 'package:supermapper_app/theme.dart';
 import 'package:supermapper_app/widgets/contributionCard.dart';
+import 'package:supermapper_app/widgets/savedSpotCard.dart';
 import 'package:supermapper_app/widgets/spot.dart';
 import 'package:supermapper_app/widgets/statCard.dart';
 
@@ -23,21 +24,24 @@ class ProfileScreenState extends State<ProfileScreen> {
   final _spotService = SpotService();
   final _profileService = ProfileService();
 
-  late Future<List<Spot>> _spotsFuture;
+  late Future<List<Spot>> _contributionSpotFuture;
+  late Future<List<Spot>> _savedSpotsFuture;
   late Future<String> _username;
-
-  final _supabase = Supabase.instance.client;
+  final _client = Supabase.instance.client;
 
   @override
   void initState() {
     super.initState();
-    _spotsFuture = _spotService.getUserSpots();
+    _contributionSpotFuture = _spotService.getUserSpots();
+    _savedSpotsFuture = _profileService.getCurrentUserSavedSpot();
     _username = _profileService.getCurrentUsername();
+    
   }
 
   void reload() {
     setState(() {
-      _spotsFuture = _spotService.getUserSpots();
+      _contributionSpotFuture = _spotService.getUserSpots();
+      _savedSpotsFuture = _profileService.getCurrentUserSavedSpot();
     });
   }
 
@@ -70,7 +74,7 @@ class ProfileScreenState extends State<ProfileScreen> {
     );
 
     if (confirmed != true) return;
-    await _supabase.auth.signOut();
+    await _client.auth.signOut();
   }
 
   Future<void> _usernameChanged(String newUsername) async {
@@ -120,7 +124,7 @@ class ProfileScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(height: 10),
               FutureBuilder<List<Spot>>(
-                future: _spotsFuture,
+                future: _contributionSpotFuture,
                 builder: _buildSpotsSection,
               ),
             ],
@@ -171,6 +175,8 @@ class ProfileScreenState extends State<ProfileScreen> {
 
     final spots = snapshot.requireData;
     final recentSpots = spots.take(_recentCount).toList();
+    
+    final savedSpots = _profileService.getCurrentUserSavedSpot();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,6 +195,38 @@ class ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
         const SizedBox(height: 20),
+        const _SectionTitle('SAVED SPOTS'),
+        const SizedBox(height: 5),
+
+        FutureBuilder<List<Spot>>(
+          future: _savedSpotsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            final savedSpots = snapshot.data ?? [];
+            print(savedSpots);
+            if (savedSpots.isEmpty) {
+              return const Center(child: Text('No saved spots for now 😢'));
+            }
+            return GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.zero,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                mainAxisExtent: 160,
+              ),
+              itemCount: savedSpots.length,
+              itemBuilder: (context, index) => SavedSpotCard(spot: savedSpots[index]),
+            );
+          },
+        ),
+        
+
+        const SizedBox(height: 20),
         const _SectionTitle('YOUR CONTRIBUTIONS'),
         const SizedBox(height: 5),
         if (recentSpots.isEmpty)
@@ -205,10 +243,10 @@ class ProfileScreenState extends State<ProfileScreen> {
             padding: EdgeInsets.zero,
             itemCount: recentSpots.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
+              crossAxisCount: 1,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
-              mainAxisExtent: 160,
+              mainAxisExtent: 120,
             ),
             itemBuilder: (context, index) =>
                 ContributionCard(spot: recentSpots[index]),

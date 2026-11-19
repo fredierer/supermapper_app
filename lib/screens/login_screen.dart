@@ -17,7 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool _isLoading = false;
 
-  final _supabase = Supabase.instance.client;
+  final _client = Supabase.instance.client;
 
   static const double _borderWidth = 3.0;
 
@@ -27,7 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _signIn() async {
     setState(() => _isLoading = true);
     try {
-      await _supabase.auth.signInWithPassword(
+      await _client.auth.signInWithPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
     
     try {
-      final response = await _supabase.auth.signUp(
+      final response = await _client.auth.signUp(
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );

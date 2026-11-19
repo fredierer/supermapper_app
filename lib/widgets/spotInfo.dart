@@ -5,6 +5,7 @@ import 'package:map_launcher/map_launcher.dart';
 import 'package:flutter/foundation.dart';
 import 'package:supermapper_app/screens/profile_screen.dart';
 import 'package:supermapper_app/services/profile_service.dart';
+import 'package:supermapper_app/theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SpotInfo extends StatefulWidget {
@@ -26,11 +27,16 @@ class _SpotInfoState extends State<SpotInfo> {
   static const _offeredMaps = <MapApp>[.apple, .google];
 
   final _profileService = ProfileService();
+  bool? _isSpotSavedByUser;
+
 
   @override
   void initState() {
     super.initState();
     _spotFuture = _fetchSpotData(widget.spotId);
+    _profileService.isSpotSavedByCurrentUser(widget.spotId).then((saved) {
+      if (mounted) setState(() => _isSpotSavedByUser = saved);
+    });
   }
 
   Future<Map<String, dynamic>?> _fetchSpotData(int id) async {
@@ -121,6 +127,21 @@ class _SpotInfoState extends State<SpotInfo> {
 
   }
 
+  Future<void> _toggleSaved(int spotId) async {
+    final wasSaved = _isSpotSavedByUser ?? false;
+    setState(() => _isSpotSavedByUser = !wasSaved);
+    try {
+      if (wasSaved) {
+        await _profileService.unsaveSpotForCurrentUser(spotId);
+      } else {
+        await _profileService.saveSpotForCurrentUser(spotId);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isSpotSavedByUser = wasSaved);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -169,6 +190,7 @@ class _SpotInfoState extends State<SpotInfo> {
               );
             }
 
+            final int spotId = spotData['id'] ?? 0;
             final String rawDate = spotData['created_at']?.toString() ?? '';
             final String date = formatDate(rawDate);
             final String title = spotData['title']?.toString() ?? 'Spot #${widget.spotId}';
@@ -258,18 +280,56 @@ class _SpotInfoState extends State<SpotInfo> {
 
                 const SizedBox(height: 20),
 
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton.icon(
-                    onPressed: hasCoords
-                      ? () => _openInMaps(lat: lat, lng: lng, title: title)
-                      : null, 
-                     
-                    label: Text("Open in Maps"),
-                    icon: Icon(Icons.location_on_outlined)
-                  )
+                Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 50,
+                        child: ElevatedButton.icon(
+                          onPressed: hasCoords
+                              ? () => _openInMaps(lat: lat, lng: lng, title: title)
+                              : null,
+                          icon: const Icon(Icons.location_on_outlined, size: 24),
+                          label: const Text('Open in Maps'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.amber,
+                            foregroundColor: Colors.black,
+                            disabledBackgroundColor: Colors.grey.shade300,
+                            elevation: 2,
+                            shadowColor: Colors.black,
+                            padding: EdgeInsets.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            side: const BorderSide(color: Colors.black, width: 3.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    IconButton(
+                      onPressed: _isSpotSavedByUser == null ? null : () => _toggleSaved(widget.spotId),
+                      icon: Icon(
+                        _isSpotSavedByUser == true ? Icons.bookmark : Icons.bookmark_add_outlined,
+                        color: Colors.black,
+                      ),
+                      style: IconButton.styleFrom(
+                        backgroundColor: AppColors.amber,
+                        elevation: 2,
+                        shadowColor: Colors.black,
+                        fixedSize: const Size(50, 50),
+                        padding: EdgeInsets.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        side: const BorderSide(color: Colors.black, width: 3.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
+                
               ],
             );
           },

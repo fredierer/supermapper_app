@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart';
+import 'package:supermapper_app/widgets/spot.dart';
 
 class ProfileService {
   final SupabaseClient _client = Supabase.instance.client;
@@ -51,6 +52,38 @@ class ProfileService {
     }
   }
   
+  Future<List<Spot>> getCurrentUserSavedSpot() async {
+
+    final userId = _client.auth.currentUser?.id;
+
+    try {
+      final data = await _client
+        .from('profiles')
+        .select('saved_spots')
+        .eq('id', userId!)
+        .single();
+
+      final savedSpotsId = List<int>.from(data['saved_spots'] ?? []);
+      
+      if (savedSpotsId.isEmpty) return [];
+
+      final spotsData = await _client
+        .from('spots')
+        .select()
+        .inFilter('id', savedSpotsId);
+
+      final savedSpots = spotsData
+        .map<Spot>((json) => Spot.fromJson(json))
+        .toList();
+
+      return savedSpots;
+
+    } catch (e) {
+      debugPrint('Error while fetching the current user saved spot : $e');
+      rethrow;
+    }
+
+  }
 
   Future<void> updateUsername(String username) async {
     try {
@@ -70,4 +103,95 @@ class ProfileService {
       rethrow;
     }
   }
+
+  Future<bool> isSpotSavedByCurrentUser(int spotId) async {
+    final userId = _client.auth.currentUser?.id;
+    if (userId == null) {
+      throw Exception('No user logged in. Impossible to save the spot.');
+    }
+
+    try {
+      final data = await _client
+        .from('profiles')
+        .select('saved_spots')
+        .eq('id', userId)
+        .single();
+
+      final savedSpots = List<int>.from(data['saved_spots'] ?? []);
+
+      if (savedSpots.contains(spotId)) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      debugPrint("Error while searching if spot is saved by the current user : $e");
+      rethrow;
+    }
+  }
+
+  Future<void> saveSpotForCurrentUser(int spotId) async {
+    final userId = _client.auth.currentUser?.id;
+    if (userId == null) {
+      throw Exception('No user logged in. Impossible to save the spot.');
+    }
+
+    try {
+      final data = await _client
+        .from('profiles')
+        .select('saved_spots')
+        .eq('id', userId)
+        .single();
+
+      final savedSpots = List<int>.from(data['saved_spots'] ?? []);
+
+      if (savedSpots.contains(spotId)) return;
+
+      savedSpots.add(spotId);
+      await _client
+          .from('profiles')
+          .update({'saved_spots': savedSpots})
+          .eq('id', userId);
+
+    } catch (e) {
+      debugPrint("Error while trying to save spot for the current user : $e");
+      rethrow;
+    }
+
+  }
+
+  Future<void> unsaveSpotForCurrentUser(int spotId) async {
+    final userId = _client.auth.currentUser?.id;
+    if (userId == null) {
+      throw Exception('No user logged in. Impossible to unsave the spot.');
+    }
+
+    try {
+      final data = await _client
+        .from('profiles')
+        .select('saved_spots')
+        .eq('id', userId)
+        .single();
+
+      final savedSpots = List<int>.from(data['saved_spots'] ?? []);
+
+      if (!savedSpots.contains(spotId)) return;
+
+      final isRemoved = savedSpots.remove(spotId);
+      
+      if (isRemoved) {
+        await _client
+            .from('profiles')
+            .update({'saved_spots': savedSpots})
+            .eq('id', userId);
+      }
+
+    } catch (e) {
+      debugPrint("Error while trying to save spot for the current user : $e");
+      rethrow;
+    }
+
+  }
+
+
 }
