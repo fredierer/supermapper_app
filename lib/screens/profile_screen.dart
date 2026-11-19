@@ -205,7 +205,6 @@ class ProfileScreenState extends State<ProfileScreen> {
               return const Center(child: CircularProgressIndicator());
             }
             final savedSpots = snapshot.data ?? [];
-            print(savedSpots);
             if (savedSpots.isEmpty) {
               return const Center(child: Text('No saved spots for now 😢'));
             }

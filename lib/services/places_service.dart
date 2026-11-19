@@ -76,6 +76,7 @@ class BoundaryResult{
     this.holes
   );
 }
+
 class PlaceService {
 
   Future<List<PlaceResult>> searchPlaces(String query, {int maxResults = 10}) async {
@@ -136,7 +137,6 @@ class PlaceService {
     }
 
     final data = jsonDecode(response.body) as List;
-    print(data);
     if (data.isEmpty) return [];
 
     final geometry = (data.first as Map<String, dynamic>)['geojson'] as Map<String, dynamic>?; //get geormetry
