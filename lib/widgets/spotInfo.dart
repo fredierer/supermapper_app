@@ -3,6 +3,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:map_launcher/map_launcher.dart';
 import 'package:flutter/foundation.dart';
+import 'package:supermapper_app/screens/profile_screen.dart';
+import 'package:supermapper_app/services/profile_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SpotInfo extends StatefulWidget {
@@ -22,6 +24,8 @@ class SpotInfo extends StatefulWidget {
 class _SpotInfoState extends State<SpotInfo> {
   late final Future<Map<String, dynamic>?> _spotFuture;
   static const _offeredMaps = <MapApp>[.apple, .google];
+
+  final _profileService = ProfileService();
 
   @override
   void initState() {
@@ -126,7 +130,7 @@ class _SpotInfoState extends State<SpotInfo> {
         borderRadius: BorderRadius.circular(16),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: FutureBuilder<Map<String, dynamic>?>(
           future: _spotFuture,
           builder: (context, snapshot) {
@@ -169,6 +173,7 @@ class _SpotInfoState extends State<SpotInfo> {
             final String date = formatDate(rawDate);
             final String title = spotData['title']?.toString() ?? 'Spot #${widget.spotId}';
             final String description = spotData['description']?.toString() ?? 'No description';
+            final Future<String> username = _profileService.getUsernameFromId(spotData['creator_id']?.toString() ?? '');
             final double? lat = (spotData['lat'] as num?)?.toDouble();
             final double? lng = (spotData['lng'] as num?)?.toDouble();
             final bool hasCoords = lat != null && lng != null;
@@ -187,13 +192,39 @@ class _SpotInfoState extends State<SpotInfo> {
                           Text(
                             title,
                             style: Theme.of(context).textTheme.titleLarge,
-                            overflow: TextOverflow.ellipsis,
                           ),
-                          Text(
-                            date,
-                            style: Theme.of(context).textTheme.bodySmall,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                          SizedBox(height: 5),
+                          Row(
+                            children: [
+                              Text(
+                                date,
+                                style: Theme.of(context).textTheme.bodySmall,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+
+                              SizedBox(width: 20),
+                              Icon(
+                                Icons.person,
+                                size: 14,
+                                color: Colors.black,
+                              ),
+                              SizedBox(width: 5,),
+                              FutureBuilder<String>(
+                                future: username,
+                                builder: (context, snapshot) {
+                                  return Text(
+                                    snapshot.data ?? "...",
+                                    style: Theme.of(context).textTheme.bodySmall,
+                                    overflow: TextOverflow.ellipsis,
+                                  );
+                                },
+                              ),
+
+
+
+                            ],
+                          )
+                          
                         ],
                       )
                     ),
