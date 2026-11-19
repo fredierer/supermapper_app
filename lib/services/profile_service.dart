@@ -21,6 +21,35 @@ class ProfileService {
       rethrow;
     }
   }
+
+  Future<String> getCurrentUserId() async {
+    try {
+      final user = _client.auth.currentUser;
+      if (user == null) return '';
+
+      return user.id;
+
+    } catch (e) {
+      debugPrint('Error while fetching the user id : $e');
+      rethrow;
+    }
+  }
+
+  Future<String> getUsernameFromId(String userId) async {    
+    try {
+      final data = await _client
+        .from('profiles')
+        .select('username')
+        .eq('id', userId)
+        .single();
+
+      return data['username'] as String;
+
+    } catch (e) {
+      debugPrint('Error while searching for username from Id : $e');
+      rethrow;
+    }
+  }
   
 
   Future<void> updateUsername(String username) async {

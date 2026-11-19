@@ -7,6 +7,7 @@ import 'package:supermapper_app/screens/settings_screen.dart';
 import 'package:supermapper_app/theme.dart';
 import 'package:supermapper_app/widgets/navBarButton.dart';
 import 'package:supermapper_app/transitions/customSlideTransition.dart';
+import 'package:supermapper_app/widgets/spot.dart';
 
 const double _borderWidth = 3.0;
 
@@ -21,7 +22,7 @@ class _HomeShellState extends State<HomeShell> {
   static const _homeIndex = 0;
   static const _mapIndex = 1;
   static const _profileIndex = 2;
-  //static const _settingsIndex = 3;
+  
 
   final _mapKey = GlobalKey<MapScreenState>();
   final _profileKey = GlobalKey<ProfileScreenState>();
@@ -34,11 +35,20 @@ class _HomeShellState extends State<HomeShell> {
       key: _homeKey,
       onProfileButtonPressed: () => _goTo(_profileIndex),
       onMapCardPressed: () => _goTo(_mapIndex),
+      onSpotCardPressed: _openSpotOnMap,
     ),
     MapScreen(key: _mapKey, onAddButtonPressed: _navigateToAddSpotScreen),
     ProfileScreen(key: _profileKey),
    // SettingsScreen(),
   ];
+
+  void _openSpotOnMap(Spot spot) {
+    setState(() {
+      _currentIndex = _mapIndex;
+    });
+    _mapKey.currentState?.openSpot(spot);
+  }
+
 
   void _goTo(int index) {
     setState(() => _currentIndex = index);

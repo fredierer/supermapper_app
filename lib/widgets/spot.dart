@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:supermapper_app/configuration/contribution_category.dart'; 
 import 'package:country_coder/country_coder.dart';
+import 'package:supermapper_app/services/profile_service.dart';
 
 String getCountryCodeFromLatLng(double lat, double lng) {
   final countries = CountryCoder.instance;
@@ -19,6 +20,7 @@ class Spot {
   final double lng;
   final String countryCode;
   final DateTime creationDate;
+  final String creatorId;
 
   Spot({
     required this.id,
@@ -29,11 +31,13 @@ class Spot {
     required this.lng,
     required this.countryCode,
     required this.creationDate,
+    required this.creatorId,
   });
 
   factory Spot.fromJson(Map<String, dynamic> json) {
     final lat = (json['lat'] as num?)?.toDouble() ?? 0.0;
     final lng = (json['lng'] as num?)?.toDouble() ?? 0.0;
+    
 
     return Spot(
       id: json['id'],
@@ -44,6 +48,7 @@ class Spot {
       lng: lng,
       countryCode: getCountryCodeFromLatLng(lat, lng),
       creationDate: DateTime.parse(json['created_at'] as String),
+      creatorId: json['creator_id'] as String? ?? '',
     );
   }
 

@@ -113,6 +113,18 @@ class MapScreenState extends State<MapScreen> {
     });
   }
 
+  Future<void> openSpot(Spot spot) async {
+    setState(() {
+      _targetLat = spot.lat;
+      _targetLng = spot.lng;
+      _zoom = 10.0;
+      _selectedSpotId = null;
+    });
+    await Future.delayed(const Duration(milliseconds: 800));
+    if (!mounted) return;
+    setState(() => _selectedSpotId = spot.id);
+  }
+
   Future<void> _navigateToSearchScreen() async {
     
     setState(() {

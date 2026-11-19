@@ -319,26 +319,26 @@ class _FilterScreenState extends State<FilterScreen> {
         leading: Padding(
           padding: EdgeInsetsGeometry.fromLTRB(20,0,0,0),
           child: IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back_ios_new,
-                      size: 22,
-                      color: Colors.black,
-                    ),
-                    onPressed: () => Navigator.pop(context),
-                    style: IconButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      fixedSize: const Size(52, 52),
-                      padding: EdgeInsets.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      side: const BorderSide(
-                        color: Colors.black,
-                        width: _borderWidth,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
+            icon: const Icon(
+              Icons.arrow_back_ios_new,
+              size: 22,
+              color: Colors.black,
+            ),
+            onPressed: () => Navigator.pop(context),
+            style: IconButton.styleFrom(
+              backgroundColor: Colors.white,
+              fixedSize: const Size(52, 52),
+              padding: EdgeInsets.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              side: const BorderSide(
+                color: Colors.black,
+                width: _borderWidth,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
         ),
         titleSpacing: 15,
         title: Text("Filter",
