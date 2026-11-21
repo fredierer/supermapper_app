@@ -1,5 +1,5 @@
-name: supermapper_app
-description: "A new Flutter project."
+name: Supermapper
+description: "Find border crossing info, route insights, and on-the-ground advice on an interactive map. Add your own pins to help fellow travelers along the road—generous, practical, and built for the journey."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev

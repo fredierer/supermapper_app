@@ -44,3 +44,7 @@ app.*.map.json
 /android/app/profile/
 /android/app/release/
 /android/build/
+
+#Key Publishing
+upload-keystore.jks
+
