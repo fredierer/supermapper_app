@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:supermapper_app/widgets/spot.dart';
+import 'package:supermapper/widgets/spot.dart';
 
 class ContributionCard extends StatelessWidget {
   const ContributionCard({super.key, required this.spot});

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:supermapper_app/services/profile_service.dart';
-import 'package:supermapper_app/services/spots_service.dart';
-import 'package:supermapper_app/theme.dart';
-import 'package:supermapper_app/widgets/spot.dart';
+import 'package:supermapper/services/profile_service.dart';
+import 'package:supermapper/services/spots_service.dart';
+import 'package:supermapper/theme.dart';
+import 'package:supermapper/widgets/spot.dart';
 
 const double _borderWidth = 3.0;
 final _profileService = ProfileService();

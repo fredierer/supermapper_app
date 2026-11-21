@@ -1,8 +1,8 @@
 import 'package:country_coder/country_coder.dart';
 import 'package:flutter/material.dart';
-import 'package:supermapper_app/screens/auth_gate.dart';
-import 'package:supermapper_app/shells/homeShell.dart';
-import 'package:supermapper_app/theme.dart';
+import 'package:supermapper/screens/auth_gate.dart';
+import 'package:supermapper/shells/homeShell.dart';
+import 'package:supermapper/theme.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 

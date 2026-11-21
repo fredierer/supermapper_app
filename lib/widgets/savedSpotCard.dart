@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:supermapper_app/screens/profile_screen.dart';
-import 'package:supermapper_app/services/profile_service.dart';
-import 'package:supermapper_app/widgets/spot.dart';
+import 'package:supermapper/screens/profile_screen.dart';
+import 'package:supermapper/services/profile_service.dart';
+import 'package:supermapper/widgets/spot.dart';
 
 class SavedSpotCard extends StatefulWidget {
   const SavedSpotCard({super.key, required this.spot});

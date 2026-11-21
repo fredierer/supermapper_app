@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:supermapper_app/theme.dart';
+import 'package:supermapper/theme.dart';
 
 class AddSpotButton extends StatelessWidget {
   final IconData icon;

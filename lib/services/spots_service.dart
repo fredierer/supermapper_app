@@ -1,6 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:supermapper_app/configuration/contribution_category.dart';
-import 'package:supermapper_app/widgets/spot.dart';
+import 'package:supermapper/configuration/contribution_category.dart';
+import 'package:supermapper/widgets/spot.dart';
 import 'package:flutter/foundation.dart';
 
 class SpotService {

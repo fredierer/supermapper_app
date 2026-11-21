@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:supermapper_app/configuration/contribution_category.dart';
+import 'package:supermapper/configuration/contribution_category.dart';
 
 class AddSpotStepDetails extends StatefulWidget {
   const AddSpotStepDetails({

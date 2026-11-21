@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:supermapper_app/theme.dart';
-import 'package:supermapper_app/configuration/contribution_category.dart';
+import 'package:supermapper/theme.dart';
+import 'package:supermapper/configuration/contribution_category.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_fonts/google_fonts.dart';
 

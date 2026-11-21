@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:supermapper_app/screens/login_screen.dart';
-import 'package:supermapper_app/shells/homeShell.dart';
+import 'package:supermapper/screens/login_screen.dart';
+import 'package:supermapper/shells/homeShell.dart';
 
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});

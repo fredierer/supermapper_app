@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:supermapper_app/services/places_service.dart';
-import 'package:supermapper_app/widgets/map.dart';
+import 'package:supermapper/services/places_service.dart';
+import 'package:supermapper/widgets/map.dart';
 import 'dart:async';
 
-import 'package:supermapper_app/widgets/userPositionButton.dart';
+import 'package:supermapper/widgets/userPositionButton.dart';
 
 
 class AddSpotStepMap extends StatefulWidget {

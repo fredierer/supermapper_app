@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:supermapper_app/screens/addSpotScreens/add_spot_screen.dart';
-import 'package:supermapper_app/screens/home_screen.dart';
-import 'package:supermapper_app/screens/map_screen.dart';
-import 'package:supermapper_app/screens/profile_screen.dart';
-import 'package:supermapper_app/screens/settings_screen.dart';
-import 'package:supermapper_app/theme.dart';
-import 'package:supermapper_app/widgets/navBarButton.dart';
-import 'package:supermapper_app/transitions/customSlideTransition.dart';
-import 'package:supermapper_app/widgets/spot.dart';
+import 'package:supermapper/screens/addSpotScreens/add_spot_screen.dart';
+import 'package:supermapper/screens/home_screen.dart';
+import 'package:supermapper/screens/map_screen.dart';
+import 'package:supermapper/screens/profile_screen.dart';
+import 'package:supermapper/screens/settings_screen.dart';
+import 'package:supermapper/theme.dart';
+import 'package:supermapper/widgets/navBarButton.dart';
+import 'package:supermapper/transitions/customSlideTransition.dart';
+import 'package:supermapper/widgets/spot.dart';
 
 const double _borderWidth = 3.0;
 

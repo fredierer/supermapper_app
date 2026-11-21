@@ -2,22 +2,22 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:supermapper_app/configuration/contribution_category.dart';
-import 'package:supermapper_app/screens/filter_screen.dart';
-import 'package:supermapper_app/screens/search_screen.dart';
-import 'package:supermapper_app/services/POI_service.dart';
-import 'package:supermapper_app/services/places_service.dart';
-import 'package:supermapper_app/theme.dart';
-import 'package:supermapper_app/widgets/map.dart';
-import 'package:supermapper_app/transitions/customSlideTransition.dart';
-import 'package:supermapper_app/services/spots_service.dart';
-import 'package:supermapper_app/widgets/poi.dart';
-import 'package:supermapper_app/widgets/spot.dart';
-import 'package:supermapper_app/widgets/spotInfo.dart';
+import 'package:supermapper/configuration/contribution_category.dart';
+import 'package:supermapper/screens/filter_screen.dart';
+import 'package:supermapper/screens/search_screen.dart';
+import 'package:supermapper/services/POI_service.dart';
+import 'package:supermapper/services/places_service.dart';
+import 'package:supermapper/theme.dart';
+import 'package:supermapper/widgets/map.dart';
+import 'package:supermapper/transitions/customSlideTransition.dart';
+import 'package:supermapper/services/spots_service.dart';
+import 'package:supermapper/widgets/poi.dart';
+import 'package:supermapper/widgets/spot.dart';
+import 'package:supermapper/widgets/spotInfo.dart';
 import 'dart:ui';
 
-import 'package:supermapper_app/widgets/toolNavButton.dart';
-import 'package:supermapper_app/widgets/userPositionButton.dart';
+import 'package:supermapper/widgets/toolNavButton.dart';
+import 'package:supermapper/widgets/userPositionButton.dart';
 
 const double _borderWidth = 3.0;
 

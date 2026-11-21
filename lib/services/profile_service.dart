@@ -1,6 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart';
-import 'package:supermapper_app/widgets/spot.dart';
+import 'package:supermapper/widgets/spot.dart';
 
 class ProfileService {
   final SupabaseClient _client = Supabase.instance.client;

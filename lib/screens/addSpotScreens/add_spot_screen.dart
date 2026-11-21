@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:supermapper_app/configuration/contribution_category.dart';
-import 'package:supermapper_app/screens/addSpotScreens/add_spot_stepDetails.dart';
-import 'package:supermapper_app/screens/addSpotScreens/add_spot_stepLocation.dart';
-import 'package:supermapper_app/screens/addSpotScreens/add_spot_stepMap.dart';
-import 'package:supermapper_app/services/spots_service.dart';
-import 'package:supermapper_app/theme.dart';
+import 'package:supermapper/configuration/contribution_category.dart';
+import 'package:supermapper/screens/addSpotScreens/add_spot_stepDetails.dart';
+import 'package:supermapper/screens/addSpotScreens/add_spot_stepLocation.dart';
+import 'package:supermapper/screens/addSpotScreens/add_spot_stepMap.dart';
+import 'package:supermapper/services/spots_service.dart';
+import 'package:supermapper/theme.dart';
 
 class AddSpotScreen extends StatefulWidget {
   const AddSpotScreen({

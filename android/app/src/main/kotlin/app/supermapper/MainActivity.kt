@@ -1,4 +1,4 @@
-package com.example.supermapper_app
+package app.supermapper
 
 import io.flutter.embedding.android.FlutterActivity
 

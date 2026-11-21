@@ -1,5 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:supermapper_app/widgets/poi.dart';
+import 'package:supermapper/widgets/poi.dart';
 
 class PoiService {
   final SupabaseClient _client = Supabase.instance.client;

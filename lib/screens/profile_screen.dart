@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:supermapper_app/services/profile_service.dart';
-import 'package:supermapper_app/services/spots_service.dart';
-import 'package:supermapper_app/theme.dart';
-import 'package:supermapper_app/widgets/contributionCard.dart';
-import 'package:supermapper_app/widgets/savedSpotCard.dart';
-import 'package:supermapper_app/widgets/spot.dart';
-import 'package:supermapper_app/widgets/statCard.dart';
+import 'package:supermapper/services/profile_service.dart';
+import 'package:supermapper/services/spots_service.dart';
+import 'package:supermapper/theme.dart';
+import 'package:supermapper/widgets/contributionCard.dart';
+import 'package:supermapper/widgets/savedSpotCard.dart';
+import 'package:supermapper/widgets/spot.dart';
+import 'package:supermapper/widgets/statCard.dart';
 
 const double _borderWidth = 3.0;
 

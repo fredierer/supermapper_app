@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:supermapper_app/theme.dart';
+import 'package:supermapper/theme.dart';
 
 const double _borderWidth = 3.0;
 
