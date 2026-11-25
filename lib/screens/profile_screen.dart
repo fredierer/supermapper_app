@@ -386,39 +386,39 @@ class _ProfileHeaderState extends State<_ProfileHeader> {
         
         // Conteneur centré pour la ligne pseudo + bouton
         Center(
-          child : Flexible(
-            child: _isEditing
-              ? ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 250),
-                  child: TextField(
-                    controller: _textController,
-                    autofocus: true,
-                    maxLength: 36,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.spaceMono(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                    decoration: const InputDecoration(
-                      isDense: true,
-                      contentPadding: EdgeInsets.all(5.0),
-                      border: UnderlineInputBorder(),
-                    ),
-                  ),
-                )
-              : Text(
-                widget.username,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.spaceMono(
-                        fontSize: 36,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
+  child: _isEditing
+      ? ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 250),
+          child: TextField(
+            controller: _textController,
+            autofocus: true,
+            maxLength: 36,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.spaceMono(
+              fontSize: 36,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
             ),
+            decoration: const InputDecoration(
+              isDense: true,
+              contentPadding: EdgeInsets.all(5.0),
+              border: UnderlineInputBorder(),
+            ),
+          ),
+        )
+      : FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            widget.username,
+            maxLines: 1,
+            style: GoogleFonts.spaceMono(
+              fontSize: 36,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
         ),
+      ),
       ],
     );
   }
