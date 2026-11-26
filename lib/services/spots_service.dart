@@ -81,4 +81,21 @@ class SpotService {
     }
   }
 
+  Future<void> reportSpot({
+    required int spotId,
+    required String category,
+    required String message,
+  }) async {
+    try {
+      await _client.from('reports').insert({
+        'spot_id': spotId,
+        'category': category,
+        'message': message,
+      });
+    } catch (e) {
+      debugPrint('Error while reporting a spot : $e');
+      rethrow;
+    }
+  }
+
 }

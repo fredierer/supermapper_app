@@ -3,7 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:map_launcher/map_launcher.dart';
 import 'package:flutter/foundation.dart';
-import 'package:supermapper/screens/profile_screen.dart';
+import 'package:supermapper/screens/report_screen.dart';
 import 'package:supermapper/services/profile_service.dart';
 import 'package:supermapper/theme.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -139,6 +139,21 @@ class _SpotInfoState extends State<SpotInfo> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _isSpotSavedByUser = wasSaved);
+    }
+  }
+
+  Future<void> _reportSpot(int spotId) async {
+    final sent = await Navigator.of(context, rootNavigator: true).push<bool>(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) => ReportScreen(spotId: spotId),
+      ),
+    );
+
+    if (sent == true && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Thanks, your report has been sent.')),
+      );
     }
   }
 
@@ -316,6 +331,26 @@ class _SpotInfoState extends State<SpotInfo> {
                       ),
                       style: IconButton.styleFrom(
                         backgroundColor: AppColors.amber,
+                        elevation: 2,
+                        shadowColor: Colors.black,
+                        fixedSize: const Size(50, 50),
+                        padding: EdgeInsets.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        side: const BorderSide(color: Colors.black, width: 3.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    IconButton(
+                      onPressed: () => _reportSpot(widget.spotId),
+                      icon: Icon(
+                        Icons.report_gmailerrorred,
+                        color: Colors.black,
+                      ),
+                      style: IconButton.styleFrom(
+                        backgroundColor: AppColors.errorRed,
                         elevation: 2,
                         shadowColor: Colors.black,
                         fixedSize: const Size(50, 50),
