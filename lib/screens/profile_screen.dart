@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:supermapper/services/profile_service.dart';
 import 'package:supermapper/services/spots_service.dart';
 import 'package:supermapper/theme.dart';
+import 'package:supermapper/widgets/confirmAlertDialog.dart';
 import 'package:supermapper/widgets/contributionCard.dart';
 import 'package:supermapper/widgets/savedSpotCard.dart';
 import 'package:supermapper/widgets/spot.dart';
@@ -12,7 +13,12 @@ import 'package:supermapper/widgets/statCard.dart';
 const double _borderWidth = 3.0;
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  const ProfileScreen({
+    super.key,
+    required this.onSpotDeleted,
+  });
+
+  final VoidCallback onSpotDeleted;
 
   @override
   State<ProfileScreen> createState() => ProfileScreenState();
@@ -46,34 +52,13 @@ class ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _disconnect() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: Colors.black, width: _borderWidth),
-        ),
-        title: const Text(
-          'Disconnect ?',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        content: const Text('Are you sure to disconnect ?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, false),
-            style: TextButton.styleFrom(foregroundColor: Colors.black),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(dialogContext, true),
-            style: _amberButtonStyle(),
-            child: const Text('Disconnect'),
-          ),
-        ],
-      ),
+    final confirmed = await showConfirmDialog(
+      context,
+      title: 'Disconnect ?',
+      message: 'Are you sure to disconnect ?',
+      confirmLabel: 'Disconnect',
     );
-
-    if (confirmed != true) return;
+    if (!confirmed) return;
     await _client.auth.signOut();
   }
 
@@ -164,7 +149,15 @@ class ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 16),
               FilledButton(
                 onPressed: reload,
-                style: _amberButtonStyle(),
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.amber,
+                  foregroundColor: Colors.black,
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    side: const BorderSide(color: Colors.black, width: 3.0),
+                  ),
+                ),
                 child: const Text('Try again'),
               ),
             ],
@@ -248,23 +241,17 @@ class ProfileScreenState extends State<ProfileScreen> {
               mainAxisExtent: 120,
             ),
             itemBuilder: (context, index) =>
-                ContributionCard(spot: recentSpots[index]),
+                ContributionCard(
+                  spot: recentSpots[index],
+                  onDeleted: () {
+                    reload();
+                    widget.onSpotDeleted();
+                  }
+                ),
           ),
       ],
     );
   }
-}
-
-ButtonStyle _amberButtonStyle() {
-  return FilledButton.styleFrom(
-    backgroundColor: AppColors.amber,
-    foregroundColor: Colors.black,
-    elevation: 2,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(14),
-      side: const BorderSide(color: Colors.black, width: _borderWidth),
-    ),
-  );
 }
 
 class _ProfileHeader extends StatefulWidget {
@@ -386,39 +373,39 @@ class _ProfileHeaderState extends State<_ProfileHeader> {
         
         // Conteneur centré pour la ligne pseudo + bouton
         Center(
-  child: _isEditing
-      ? ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 250),
-          child: TextField(
-            controller: _textController,
-            autofocus: true,
-            maxLength: 36,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.spaceMono(
-              fontSize: 36,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-            decoration: const InputDecoration(
-              isDense: true,
-              contentPadding: EdgeInsets.all(5.0),
-              border: UnderlineInputBorder(),
-            ),
-          ),
-        )
-      : FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(
-            widget.username,
-            maxLines: 1,
-            style: GoogleFonts.spaceMono(
-              fontSize: 36,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
+          child: _isEditing
+            ? ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 250),
+                child: TextField(
+                  controller: _textController,
+                  autofocus: true,
+                  maxLength: 36,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.spaceMono(
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                  decoration: const InputDecoration(
+                    isDense: true,
+                    contentPadding: EdgeInsets.all(5.0),
+                    border: UnderlineInputBorder(),
+                  ),
+                ),
+              )
+            : FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  widget.username,
+                  maxLines: 1,
+                  style: GoogleFonts.spaceMono(
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
         ),
-      ),
       ],
     );
   }

@@ -38,7 +38,12 @@ class _HomeShellState extends State<HomeShell> {
       onSpotCardPressed: _openSpotOnMap,
     ),
     MapScreen(key: _mapKey, onAddButtonPressed: _navigateToAddSpotScreen),
-    ProfileScreen(key: _profileKey),
+    ProfileScreen(
+      key: _profileKey,
+      onSpotDeleted: () {
+        _mapKey.currentState?.fetchSpotsData();
+      },
+    ),
    // SettingsScreen(),
   ];
 

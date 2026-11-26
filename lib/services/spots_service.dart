@@ -69,4 +69,16 @@ class SpotService {
     }
 
   }
+
+ Future<void> deleteSpot({
+  required int spotId,
+  }) async {
+    try {
+      await _client.from('spots').delete().eq('id', spotId);
+    } catch (e) {
+      debugPrint('Error while deleting a spot : $e');
+      rethrow;
+    }
+  }
+
 }

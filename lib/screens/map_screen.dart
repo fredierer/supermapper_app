@@ -91,6 +91,12 @@ class MapScreenState extends State<MapScreen> {
     });
   }
 
+  void reload() {
+    setState(() {
+      fetchSpotsData();
+    });
+  }
+
   @override
   void initState() {
     super.initState();
