@@ -25,12 +25,7 @@ class _ReportScreenState extends State<ReportScreen> {
   String? _category;
   bool _isSending = false;
 
-  @override
-  void dispose() {
-    _messageController.dispose();
-    super.dispose();
-  }
-
+  
   Future<void> _send() async {
     if (_category == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -163,4 +158,11 @@ class _ReportScreenState extends State<ReportScreen> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    super.dispose();
+  }
+
 }
